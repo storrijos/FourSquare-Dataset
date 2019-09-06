@@ -126,7 +126,6 @@ def count_number_of_elements(items, maxDiff):
     items = basic_processed_hash.items()
     items_lenght = len(items)
     for k, v in items:
-        basic_processed_hash[k] = len(v)
         total_count += len(v)
 
     if items_lenght != 0:
