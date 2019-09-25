@@ -31,8 +31,8 @@ def readPOISandCoordinates(txt_file):
     for line in linestoken:
         poi_id = line.split()[0]
         lat = line.split()[1]
-        long = line.split()[2]
-        poi_map[poi_id] = [lat, long]
+        longitude = line.split()[2]
+        poi_map[poi_id] = [lat, longitude]
     return poi_map
 
 def readFileGroupItem(txt_file, pois):
