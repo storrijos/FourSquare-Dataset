@@ -1,4 +1,8 @@
 .DS_Store
 .idea/
-venv
-entradas/DatosNewYork
+src/Flock/py3env
+src/Flock/__pycache__
+src/Flock/output.dat
+src/Flock/output.mfi
+src/Flock/outputDisk.mfi
+src/ST-DBSCAN/__pycache__
