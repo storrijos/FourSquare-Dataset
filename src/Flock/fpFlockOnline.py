@@ -56,33 +56,32 @@ class FPFlockOnline(object):
         return traj
 
     def addNewLine(keyFlock, begin, end, b):
-	    print('KeyFlock: ' + str(keyFlock) + ' Begin: ' + str(begin) + ' End ' + str(end) + ' ' + str(b))
+        print('KeyFlock: ' + str(keyFlock) + ' Begin: ' + str(begin) + ' End ' + str(end) + ' ' + str(b))
 
     def flocks(output1, totalMaximalDisks, keyFlock):
         lines = output1.readlines()
         for line in lines:
             lineSplit = line.split(' ')
-            array = list(map(int,lineSplit[:-1]))
+            array = list(map(int, lineSplit[:-1]))
             array.sort()
             if len(array) < delta:
                 continue
             members = totalMaximalDisks[int(str(array[0]))].members
             begin = totalMaximalDisks[int(str(array[0]))].timestamp
             end = begin
-            for element in range(1,len(array)):
+
+            for element in range(1, len(array)):
                 now = totalMaximalDisks[int(str(array[element]))].timestamp
                 if(now == end + 1 or now == end):
                     if(now == end + 1):
                         members = members.intersection(totalMaximalDisks[int(str(array[element]))].members)
                     end = now
-					
                 elif end-begin >= delta - 1:
                     b = list(members)
                     b.sort()
                     stdin.append('{0}\t{1}\t{2}\t{3}'.format(keyFlock, begin, end, b))
                     keyFlock += 1
                     begin = end = now
-
                 else:
                     begin = end = now
 
@@ -94,8 +93,16 @@ class FPFlockOnline(object):
                 keyFlock += 1
         
         return stdin, keyFlock
-            
-    def flockFinder(self,filename,tag):
+
+    def preprocessDataset(self, filename):
+        dataset = pd.read_csv(filename, delim_whitespace=True, header=None)
+        dataset.columns = ["id", "item_id", "latitude", "longitude", "real_timestamp"]
+        dataset.sort_values(['id', 'real_timestamp'], ascending=[True, True], inplace=True)
+        dataset['timestamp'] = dataset.groupby(['id']).cumcount()
+        dataset = dataset.drop(columns=['item_id'])
+        return dataset
+
+    def flockFinder(self, filename):
         global traj
         global stdin
         global delta
@@ -106,21 +113,16 @@ class FPFlockOnline(object):
         delta = self.delta
         LCMmaximal.precision = 0.001
 
-        #dataset = csv.reader(open('Datasets/'+filename, 'r'),delimiter='\t')
-
-        dataset = pd.read_csv('Datasets/US_NewYork_POIS_Coords_short.txt', delim_whitespace=True, header=None)
-        dataset.columns = ["id", "item_id", "latitude", "longitude", "timestamp"]
+        dataset = FPFlockOnline.preprocessDataset(self, filename)
 
         if os.path.exists('output.mfi'):
             os.system('rm output.mfi')
-
-        #next(dataset)
 
         t1 = time.time()
 
         points = LCMmaximal.pointTimestamp(dataset)
 
-        timestamps = list(map(int,points.keys()))
+        timestamps = list(map(int, points.keys()))
         timestamps.sort()
 
         keyFlock = 1
@@ -157,22 +159,18 @@ class FPFlockOnline(object):
             if os.path.exists('output.mfi'):
                 output1 = open('output.mfi','r')				   
                 
-            stdin, keyFlock  = FPFlockOnline.flocks(output1, totalMaximalDisks, keyFlock)
+            stdin, keyFlock = FPFlockOnline.flocks(output1, totalMaximalDisks, keyFlock)
             
                    
         print("Flocks: ", len(stdin))
         flocks = len(stdin)
         t2 = round(time.time()-t1,3)
-        print("\nTime: ",t2)
-		
-  		
+        print("\nTime: ", t2)
+
 def main():
     fp = FPFlockOnline(0.2,3,2)
-#    flockFinder('SJ2500T100t500f.csv')
-    fp.flockFinder('Datasets/US_NewYork_POIS_Coords_short','fp2test')
+    fp.flockFinder('Datasets/US_NewYork_POIS_Coords_short.txt')
+    #dataset = fp.preprocessDataset('Datasets/US_NewYork_POIS_Coords_short.txt')
 
-#    fp = FPFlockOnline(int(sys.argv[1]),int(sys.argv[2]),int(sys.argv[3]))
-#    fp.flockFinder(str(sys.argv[4]),'fp2'+str(sys.argv[5]))
-	
 if __name__ == '__main__':
     main()
