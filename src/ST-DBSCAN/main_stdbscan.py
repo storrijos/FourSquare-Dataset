@@ -46,7 +46,7 @@ def plot_clusters(df, output_name):
 
 def test_time():
 
-    df = pd.read_csv('US_NewYork_POIS_Coords_short2.txt', delim_whitespace=True, header=None)
+    df = pd.read_csv('US_NewYork_POIS_Coords_short.txt', delim_whitespace=True, header=None)
     df.columns = ["user_id", "item_id", "latitude", "longitude", "date_time"]
 
     '''

@@ -6,3 +6,5 @@ src/Flock/output.dat
 src/Flock/output.mfi
 src/Flock/outputDisk.mfi
 src/ST-DBSCAN/__pycache__
+venv
+entradas
