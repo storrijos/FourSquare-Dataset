@@ -29,6 +29,8 @@ import os
 import io
 import sys
 import pandas as pd
+import numpy
+import matplotlib.pyplot as plt
 
 class FPFlockOnline(object):
     """ This class is intanced with epsilon, mu and delta"""
@@ -55,10 +57,13 @@ class FPFlockOnline(object):
             del traj[key]
         return traj
 
-    def addNewLine(keyFlock, begin, end, b):
-        print('KeyFlock: ' + str(keyFlock) + ' Begin: ' + str(begin) + ' End ' + str(end) + ' ' + str(b))
+    def addNewLine(output_file, keyFlock, begin, end, b):
+        with open(output_file, "a") as outputFile:
+            output = "KeyFlock: " + str(keyFlock) + " Begin: " + str(begin) + " End " + str(end) + ' ' + str(b) + '\n'
+            outputFile.write(output)
 
-    def flocks(output1, totalMaximalDisks, keyFlock):
+    def flocks(self, output_file, output1, totalMaximalDisks, keyFlock):
+        elements_in_flock_count = 0
         lines = output1.readlines()
         for line in lines:
             lineSplit = line.split(' ')
@@ -69,6 +74,7 @@ class FPFlockOnline(object):
             members = totalMaximalDisks[int(str(array[0]))].members
             begin = totalMaximalDisks[int(str(array[0]))].timestamp
             end = begin
+
 
             for element in range(1, len(array)):
                 now = totalMaximalDisks[int(str(array[element]))].timestamp
@@ -89,10 +95,11 @@ class FPFlockOnline(object):
                 b = list(members)
                 b.sort()
                 stdin.append('{0}\t{1}\t{2}\t{3}'.format(keyFlock, begin, end, b))
-                FPFlockOnline.addNewLine(keyFlock, begin, end, b)
+                FPFlockOnline.addNewLine(output_file, keyFlock, begin, end, b)
+                elements_in_flock_count = len(b)
                 keyFlock += 1
         
-        return stdin, keyFlock
+        return stdin, keyFlock, elements_in_flock_count
 
     def preprocessDataset(self, filename):
         dataset = pd.read_csv(filename, delim_whitespace=True, header=None)
@@ -102,7 +109,7 @@ class FPFlockOnline(object):
         dataset = dataset.drop(columns=['item_id'])
         return dataset
 
-    def flockFinder(self, filename):
+    def flockFinder(self, filename, output_file):
         global traj
         global stdin
         global delta
@@ -132,11 +139,14 @@ class FPFlockOnline(object):
         totalMaximalDisks = {}
         stdin = []
 
+        elements_in_flock_count = 0
+        flocks_avg = 0
         for timestamp in timestamps:
             output = open('output.dat','w')
             LCMmaximal.disksTimestamp(points, timestamp)
             if not os.path.exists('outputDisk.dat'):
                 continue
+
             maximalDisks, diskID = LCMmaximal.maximalDisksTimestamp(timestamp, diskID)
             totalMaximalDisks.update(maximalDisks)
              
@@ -158,19 +168,65 @@ class FPFlockOnline(object):
                           
             if os.path.exists('output.mfi'):
                 output1 = open('output.mfi','r')				   
-                
-            stdin, keyFlock = FPFlockOnline.flocks(output1, totalMaximalDisks, keyFlock)
-            
-                   
+                stdin, keyFlock, elems = FPFlockOnline.flocks(self, output_file, output1, totalMaximalDisks, keyFlock)
+                elements_in_flock_count += elems
+
+        if len(stdin) != 0:
+            flocks_avg = elements_in_flock_count / len(stdin)
+        writeEndOfFile(output_file, 'Flocks_avg: ' + str(flocks_avg))
         print("Flocks: ", len(stdin))
         flocks = len(stdin)
         t2 = round(time.time()-t1,3)
         print("\nTime: ", t2)
+        return flocks_avg
+
+def writeEndOfFile(output_file, text):
+    with open(output_file, "a") as outputFile:
+        outputFile.write(text)
+
+def experimentos():
+    min_mu = 2
+    max_mu = 10
+    min_delta = 2
+    max_delta = 10
+    min_epsilon = 0.01
+    max_epsilon = 0.21
+    i = 0
+
+    res = []
+
+    for epsilon in numpy.arange(min_epsilon, max_epsilon, 0.05):
+        for mu in numpy.arange(min_mu, max_mu, 2):
+            for delta in numpy.arange(min_delta, max_delta, 2):
+                output_file = 'Experiments/experimento_' + str(i) + '.txt'
+                fp = FPFlockOnline(epsilon, mu, delta)
+                flock_avg = fp.flockFinder('Datasets/US_NewYork_POIS_Coords_short_10k.txt', output_file)
+                res.append({"epsilon": epsilon, "mu": mu, "delta": delta, "flock_avg": flock_avg})
+                i += 1
+                print('Porcentaje:' + str((i/64)*100) + '%')
+
+    numpy.set_printoptions(threshold=sys.maxsize)
+    df = pd.DataFrame(res, columns=['epsilon', 'mu', 'delta', 'flock_avg'])
+
+    #Imprimimos los resultados
+    #print(df.to_string())
+
+    writeEndOfFile('df_results.txt', df.to_string())
+
+
+#plot_x_y_values(df, 'flock_avg', 'epsilon')
+    #plot_x_y_values(df, 'flock_avg', 'mu')
+    #plot_x_y_values(df, 'flock_avg', 'delta')
+
+def plot_x_y_values(df, x_label, y_label):
+    df.plot(x=x_label, y=y_label, marker='.')
+    plt.show()
 
 def main():
-    fp = FPFlockOnline(0.2,3,2)
-    fp.flockFinder('Datasets/US_NewYork_POIS_Coords_short.txt')
-    #dataset = fp.preprocessDataset('Datasets/US_NewYork_POIS_Coords_short.txt')
+    #output_file = sys.argv[1]
+    #fp = FPFlockOnline(0.2,3,2)
+    #fp.flockFinder('Datasets/US_NewYork_POIS_Coords_short.txt', output_file)
 
+    experimentos()
 if __name__ == '__main__':
     main()
