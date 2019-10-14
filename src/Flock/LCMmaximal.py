@@ -240,6 +240,13 @@ def maximalDisksTimestamp(timestamp, diskID):
     return (maximalDisks, diskID)
 
 def main():
-    pass
+    global epsilon
+    global mu
+    global precision
+
+    epsilon = 300
+    mu = 9
+    precision = 0.001
+
 if __name__ == '__main__':
     main()

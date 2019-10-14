@@ -44,7 +44,7 @@ class FPFlockOnline(object):
         oldKey = set()
         for maximal in maximalDisks:
             for member in maximalDisks[maximal].members:
-                if not member  in traj.keys():
+                if not member in traj.keys():
                     traj[member]= []
                     traj[member].append(maximalDisks[maximal].id)
                     newKey.add(member)
@@ -75,7 +75,6 @@ class FPFlockOnline(object):
             begin = totalMaximalDisks[int(str(array[0]))].timestamp
             end = begin
 
-
             for element in range(1, len(array)):
                 now = totalMaximalDisks[int(str(array[element]))].timestamp
                 if(now == end + 1 or now == end):
@@ -86,6 +85,8 @@ class FPFlockOnline(object):
                     b = list(members)
                     b.sort()
                     stdin.append('{0}\t{1}\t{2}\t{3}'.format(keyFlock, begin, end, b))
+                    elements_in_flock_count += len(b)
+                    FPFlockOnline.addNewLine(output_file, keyFlock, begin, end, b)
                     keyFlock += 1
                     begin = end = now
                 else:
@@ -96,7 +97,9 @@ class FPFlockOnline(object):
                 b.sort()
                 stdin.append('{0}\t{1}\t{2}\t{3}'.format(keyFlock, begin, end, b))
                 FPFlockOnline.addNewLine(output_file, keyFlock, begin, end, b)
-                elements_in_flock_count = len(b)
+                elements_in_flock_count += len(b)
+                print('LONGITUD')
+                print(elements_in_flock_count)
                 keyFlock += 1
         
         return stdin, keyFlock, elements_in_flock_count
@@ -170,8 +173,14 @@ class FPFlockOnline(object):
                 output1 = open('output.mfi','r')				   
                 stdin, keyFlock, elems = FPFlockOnline.flocks(self, output_file, output1, totalMaximalDisks, keyFlock)
                 elements_in_flock_count += elems
+                print('ELEMENTOS')
+                print(elements_in_flock_count)
 
         if len(stdin) != 0:
+            print('stdin')
+            print(len(stdin))
+            print ('elements flock')
+            print(elements_in_flock_count)
             flocks_avg = elements_in_flock_count / len(stdin)
         writeEndOfFile(output_file, 'Flocks_avg: ' + str(flocks_avg))
         print("Flocks: ", len(stdin))
@@ -200,7 +209,7 @@ def experimentos():
             for delta in numpy.arange(min_delta, max_delta, 2):
                 output_file = 'Experiments/experimento_' + str(i) + '.txt'
                 fp = FPFlockOnline(epsilon, mu, delta)
-                flock_avg = fp.flockFinder('Datasets/US_NewYork_POIS_Coords_short_10k.txt', output_file)
+                flock_avg = fp.flockFinder('Datasets/US_NewYork_POIS_Coords_short.txt', output_file)
                 res.append({"epsilon": epsilon, "mu": mu, "delta": delta, "flock_avg": flock_avg})
                 i += 1
                 print('Porcentaje:' + str((i/64)*100) + '%')
@@ -223,7 +232,7 @@ def plot_x_y_values(df, x_label, y_label):
     plt.show()
 
 def main():
-    #output_file = sys.argv[1]
+    #output_file = 'output_prueba.txt' #sys.argv[1]
     #fp = FPFlockOnline(0.2,3,2)
     #fp.flockFinder('Datasets/US_NewYork_POIS_Coords_short.txt', output_file)
 

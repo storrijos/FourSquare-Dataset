@@ -1,7 +1,42 @@
-KeyFlock: 1 Begin: 30 End 31 [162, 221, 253, 386]
-KeyFlock: 1 Begin: 30 End 31 [162, 221, 253, 386]
-KeyFlock: 1 Begin: 30 End 31 [162, 221, 253, 386]
-KeyFlock: 1 Begin: 30 End 31 [162, 221, 253, 386]
+keyFlock: 1 Begin: 30 End 31 [162, 221, 253, 386]
+KeyFlock: 2 Begin: 30 End 31 [162, 221, 253, 386]
+KeyFlock: 3 Begin: 30 End 32 [162, 221, 253, 386]
+KeyFlock: 4 Begin: 31 End 32 [0, 162, 253, 386]
+KeyFlock: 5 Begin: 30 End 32 [162, 221, 253, 386]
+KeyFlock: 6 Begin: 31 End 33 [0, 162, 253, 386]
+KeyFlock: 7 Begin: 30 End 33 [162, 221, 253, 386]
+KeyFlock: 8 Begin: 30 End 34 [162, 221, 253, 386]
+KeyFlock: 9 Begin: 34 End 35 [0, 162, 221, 386]
+KeyFlock: 10 Begin: 30 End 35 [162, 221, 253, 386]
+KeyFlock: 11 Begin: 35 End 36 [0, 162, 221, 253, 386]-
+KeyFlock: 12 Begin: 30 End 36 [162, 221, 253, 386]
+KeyFlock: 13 Begin: 30 End 36 [162, 221, 253, 386]
+KeyFlock: 14 Begin: 35 End 36 [0, 162, 221, 253, 386]-
+KeyFlock: 15 Begin: 30 End 37 [162, 221, 253, 386]
+KeyFlock: 16 Begin: 30 End 37 [162, 221, 253, 386]
+KeyFlock: 19 Begin: 35 End 38 [0, 162, 253, 386]
+KeyFlock: 20 Begin: 30 End 38 [162, 221, 253, 386]
+KeyFlock: 22 Begin: 38 End 39 [0, 162, 221, 253, 386]-
+KeyFlock: 23 Begin: 30 End 39 [162, 221, 253, 386]
+KeyFlock: 24 Begin: 30 End 39 [162, 221, 253, 386]
+KeyFlock: 26 Begin: 38 End 40 [0, 162, 221, 253, 386]-
+KeyFlock: 28 Begin: 35 End 40 [0, 162, 253, 386]
+KeyFlock: 29 Begin: 30 End 40 [162, 221, 253, 386]
+KeyFlock: 31 Begin: 38 End 41 [0, 221, 253, 386]
+KeyFlock: 32 Begin: 30 End 41 [221, 253, 386] +
+KeyFlock: 34 Begin: 38 End 42 [0, 221, 253, 386]
+KeyFlock: 36 Begin: 35 End 42 [0, 253, 386] +
+KeyFlock: 38 Begin: 38 End 42 [0, 221, 386] +
+KeyFlock: 40 Begin: 38 End 43 [0, 221, 253, 386]
+KeyFlock: 42 Begin: 35 End 43 [0, 253, 386] +
+KeyFlock: 44 Begin: 38 End 44 [0, 221, 253, 386]
+KeyFlock: 45 Begin: 30 End 44 [221, 253, 386] +
+KeyFlock: 47 Begin: 38 End 45 [0, 221, 253, 386]
+KeyFlock: 49 Begin: 35 End 45 [0, 253, 386] +
+KeyFlock: 51 Begin: 38 End 45 [0, 221, 386] +
+KeyFlock: 53 Begin: 38 End 46 [0, 221, 253, 386]
+KeyFlock: 55 Begin: 35 End 46 [0, 253, 386] +
+Flocks_avg: 1.0545454545454545KeyFlock: 1 Begin: 30 End 31 [162, 221, 253, 386]
 KeyFlock: 2 Begin: 30 End 31 [162, 221, 253, 386]
 KeyFlock: 3 Begin: 30 End 32 [162, 221, 253, 386]
 KeyFlock: 4 Begin: 31 End 32 [0, 162, 253, 386]
@@ -12,18 +47,33 @@ KeyFlock: 8 Begin: 30 End 34 [162, 221, 253, 386]
 KeyFlock: 9 Begin: 34 End 35 [0, 162, 221, 386]
 KeyFlock: 10 Begin: 30 End 35 [162, 221, 253, 386]
 KeyFlock: 11 Begin: 35 End 36 [0, 162, 221, 253, 386]
-KeyFlock: 1 Begin: 30 End 31 [162, 221, 253, 386]
-KeyFlock: 2 Begin: 30 End 31 [162, 221, 253, 386]
-KeyFlock: 3 Begin: 30 End 32 [162, 221, 253, 386]
-KeyFlock: 4 Begin: 31 End 32 [0, 162, 253, 386]
-KeyFlock: 5 Begin: 30 End 32 [162, 221, 253, 386]
-KeyFlock: 6 Begin: 31 End 33 [0, 162, 253, 386]
-KeyFlock: 7 Begin: 30 End 33 [162, 221, 253, 386]
-KeyFlock: 8 Begin: 30 End 34 [162, 221, 253, 386]
-KeyFlock: 9 Begin: 34 End 35 [0, 162, 221, 386]
-KeyFlock: 10 Begin: 30 End 35 [162, 221, 253, 386]
-KeyFlock: 11 Begin: 35 End 36 [0, 162, 221, 253, 386]
-KeyFlock: 1 Begin: 30 End 31 [162, 221, 253, 386]
+KeyFlock: 12 Begin: 30 End 36 [162, 221, 253, 386]
+KeyFlock: 13 Begin: 30 End 36 [162, 221, 253, 386]
+KeyFlock: 14 Begin: 35 End 36 [0, 162, 221, 253, 386]
+KeyFlock: 15 Begin: 30 End 37 [162, 221, 253, 386]
+KeyFlock: 16 Begin: 30 End 37 [162, 221, 253, 386]
+KeyFlock: 19 Begin: 35 End 38 [0, 162, 253, 386]
+KeyFlock: 20 Begin: 30 End 38 [162, 221, 253, 386]
+KeyFlock: 22 Begin: 38 End 39 [0, 162, 221, 253, 386]
+KeyFlock: 23 Begin: 30 End 39 [162, 221, 253, 386]
+KeyFlock: 24 Begin: 30 End 39 [162, 221, 253, 386]
+KeyFlock: 26 Begin: 38 End 40 [0, 162, 221, 253, 386]
+KeyFlock: 28 Begin: 35 End 40 [0, 162, 253, 386]
+KeyFlock: 29 Begin: 30 End 40 [162, 221, 253, 386]
+KeyFlock: 31 Begin: 38 End 41 [0, 221, 253, 386]
+KeyFlock: 32 Begin: 30 End 41 [221, 253, 386]
+KeyFlock: 34 Begin: 38 End 42 [0, 221, 253, 386]
+KeyFlock: 36 Begin: 35 End 42 [0, 253, 386]
+KeyFlock: 38 Begin: 38 End 42 [0, 221, 386]
+KeyFlock: 40 Begin: 38 End 43 [0, 221, 253, 386]
+KeyFlock: 42 Begin: 35 End 43 [0, 253, 386]
+KeyFlock: 44 Begin: 38 End 44 [0, 221, 253, 386]
+KeyFlock: 45 Begin: 30 End 44 [221, 253, 386]
+KeyFlock: 47 Begin: 38 End 45 [0, 221, 253, 386]
+KeyFlock: 49 Begin: 35 End 45 [0, 253, 386]
+KeyFlock: 51 Begin: 38 End 45 [0, 221, 386]
+KeyFlock: 53 Begin: 38 End 46 [0, 221, 253, 386]
+KeyFlock: 55 Begin: 35 End 46 [0, 253, 386]
 KeyFlock: 1 Begin: 30 End 31 [162, 221, 253, 386]
 KeyFlock: 2 Begin: 30 End 31 [162, 221, 253, 386]
 KeyFlock: 3 Begin: 30 End 32 [162, 221, 253, 386]
@@ -62,3 +112,136 @@ KeyFlock: 49 Begin: 35 End 45 [0, 253, 386]
 KeyFlock: 51 Begin: 38 End 45 [0, 221, 386]
 KeyFlock: 53 Begin: 38 End 46 [0, 221, 253, 386]
 KeyFlock: 55 Begin: 35 End 46 [0, 253, 386]
+Flocks_avg: 1.0545454545454545KeyFlock: 1 Begin: 30 End 31 [162, 221, 253, 386]
+KeyFlock: 2 Begin: 30 End 31 [162, 221, 253, 386]
+KeyFlock: 3 Begin: 30 End 32 [162, 221, 253, 386]
+KeyFlock: 4 Begin: 31 End 32 [0, 162, 253, 386]
+KeyFlock: 5 Begin: 30 End 32 [162, 221, 253, 386]
+KeyFlock: 6 Begin: 31 End 33 [0, 162, 253, 386]
+KeyFlock: 7 Begin: 30 End 33 [162, 221, 253, 386]
+KeyFlock: 8 Begin: 30 End 34 [162, 221, 253, 386]
+KeyFlock: 9 Begin: 34 End 35 [0, 162, 221, 386]
+KeyFlock: 10 Begin: 30 End 35 [162, 221, 253, 386]
+KeyFlock: 11 Begin: 35 End 36 [0, 162, 221, 253, 386]
+KeyFlock: 12 Begin: 30 End 36 [162, 221, 253, 386]
+KeyFlock: 13 Begin: 30 End 36 [162, 221, 253, 386]
+KeyFlock: 14 Begin: 35 End 36 [0, 162, 221, 253, 386]
+KeyFlock: 15 Begin: 30 End 37 [162, 221, 253, 386]
+KeyFlock: 16 Begin: 30 End 37 [162, 221, 253, 386]
+KeyFlock: 19 Begin: 35 End 38 [0, 162, 253, 386]
+KeyFlock: 20 Begin: 30 End 38 [162, 221, 253, 386]
+KeyFlock: 22 Begin: 38 End 39 [0, 162, 221, 253, 386]
+KeyFlock: 23 Begin: 30 End 39 [162, 221, 253, 386]
+KeyFlock: 24 Begin: 30 End 39 [162, 221, 253, 386]
+KeyFlock: 26 Begin: 38 End 40 [0, 162, 221, 253, 386]
+KeyFlock: 28 Begin: 35 End 40 [0, 162, 253, 386]
+KeyFlock: 29 Begin: 30 End 40 [162, 221, 253, 386]
+KeyFlock: 31 Begin: 38 End 41 [0, 221, 253, 386]
+KeyFlock: 32 Begin: 30 End 41 [221, 253, 386]
+KeyFlock: 34 Begin: 38 End 42 [0, 221, 253, 386]
+KeyFlock: 36 Begin: 35 End 42 [0, 253, 386]
+KeyFlock: 38 Begin: 38 End 42 [0, 221, 386]
+KeyFlock: 40 Begin: 38 End 43 [0, 221, 253, 386]
+KeyFlock: 42 Begin: 35 End 43 [0, 253, 386]
+KeyFlock: 44 Begin: 38 End 44 [0, 221, 253, 386]
+KeyFlock: 45 Begin: 30 End 44 [221, 253, 386]
+KeyFlock: 47 Begin: 38 End 45 [0, 221, 253, 386]
+KeyFlock: 49 Begin: 35 End 45 [0, 253, 386]
+KeyFlock: 51 Begin: 38 End 45 [0, 221, 386]
+KeyFlock: 53 Begin: 38 End 46 [0, 221, 253, 386]
+KeyFlock: 55 Begin: 35 End 46 [0, 253, 386]
+Flocks_avg: 1.0545454545454545
+KeyFlock: 1 Begin: 30 End 31 [162, 221, 253, 386]
+KeyFlock: 2 Begin: 30 End 31 [162, 221, 253, 386]
+KeyFlock: 3 Begin: 30 End 32 [162, 221, 253, 386]
+KeyFlock: 4 Begin: 31 End 32 [0, 162, 253, 386]
+KeyFlock: 5 Begin: 30 End 32 [162, 221, 253, 386]
+KeyFlock: 6 Begin: 31 End 33 [0, 162, 253, 386]
+KeyFlock: 7 Begin: 30 End 33 [162, 221, 253, 386]
+KeyFlock: 8 Begin: 30 End 34 [162, 221, 253, 386]
+KeyFlock: 9 Begin: 34 End 35 [0, 162, 221, 386]
+KeyFlock: 10 Begin: 30 End 35 [162, 221, 253, 386]
+KeyFlock: 11 Begin: 35 End 36 [0, 162, 221, 253, 386]+
+KeyFlock: 12 Begin: 30 End 36 [162, 221, 253, 386]
+KeyFlock: 13 Begin: 30 End 36 [162, 221, 253, 386]
+KeyFlock: 14 Begin: 35 End 36 [0, 162, 221, 253, 386]+
+KeyFlock: 15 Begin: 30 End 37 [162, 221, 253, 386]
+KeyFlock: 16 Begin: 30 End 37 [162, 221, 253, 386]
+KeyFlock: 19 Begin: 35 End 38 [0, 162, 253, 386]
+KeyFlock: 20 Begin: 30 End 38 [162, 221, 253, 386]
+KeyFlock: 22 Begin: 38 End 39 [0, 162, 221, 253, 386]+
+KeyFlock: 23 Begin: 30 End 39 [162, 221, 253, 386]
+KeyFlock: 24 Begin: 30 End 39 [162, 221, 253, 386]
+KeyFlock: 26 Begin: 38 End 40 [0, 162, 221, 253, 386]+
+KeyFlock: 28 Begin: 35 End 40 [0, 162, 253, 386]
+KeyFlock: 29 Begin: 30 End 40 [162, 221, 253, 386]
+KeyFlock: 31 Begin: 38 End 41 [0, 221, 253, 386]
+KeyFlock: 32 Begin: 30 End 41 [221, 253, 386]-
+KeyFlock: 34 Begin: 38 End 42 [0, 221, 253, 386]
+KeyFlock: 36 Begin: 35 End 42 [0, 253, 386]-
+KeyFlock: 38 Begin: 38 End 42 [0, 221, 386]-
+KeyFlock: 40 Begin: 38 End 43 [0, 221, 253, 386]
+KeyFlock: 42 Begin: 35 End 43 [0, 253, 386]-
+KeyFlock: 44 Begin: 38 End 44 [0, 221, 253, 386]
+KeyFlock: 45 Begin: 30 End 44 [221, 253, 386]-
+KeyFlock: 47 Begin: 38 End 45 [0, 221, 253, 386]
+KeyFlock: 49 Begin: 35 End 45 [0, 253, 386]-
+KeyFlock: 51 Begin: 38 End 45 [0, 221, 386]-
+KeyFlock: 53 Begin: 38 End 46 [0, 221, 253, 386]
+KeyFlock: 55 Begin: 35 End 46 [0, 253, 386]-
+Flocks_avg: 2.690909090909091KeyFlock: 1 Begin: 30 End 31 [162, 221, 253, 386]
+KeyFlock: 2 Begin: 30 End 31 [162, 221, 253, 386]
+KeyFlock: 3 Begin: 30 End 32 [162, 221, 253, 386]
+KeyFlock: 4 Begin: 31 End 32 [0, 162, 253, 386]
+KeyFlock: 5 Begin: 30 End 32 [162, 221, 253, 386]
+KeyFlock: 6 Begin: 31 End 33 [0, 162, 253, 386]
+KeyFlock: 7 Begin: 30 End 33 [162, 221, 253, 386]
+KeyFlock: 8 Begin: 30 End 34 [162, 221, 253, 386]
+KeyFlock: 9 Begin: 34 End 35 [0, 162, 221, 386]
+KeyFlock: 10 Begin: 30 End 35 [162, 221, 253, 386]
+KeyFlock: 11 Begin: 35 End 36 [0, 162, 221, 253, 386]-
+KeyFlock: 12 Begin: 30 End 36 [162, 221, 253, 386]
+KeyFlock: 13 Begin: 30 End 36 [162, 221, 253, 386]
+KeyFlock: 14 Begin: 35 End 36 [0, 162, 221, 253, 386]-
+KeyFlock: 15 Begin: 30 End 37 [162, 221, 253, 386]
+KeyFlock: 16 Begin: 30 End 37 [162, 221, 253, 386]
+KeyFlock: 17 Begin: 35 End 36 [0, 162, 221, 253, 386]-
+KeyFlock: 18 Begin: 31 End 33 [0, 162, 253, 386]
+KeyFlock: 19 Begin: 35 End 38 [0, 162, 253, 386]
+KeyFlock: 20 Begin: 30 End 38 [162, 221, 253, 386]
+KeyFlock: 21 Begin: 35 End 36 [0, 162, 221, 253, 386]-
+KeyFlock: 22 Begin: 38 End 39 [0, 162, 221, 253, 386]-
+KeyFlock: 23 Begin: 30 End 39 [162, 221, 253, 386]
+KeyFlock: 24 Begin: 30 End 39 [162, 221, 253, 386]
+KeyFlock: 25 Begin: 35 End 36 [0, 162, 221, 253, 386]-
+KeyFlock: 26 Begin: 38 End 40 [0, 162, 221, 253, 386]-
+KeyFlock: 27 Begin: 31 End 33 [0, 162, 253, 386]
+KeyFlock: 28 Begin: 35 End 40 [0, 162, 253, 386]
+KeyFlock: 29 Begin: 30 End 40 [162, 221, 253, 386]
+KeyFlock: 30 Begin: 35 End 36 [0, 162, 221, 253, 386]-
+KeyFlock: 31 Begin: 38 End 41 [0, 221, 253, 386]
+KeyFlock: 32 Begin: 30 End 41 [221, 253, 386]+
+KeyFlock: 33 Begin: 35 End 36 [0, 162, 221, 253, 386]-
+KeyFlock: 34 Begin: 38 End 42 [0, 221, 253, 386]
+KeyFlock: 35 Begin: 31 End 33 [0, 162, 253, 386]
+KeyFlock: 36 Begin: 35 End 42 [0, 253, 386]+
+KeyFlock: 37 Begin: 34 End 36 [0, 162, 221, 386]
+KeyFlock: 38 Begin: 38 End 42 [0, 221, 386]+
+KeyFlock: 39 Begin: 35 End 36 [0, 162, 221, 253, 386]-
+KeyFlock: 40 Begin: 38 End 43 [0, 221, 253, 386]
+KeyFlock: 41 Begin: 31 End 33 [0, 162, 253, 386]
+KeyFlock: 42 Begin: 35 End 43 [0, 253, 386]+
+KeyFlock: 43 Begin: 35 End 36 [0, 162, 221, 253, 386]-
+KeyFlock: 44 Begin: 38 End 44 [0, 221, 253, 386]
+KeyFlock: 45 Begin: 30 End 44 [221, 253, 386]+
+KeyFlock: 46 Begin: 35 End 36 [0, 162, 221, 253, 386]-
+KeyFlock: 47 Begin: 38 End 45 [0, 221, 253, 386]
+KeyFlock: 48 Begin: 31 End 33 [0, 162, 253, 386]
+KeyFlock: 49 Begin: 35 End 45 [0, 253, 386]+
+KeyFlock: 50 Begin: 34 End 36 [0, 162, 221, 386]
+KeyFlock: 51 Begin: 38 End 45 [0, 221, 386]+
+KeyFlock: 52 Begin: 35 End 36 [0, 162, 221, 253, 386]-
+KeyFlock: 53 Begin: 38 End 46 [0, 221, 253, 386]
+KeyFlock: 54 Begin: 31 End 33 [0, 162, 253, 386]
+KeyFlock: 55 Begin: 35 End 46 [0, 253, 386]+
+Flocks_avg: 4.090909090909091
