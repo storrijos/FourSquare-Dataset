@@ -38,6 +38,7 @@ class FPFlockOnline(object):
         self.epsilon = epsilon
         self.mu = mu
         self.delta = delta
+        self.df = pd.DataFrame(columns=['keyFlock', 'begin', 'end', 'traj'])
 
     def getTransactions(maximalDisks):
         newKey = set()
@@ -55,6 +56,8 @@ class FPFlockOnline(object):
         keysToDelete = (keys.difference(oldKey).difference(newKey))
         for key in keysToDelete:
             del traj[key]
+        print('TRAJ')
+        print(traj)
         return traj
 
     def addNewLine(output_file, keyFlock, begin, end, b):
@@ -63,29 +66,36 @@ class FPFlockOnline(object):
             outputFile.write(output)
 
     def flocks(self, output_file, output1, totalMaximalDisks, keyFlock):
+        print('LLAMADA')
         elements_in_flock_count = 0
         lines = output1.readlines()
         for line in lines:
+            print('LINE : ' + str(line))
             lineSplit = line.split(' ')
             array = list(map(int, lineSplit[:-1]))
             array.sort()
             if len(array) < delta:
                 continue
+            print(array)
             members = totalMaximalDisks[int(str(array[0]))].members
             begin = totalMaximalDisks[int(str(array[0]))].timestamp
+            print('ELEMENTOS ' + str(members) + ' ' + str(begin))
             end = begin
 
             for element in range(1, len(array)):
                 now = totalMaximalDisks[int(str(array[element]))].timestamp
+                print('NOW: ' + str(now) + 'END ' + str(end))
                 if(now == end + 1 or now == end):
                     if(now == end + 1):
                         members = members.intersection(totalMaximalDisks[int(str(array[element]))].members)
+                        print('MEMBERS ' + str(members))
                     end = now
                 elif end-begin >= delta - 1:
                     b = list(members)
                     b.sort()
                     stdin.append('{0}\t{1}\t{2}\t{3}'.format(keyFlock, begin, end, b))
                     elements_in_flock_count += len(b)
+                    print('IMPRIMO2')
                     FPFlockOnline.addNewLine(output_file, keyFlock, begin, end, b)
                     keyFlock += 1
                     begin = end = now
@@ -94,14 +104,21 @@ class FPFlockOnline(object):
 
             if end-begin >= delta - 1:
                 b = list(members)
+                print('MEMBERS_IMPRS ' + str(b))
                 b.sort()
+                print('IMPRIMO3')
                 stdin.append('{0}\t{1}\t{2}\t{3}'.format(keyFlock, begin, end, b))
                 FPFlockOnline.addNewLine(output_file, keyFlock, begin, end, b)
+
+                data = {'keyFlock': keyFlock, 'begin': begin, 'end': end, 'traj': str(b)}
+                self.df = self.df.append(data, ignore_index=True)
+
+
                 elements_in_flock_count += len(b)
                 print('LONGITUD')
                 print(elements_in_flock_count)
                 keyFlock += 1
-        
+
         return stdin, keyFlock, elements_in_flock_count
 
     def preprocessDataset(self, filename):
@@ -133,6 +150,7 @@ class FPFlockOnline(object):
         points = LCMmaximal.pointTimestamp(dataset)
 
         timestamps = list(map(int, points.keys()))
+        print('timestamps: ' + str(timestamps))
         timestamps.sort()
 
         keyFlock = 1
@@ -152,16 +170,16 @@ class FPFlockOnline(object):
 
             maximalDisks, diskID = LCMmaximal.maximalDisksTimestamp(timestamp, diskID)
             totalMaximalDisks.update(maximalDisks)
-             
             traj = FPFlockOnline.getTransactions(maximalDisks)
-            
+
             st = ''                     
             for i in traj:
                 if len(traj[i]) < delta:
                     continue
                 st += (str(traj[i])+'\n')
+                print('aqui' + st)
+            print('ST ' + st)
             output.write(st)
-                
             output.close()
 
             if os.path.getsize('output.dat') == 0:
@@ -170,7 +188,10 @@ class FPFlockOnline(object):
             os.system("./fim_closed output.dat " + str(LCMmaximal.mu) + " output.mfi > /dev/null")
                           
             if os.path.exists('output.mfi'):
-                output1 = open('output.mfi','r')				   
+                output1 = open('output.mfi','r')
+                output2 = open('output.mfi','r')
+                print('OUTPUT.MFI')
+                print(output2.readlines())
                 stdin, keyFlock, elems = FPFlockOnline.flocks(self, output_file, output1, totalMaximalDisks, keyFlock)
                 elements_in_flock_count += elems
                 print('ELEMENTOS')
@@ -182,12 +203,22 @@ class FPFlockOnline(object):
             print ('elements flock')
             print(elements_in_flock_count)
             flocks_avg = elements_in_flock_count / len(stdin)
+
+        FPFlockOnline.printFinalResultDataFrame(self)
+
         writeEndOfFile(output_file, 'Flocks_avg: ' + str(flocks_avg))
         print("Flocks: ", len(stdin))
         flocks = len(stdin)
         t2 = round(time.time()-t1,3)
         print("\nTime: ", t2)
         return flocks_avg
+
+    def printFinalResultDataFrame(self):
+        # Remove Duplicates from DataFrame
+        self.df = self.df.drop_duplicates(subset=['begin', 'end', 'traj']).apply(list)
+        # self.df = self.df[~self.df['traj'].apply(pd.Series).duplicated()]
+        # pd.DataFrame(numpy.unique(self.df), columns=self.df.columns)
+        print(self.df)
 
 def writeEndOfFile(output_file, text):
     with open(output_file, "a") as outputFile:
@@ -210,13 +241,14 @@ def experimentos():
                 output_file = 'Experiments/experimento_' + str(i) + '.txt'
                 fp = FPFlockOnline(epsilon, mu, delta)
                 flock_avg = fp.flockFinder('Datasets/US_NewYork_POIS_Coords_short.txt', output_file)
+                FPFlockOnline.printFinalResultDataFrame(fp)
+
                 res.append({"epsilon": epsilon, "mu": mu, "delta": delta, "flock_avg": flock_avg})
                 i += 1
                 print('Porcentaje:' + str((i/64)*100) + '%')
 
     numpy.set_printoptions(threshold=sys.maxsize)
     df = pd.DataFrame(res, columns=['epsilon', 'mu', 'delta', 'flock_avg'])
-
     #Imprimimos los resultados
     #print(df.to_string())
 
@@ -232,10 +264,10 @@ def plot_x_y_values(df, x_label, y_label):
     plt.show()
 
 def main():
-    #output_file = 'output_prueba.txt' #sys.argv[1]
-    #fp = FPFlockOnline(0.2,3,2)
-    #fp.flockFinder('Datasets/US_NewYork_POIS_Coords_short.txt', output_file)
+    output_file = 'output_prueba.txt' #sys.argv[1]
+    fp = FPFlockOnline(0.2,3,2)
+    fp.flockFinder('Datasets/US_NewYork_POIS_Coords_short.txt', output_file)
 
-    experimentos()
+    #experimentos()
 if __name__ == '__main__':
     main()
