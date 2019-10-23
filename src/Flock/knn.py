@@ -18,6 +18,9 @@ from surprise.model_selection import train_test_split
 
 from fpFlockOnline import FPFlockOnline
 import pandas as pd
+
+from knn_custom import KNNCustom
+
 class KNN_custom(object):
 
     def __init__(self, dataset):
@@ -95,8 +98,8 @@ if __name__ == '__main__':
     #data = Dataset.load_builtin('ml-100k')
     trainset, testset = train_test_split(data, test_size=.15)
     # Use user_based true/false to switch between user-based or item-based collaborative filtering
-    algo = KNNWithMeans(k=30, sim_options={'name': 'pearson_baseline', 'user_based': True})
-    algo.fit(trainset)
+    algo = KNNCustom(k=2, sim_options={'name': 'pearson_baseline', 'user_based': True})
+    algo.fit_custom(trainset, fp.df)
 
     # we can now query for specific predicions
     uid = str(31)  # raw user id
