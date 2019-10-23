@@ -4,6 +4,7 @@ from surprise import PredictionImpossible
 from surprise import Prediction
 from surprise.prediction_algorithms.optimize_baselines import baseline_sgd, baseline_als
 from surprise import similarities
+import numpy as np
 
 class AlgoBase(object):
     """Abstract class where is defined the basic behavior of a prediction
@@ -77,7 +78,7 @@ class AlgoBase(object):
             - Some additional details about the prediction that might be useful
               for later analysis.
         """
-        """
+
         # Convert raw ids to inner ids
         try:
             iuid = self.trainset.to_inner_uid(uid)
@@ -87,13 +88,21 @@ class AlgoBase(object):
             iiid = self.trainset.to_inner_iid(iid)
         except ValueError:
             iiid = 'UKN__' + str(iid)
-        """
+
         details = {}
         try:
-            print('ID:' + str(uid) + 'ITEM_ID ' + str(iid))
+
+            print('TRAINSET')
+            print('####')
+
+            print('ID:' + str(iuid) + 'ITEM_ID ' + str(iiid))
             #print('ID:' + str(iuid) + 'ITEM_ID ' + str(iiid))
 
-            est = self.estimate(uid, iid)
+            print('llamo')
+
+            est = self.estimate(iuid, iiid)
+
+            print('ESTIMACION' + str(est))
 
             # If the details dict was also returned
             if isinstance(est, tuple):
@@ -247,7 +256,13 @@ class AlgoBase(object):
 
         result = sum(result, [])
         result = list(filter(lambda x: x != item, set(result)))
-        return result[:k]
+
+        listOfInt = np.random.randint(0, 9, len(result))
+
+        result_dict = dict(zip(result[:k], listOfInt[:k]))
+        print(result_dict)
+        return result_dict
+        #return result[:k]
 
     def get_neighbors(self, iid, k):
         """Return the ``k`` nearest neighbors of ``iid``, which is the inner id
@@ -328,37 +343,30 @@ class KNNCustom(SymmetricAlgo):
 
     def estimate(self, u, i):
 
-        if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
-            raise PredictionImpossible('User and/or item is unkown.')
+        #if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
+         #   raise PredictionImpossible('User and/or item is unkown.')
 
         x, y = self.switch(u, i)
 
         #self.yr = self.trainset.ir if ub else self.trainset.ur
 
-        neighbors = [(self.sim[x, x2], r) for (x2, r) in self.yr[y]]
-        k_neighbors = self.get_neighbors_flock(u, self.k)
-        print('USER: ' + str(u))
-        print(neighbors)
+        #neighbors = [(self.sim[x, x2], r) for (x2, r) in self.yr[y]]
+        k_neighbors = self.get_neighbors_flock(self.trainset.to_raw_uid(u), self.k)
+        print('USER: ' + str(self.trainset.to_raw_uid(u)) + 'item' + str(y))
+        print(k_neighbors)
         print('##')
-
-        """
-        k_neighbors = heapq.nlargest(self.k, neighbors, key=lambda t: t[0])
 
         # compute weighted average
         sum_sim = sum_ratings = actual_k = 0
-        for (sim, r) in k_neighbors:
-            if sim > 0:
-                sum_sim += sim
-                sum_ratings += sim * r
-                actual_k += 1
+        for (neighbor, r) in k_neighbors.items():
+            sum_ratings += r
+            actual_k += 1
 
         if actual_k < self.min_k:
             raise PredictionImpossible('Not enough neighbors.')
 
-        est = sum_ratings / sum_sim
+        est = sum_ratings / len(k_neighbors)
 
         details = {'actual_k': actual_k}
         
-        """
-        return 1
-        #return est, details
+        return est, details

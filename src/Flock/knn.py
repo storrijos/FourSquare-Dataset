@@ -91,27 +91,25 @@ if __name__ == '__main__':
     #knn.get_neighbors(31, 2)
 
     #Read DATASET
-    dataset = preprocessDataset('Datasets/US_NewYork_POIS_Coords_short_10k.txt')
+    dataset = preprocessDataset('Datasets/US_NewYork_POIS_Coords_short.txt')
     reader = Reader(line_format='user item rating', rating_scale=(0, 9))
     print(dataset)
     data = Dataset.load_from_df(dataset[['id', 'item_id', 'rating']], reader)
     #data = Dataset.load_builtin('ml-100k')
     trainset, testset = train_test_split(data, test_size=.15)
     # Use user_based true/false to switch between user-based or item-based collaborative filtering
-    algo = KNNCustom(k=2, sim_options={'name': 'pearson_baseline', 'user_based': True})
+    algo = KNNCustom(k=10, sim_options={'name': 'pearson_baseline', 'user_based': True})
     algo.fit_custom(trainset, fp.df)
-
     # we can now query for specific predicions
-    uid = str(31)  # raw user id
-    iid = str(3493080)  # raw item id
+    uid = 3  # raw user id
+    iid = 99811  # raw item id
 
+    print('Prediction')
     # get a prediction for specific users and items.
     pred = algo.predict(uid, iid, r_ui=1, verbose=True)
 
     # run the trained model against the testset
     test_pred = algo.test(testset)
-
-    #print(test_pred)
 
     # get RMSE
     print("User-based Model : Test Set")
@@ -121,5 +119,3 @@ if __name__ == '__main__':
     print("User-based Model : Training Set")
     train_pred = algo.test(trainset.build_testset())
     accuracy.rmse(train_pred)
-
-
