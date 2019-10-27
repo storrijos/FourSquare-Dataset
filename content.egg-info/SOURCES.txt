@@ -1,0 +1,30 @@
+README.md
+setup.py
+content/__init__.py
+content/main_antigua_estructura_datos.py
+content/mapa.py
+content/spatial-time.py
+content.egg-info/PKG-INFO
+content.egg-info/SOURCES.txt
+content.egg-info/dependency_links.txt
+content.egg-info/top_level.txt
+content/Patterns/__init__.py
+content/Patterns/import_helper.py
+content/Patterns/DBSCAN/__init__.py
+content/Patterns/DBSCAN/db_scan.py
+content/Patterns/First Approach/__init__.py
+content/Patterns/First Approach/greedy_approach.py
+content/Patterns/Flock/LCMmaximal.py
+content/Patterns/Flock/__init__.py
+content/Patterns/Flock/fpFlockOnline.py
+content/Patterns/K-Means/__init__.py
+content/Patterns/K-Means/k_means.py
+content/Patterns/K-Means/k_means_clean.py
+content/Patterns/ST-DBSCAN/__init__.py
+content/Patterns/ST-DBSCAN/main_stdbscan.py
+content/Patterns/ST-DBSCAN/stdbscan.py
+content/Processing/__init__.py
+content/Processing/pre_process.py
+content/Recommender/__init__.py
+content/Recommender/knn.py
+content/Recommender/knn_recommender.py
