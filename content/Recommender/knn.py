@@ -34,9 +34,8 @@ from knn_recommender import KNNCustom
 if __name__ == '__main__':
     output_file = 'output_prueba.txt' #sys.argv[1]
     fp = FPFlockOnline(0.2,3,2)
-    fp.flockFinder('Datasets/US_NewYork_POIS_Coords_short.txt', output_file)
+    neighbors_classified = fp.flockFinder('Datasets/US_NewYork_POIS_Coords_short.txt', output_file)
     #clasify_neighbors(dataset_to_list_of_lists(fp.df))
-
     #knn.get_neighbors(31, 2)
 
     #Read DATASET
@@ -48,7 +47,7 @@ if __name__ == '__main__':
     trainset, testset = train_test_split(data, test_size=.15)
     # Use user_based true/false to switch between user-based or item-based collaborative filtering
     algo = KNNCustom(k=10, sim_options={'name': 'pearson_baseline', 'user_based': True})
-    algo.fit_custom(trainset, fp.df)
+    algo.fit_custom(trainset, neighbors_classified)
 
     #algo = KNNBaseline(sim_options = {'name': 'pearson_baseline', 'user_based': False})
     #algo.fit(trainset)

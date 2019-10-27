@@ -36,10 +36,6 @@ carpeta2_abs_path = os.path.abspath(current_dir)
 sys.path.insert(0,carpeta2_abs_path)
 from pre_process import ProcessData
 
-curent_file_abs_path = os.path.abspath(__file__)
-current_dir = os.path.dirname(curent_file_abs_path)
-sys.path.insert(0,current_dir)
-
 class FPFlockOnline(object):
     """ This class is intanced with epsilon, mu and delta"""
     def __init__(self, epsilon, mu, delta):
@@ -204,25 +200,73 @@ class FPFlockOnline(object):
             print(elements_in_flock_count)
             flocks_avg = elements_in_flock_count / len(stdin)
 
-        FPFlockOnline.printFinalResultDataFrame(self)
+        print('FLOCK')
 
-        writeEndOfFile(output_file, 'Flocks_avg: ' + str(flocks_avg))
+        neighbors_classified = self.printFinalResultDataFrame(self.df)
+
+        self.writeEndOfFile(output_file, 'Flocks_avg: ' + str(flocks_avg))
         print("Flocks: ", len(stdin))
         flocks = len(stdin)
         t2 = round(time.time()-t1,3)
         print("\nTime: ", t2)
-        return flocks_avg
+        return neighbors_classified
 
-    def printFinalResultDataFrame(self):
+    def dataset_to_list_of_lists(self, dataset):
+        string_list = list(dataset.traj.values)
+        result = []
+        for row in string_list:
+            row = row.replace("]", "")
+            row = row.replace("[", "")
+            result.append([int(x) for x in row.split(',')])
+        return result
+
+    def deep_search(self, elem, list):
+
+        neighbors = []
+        for row in list:
+            if elem in row:
+                neighbors.append(row)
+
+        flatten = sum(neighbors, [])
+        return [(ii, 1.0) for n, ii in enumerate(flatten) if ii not in flatten[:n] and ii != elem]
+
+    def clasify_neighbors(self, list):
+
+        flatten_list = sum(list, [])
+        dict = {}
+
+        for elem in flatten_list:
+            search = self.deep_search(elem, list)
+            if search != None:
+                dict[elem] = search
+        return dict
+
+    def writeEndOfFile(self, output_file, text):
+        with open(output_file, "a") as outputFile:
+            outputFile.write(text)
+
+    def dump_to_pandas(self, neighbors_classified_list):
+        neighbors_classified = self.clasify_neighbors(self.dataset_to_list_of_lists(self.df))
+        index = 0
+        final_df = pd.DataFrame()
+        for key, elems in neighbors_classified.items():
+            for neighbor in elems:
+                tmp_df = pd.DataFrame({
+                    'user_id': key,
+                    'neighbour_id': neighbor[0],
+                    'weight': neighbor[1]
+                }, index=[index])
+                index += 1
+                final_df = final_df.append(tmp_df)
+        final_df.reset_index(drop=True)
+        print(final_df)
+        return final_df
+
+    def printFinalResultDataFrame(self, df):
         # Remove Duplicates from DataFrame
-        self.df = self.df.drop_duplicates(subset=['begin', 'end', 'traj']).apply(list)
-        # self.df = self.df[~self.df['traj'].apply(pd.Series).duplicated()]
-        # pd.DataFrame(numpy.unique(self.df), columns=self.df.columns)
-        print(self.df)
-
-def writeEndOfFile(output_file, text):
-    with open(output_file, "a") as outputFile:
-        outputFile.write(text)
+        df = df.drop_duplicates(subset=['begin', 'end', 'traj']).apply(list)
+        neighbors_classified = self.clasify_neighbors(self.dataset_to_list_of_lists(df))
+        return self.dump_to_pandas(neighbors_classified)
 
 def experimentos():
     min_mu = 2
@@ -252,12 +296,7 @@ def experimentos():
     #Imprimimos los resultados
     #print(df.to_string())
 
-    writeEndOfFile('df_results.txt', df.to_string())
-
-
-#plot_x_y_values(df, 'flock_avg', 'epsilon')
-    #plot_x_y_values(df, 'flock_avg', 'mu')
-    #plot_x_y_values(df, 'flock_avg', 'delta')
+    FPFlockOnline.writeEndOfFile('df_results.txt', df.to_string())
 
 def plot_x_y_values(df, x_label, y_label):
     df.plot(x=x_label, y=y_label, marker='.')

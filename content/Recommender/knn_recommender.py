@@ -252,31 +252,22 @@ class AlgoBase(object):
 
     def get_neighbors_flock(self, item, k):
 
-        #if not self.neighbours_dataset.traj.any():
-        mask = self.neighbours_dataset.traj.apply(lambda x: str(item) in x)
-        df1 = self.neighbours_dataset[mask]
-        result = ProcessData.dataset_to_list_of_lists(df1.traj.drop_duplicates())
-        #else:
-         #   result = []
-        result = sum(result, [])
-        result = list(filter(lambda x: x != item, set(result)))
+        neighbors = self.neighbours_dataset[self.neighbours_dataset['user_id'] == item]
+        neighbors_dict = dict(zip(neighbors.neighbour_id.values, neighbors.weight.values))
+        neighbors_id_result_clean = []
+        neighbors_weight_result_clean = []
 
-        result_clean = []
-        for elem in result:
+        for elem, weight in neighbors_dict.items():
             try:
                 self.trainset.to_inner_uid(elem)
-                result_clean.append(elem)
+                neighbors_id_result_clean.append(elem)
+                neighbors_weight_result_clean.append(weight)
             except ValueError:
-                print('a')
                 print(elem)
-                print('###')
 
-        listOfInt = np.random.randint(0, 9, len(result_clean))
-
-        result_dict = dict(zip(result_clean[:k], listOfInt[:k]))
+        result_dict = dict(zip(neighbors_id_result_clean[:k], neighbors_weight_result_clean[:k]))
         print(result_dict)
         return result_dict
-        #return result[:k]
 
     def get_neighbors(self, iid, k):
         """Return the ``k`` nearest neighbors of ``iid``, which is the inner id
@@ -357,8 +348,8 @@ class KNNCustom(SymmetricAlgo):
 
     def estimate(self, u, i):
 
-        #if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
-         #   raise PredictionImpossible('User and/or item is unkown.')
+        if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
+            raise PredictionImpossible('User and/or item is unkown.')
 
         x, y = self.switch(u, i)
 
