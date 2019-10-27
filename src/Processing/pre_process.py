@@ -4,7 +4,7 @@ import os
 def find_path():
     curent_file_abs_path = os.path.dirname(os.path.realpath(__file__))
     os.chdir(curent_file_abs_path)
-
+    return curent_file_abs_path
 class ProcessData:
     def __init__(self):
         pass
@@ -18,7 +18,6 @@ class ProcessData:
             result.append([int(x) for x in row.split(',')])
         return result
 
-
     def recommender_preprocessDataset(filename):
         find_path()
         dataset = pd.read_csv(filename, delim_whitespace=True, header=None)
@@ -29,30 +28,43 @@ class ProcessData:
         dataset['rating'] = 1  # np.random.randint(1, 5, len(dataset))
         return dataset
 
-    def deep_search(elem, list):
+    def st_dbscan_deep_search(elem, list):
         neighbors = []
         for row in list:
             if elem in row:
                 neighbors.append(row)
 
         flatten = sum(neighbors, [])
-        return [ii for n, ii in enumerate(flatten) if ii not in flatten[:n] and ii != elem]
+        return [(ii, 1.0) for n, ii in enumerate(flatten) if ii not in flatten[:n] and ii != elem]
 
-    def clasify_neighbors(list):
+    def st_dbscan_clasify_neighbors(list):
         flatten_list = sum(list, [])
         dict = {}
 
         for elem in flatten_list:
-            search = ProcessData.deep_search(elem, list)
+            search = ProcessData.st_dbscan_deep_search(elem, list)
             if search != None:
                 dict[elem] = search
         print(dict)
+        return dict
+
+    def dump_to_pandas(self, neighbors_classified):
+        index = 0
+        final_df = pd.DataFrame()
+        for key, elems in neighbors_classified.items():
+            for neighbor in elems:
+                tmp_df = pd.DataFrame({
+                    'user_id': key,
+                    'neighbour_id': neighbor[0],
+                    'weight': neighbor[1]
+                }, index=[index])
+                index += 1
+                final_df = final_df.append(tmp_df)
+        final_df.reset_index(drop=True)
+        return final_df
 
     def flock_preprocessDataset(self, filename):
         find_path()
-
-        print('OS')
-        print(os.getcwd())
         dataset = pd.read_csv(filename, delim_whitespace=True, header=None)
         dataset.columns = ["id", "item_id", "latitude", "longitude", "real_timestamp"]
         dataset.sort_values(['id', 'real_timestamp'], ascending=[True, True], inplace=True)

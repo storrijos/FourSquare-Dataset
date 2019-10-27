@@ -54,8 +54,20 @@ class STDBscan():
         elems = i.groupby('cluster').user_id.apply(list)
         #Remove the ones without cluster
         del elems[-1.0]
-        neighbors = ProcessData.clasify_neighbors(elems.values)
+        print('elems')
+        print(elems.values)
+        neighbors = ProcessData.st_dbscan_clasify_neighbors(elems.values)
+        print('vecinos')
+        print(neighbors)
+        print('##')
         return neighbors
+
+    def dump_to_file(self, neighbors_classified):
+        if neighbors_classified is not None:
+            process = ProcessData()
+            final_df = process.dump_to_pandas(neighbors_classified)
+            curent_file_abs_path = os.path.dirname(os.path.realpath(__file__))
+            final_df.to_csv(str(curent_file_abs_path) + "/../../Recommender/st_dbscan_neighbors_classified.txt", sep=" ", encoding='utf-8', index=False, header=False)
 
     def execute_stdbscan(self, filename, spatial_thresold=5000, temporal_threshold=6000, min_neighbors=1):
         curent_file_abs_path = os.path.dirname(os.path.realpath(__file__))
@@ -79,7 +91,9 @@ class STDBscan():
 
         result = st_dbscan.run(df)
         neighbors = self.stdbscan_neighbors(df, result)
+        print(neighbors)
         self.result = result
+        self.dump_to_file(neighbors)
         return neighbors
 
     def stdbscan_plot_clusters(self):

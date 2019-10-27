@@ -242,28 +242,17 @@ class FPFlockOnline(object):
         with open(output_file, "a") as outputFile:
             outputFile.write(text)
 
-    def dump_to_pandas(self, neighbors_classified_list):
-        neighbors_classified = self.clasify_neighbors(self.dataset_to_list_of_lists(self.df))
-        index = 0
-        final_df = pd.DataFrame()
-        for key, elems in neighbors_classified.items():
-            for neighbor in elems:
-                tmp_df = pd.DataFrame({
-                    'user_id': key,
-                    'neighbour_id': neighbor[0],
-                    'weight': neighbor[1]
-                }, index=[index])
-                index += 1
-                final_df = final_df.append(tmp_df)
-        final_df.reset_index(drop=True)
-        #print(final_df)
-        return final_df
+    def dump_to_file(self, neighbors_classified):
+        process = ProcessData()
+        final_df = process.dump_to_pandas(neighbors_classified)
+        curent_file_abs_path = os.path.dirname(os.path.realpath(__file__))
+        final_df.to_csv(str(curent_file_abs_path) + "/../../Recommender/flock_neighbors_classified.txt", sep=" ", encoding='utf-8', index=False, header=False)
 
     def printFinalResultDataFrame(self, df):
         # Remove Duplicates from DataFrame
         df = df.drop_duplicates(subset=['begin', 'end', 'traj']).apply(list)
         neighbors_classified = self.clasify_neighbors(self.dataset_to_list_of_lists(df))
-        return self.dump_to_pandas(neighbors_classified)
+        return self.dump_to_file(neighbors_classified)
 
 def experimentos():
     min_mu = 2

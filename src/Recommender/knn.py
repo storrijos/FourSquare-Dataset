@@ -11,8 +11,10 @@ from surprise import Dataset, Reader
 from surprise.model_selection import train_test_split
 from src.Patterns.Flock.fpFlockOnline import FPFlockOnline
 from src.Recommender.knn_recommender import KNNCustom
-from src.Processing.pre_process import ProcessData
+from src.Processing.pre_process import ProcessData, find_path
 from src.Patterns.ST_DBSCAN.main_stdbscan import STDBscan
+import pandas as pd
+import os
 
 class KNN():
     def recommender(self, filename, k, neighbors):
@@ -40,17 +42,26 @@ if __name__ == '__main__':
     ###FLOCK
     output_file = 'output_prueba.txt' #sys.argv[1]
     fp = FPFlockOnline(0.2,3,2)
-    neighbors_classified = fp.flockFinder('Datasets/US_NewYork_POIS_Coords_short.txt', output_file)
-    algo_flock = knn.recommender('Datasets/US_NewYork_POIS_Coords_short.txt', 10, neighbors_classified)
-    flock_prediction = knn.recommend(algo_flock, 31, 4244)
-    print(flock_prediction)
+    curent_file_abs_path = os.path.dirname(os.path.realpath(__file__))
+    fp.flockFinder('Datasets/US_NewYork_POIS_Coords_short.txt', output_file)
+
+    flock_neighbors_path = str(curent_file_abs_path) + '/flock_neighbors_classified.txt'
+    if os.path.exists(flock_neighbors_path):
+        flock_neighbors_classified = pd.read_csv(flock_neighbors_path, delim_whitespace=True, header=None)
+        flock_neighbors_classified.columns = ["user_id", "neighbour_id", "weight"]
+
+        algo_flock = knn.recommender('Datasets/US_NewYork_POIS_Coords_short.txt', 10, flock_neighbors_classified)
+        flock_prediction = knn.recommend(algo_flock, 31, 4244)
 
     ## ST-dbscan
     st_dbscan = STDBscan()
-    neighbors = st_dbscan.execute_stdbscan('Datasets/US_NewYork_POIS_Coords_short.txt')
-    algo_st_dbscan = knn.recommender('Datasets/US_NewYork_POIS_Coords_short.txt', 10, neighbors)
-    st_dbscan_prediction = knn.recommend(algo_st_dbscan, 31, 4244)
-    print(st_dbscan_prediction)
+    st_dbscan.execute_stdbscan('Datasets/US_NewYork_POIS_Coords_short_1k.txt')
+    st_dbscan_neighbors_path = str(curent_file_abs_path) + '/st_dbscan_neighbors_classified.txt'
+    if os.path.exists(st_dbscan_neighbors_path):
+        st_dbscan_neighbors_classified = pd.read_csv(str(curent_file_abs_path) + '/st_dbscan_neighbors_classified.txt', delim_whitespace=True, header=None)
+        st_dbscan_neighbors_classified.columns = ["user_id", "neighbour_id", "weight"]
+        algo_st_dbscan = knn.recommender('Datasets/US_NewYork_POIS_Coords_short.txt', 10, st_dbscan_neighbors_classified)
+        st_dbscan_prediction = knn.recommend(algo_st_dbscan, 31, 4244)
 
 
 
