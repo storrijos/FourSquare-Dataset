@@ -5,6 +5,12 @@ from surprise import Prediction
 from surprise.prediction_algorithms.optimize_baselines import baseline_sgd, baseline_als
 from surprise import similarities
 import numpy as np
+import os, sys
+curent_file_abs_path = os.path.abspath(__file__)
+current_dir = os.path.dirname(curent_file_abs_path) + "/../Processing"
+carpeta2_abs_path = os.path.abspath(current_dir)
+sys.path.insert(0,carpeta2_abs_path)
+from pre_process import ProcessData
 
 class AlgoBase(object):
     """Abstract class where is defined the basic behavior of a prediction
@@ -245,21 +251,29 @@ class AlgoBase(object):
                             'are ' + ', '.join(construction_func.keys()) + '.')
 
     def get_neighbors_flock(self, item, k):
+
+        #if not self.neighbours_dataset.traj.any():
         mask = self.neighbours_dataset.traj.apply(lambda x: str(item) in x)
         df1 = self.neighbours_dataset[mask]
-        string_list = list(df1.traj.drop_duplicates().values)
-        result = []
-        for row in string_list:
-            row = row.replace("]", "")
-            row = row.replace("[", "")
-            result.append([int(x) for x in row.split(',')])
-
+        result = ProcessData.dataset_to_list_of_lists(df1.traj.drop_duplicates())
+        #else:
+         #   result = []
         result = sum(result, [])
         result = list(filter(lambda x: x != item, set(result)))
 
-        listOfInt = np.random.randint(0, 9, len(result))
+        result_clean = []
+        for elem in result:
+            try:
+                self.trainset.to_inner_uid(elem)
+                result_clean.append(elem)
+            except ValueError:
+                print('a')
+                print(elem)
+                print('###')
 
-        result_dict = dict(zip(result[:k], listOfInt[:k]))
+        listOfInt = np.random.randint(0, 9, len(result_clean))
+
+        result_dict = dict(zip(result_clean[:k], listOfInt[:k]))
         print(result_dict)
         return result_dict
         #return result[:k]
@@ -358,14 +372,23 @@ class KNNCustom(SymmetricAlgo):
 
         # compute weighted average
         sum_sim = sum_ratings = actual_k = 0
-        for (neighbor, r) in k_neighbors.items():
-            sum_ratings += r
-            actual_k += 1
+
+        for (neighbor, sim) in k_neighbors.items():
+            print('vecino')
+            print(neighbor)
+            print('trainset')
+            print(self.trainset.ur[self.trainset.to_inner_uid(neighbor)])
+            for (item, r) in self.trainset.ur[self.trainset.to_inner_uid(neighbor)]:
+                print('item' + str(item) + 'el_mio' + str(y))
+                if item == y:
+                    print('entra')
+                    sum_ratings += r * sim
+                    actual_k += 1
 
         if actual_k < self.min_k:
             raise PredictionImpossible('Not enough neighbors.')
 
-        est = sum_ratings / len(k_neighbors)
+        est = sum_ratings
 
         details = {'actual_k': actual_k}
         

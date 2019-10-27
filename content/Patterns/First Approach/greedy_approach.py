@@ -1,3 +1,11 @@
+#Import
+import os, sys
+curent_file_abs_path = os.path.abspath(__file__)
+current_dir = os.path.dirname(curent_file_abs_path) + "/../../Processing"
+carpeta2_abs_path = os.path.abspath(current_dir)
+sys.path.insert(0,carpeta2_abs_path)
+from pre_process import ProcessData
+
 class UserInteractions:
 
     def __init__(self, user_id):
@@ -38,7 +46,7 @@ def print_result(data_hash):
 def process_and_get_K_first():
     import time
     start = time.time()
-    items = readFileGroupItem("entradas/entrada_corta.txt")
+    items = ProcessData.readFileGroupItem("entradas/entrada_corta.txt")
     temp = process_data_counting_ocurrences_hash(items, 15552000)
     result = get_first_K(temp, 2, 1)
     print_result(result)
@@ -59,33 +67,9 @@ def process_and_get_accurate_timestamp(items, timestamp):
 def main():
     hour_seconds = 1
     max_hour = 10
-    items = readFileGroupItem("entradas/entrada_corta.txt")
+    items = ProcessData.readFileGroupItem("entradas/entrada_corta.txt")
     for time_loop in range(hour_seconds, hour_seconds * max_hour, hour_seconds):
         process_and_get_accurate_timestamp(items, time_loop)
-
-
-def readFileGroupItem(txt_file):
-    token = open(txt_file, "r")
-    linestoken = token.readlines()
-    items_map = {}
-    count = 1
-    for line in linestoken:
-        percentage = (float(count) / float(len(linestoken))) * 100
-        print('Setting up items' + "%.2f" % percentage + '%')
-        count += 1
-        item_id = str(line.split()[1])
-        user_id = line.split()[0]
-        timestamp = line.split()[3]
-        if item_id not in items_map:
-            item_iteration = Item(item_id)
-            item_iteration.add_user(user_id, timestamp)
-            items_map[item_id] = item_iteration
-        else:
-            if user_id not in items_map[item_id].keys():
-                items_map[item_id].add_user(user_id, timestamp)
-            else:
-                items_map[item_id].add_timestamp_existing_user(user_id, timestamp)
-    return items_map
 
 def add_or_append(dictionary, key, value):
     if key not in dictionary:

@@ -24,13 +24,21 @@
 
 import LCMmaximal
 import time
-import csv
-import os
-import io
-import sys
 import pandas as pd
 import numpy
 import matplotlib.pyplot as plt
+
+#Import
+import os, sys
+curent_file_abs_path = os.path.abspath(__file__)
+current_dir = os.path.dirname(curent_file_abs_path) + "/../../Processing"
+carpeta2_abs_path = os.path.abspath(current_dir)
+sys.path.insert(0,carpeta2_abs_path)
+from pre_process import ProcessData
+
+curent_file_abs_path = os.path.abspath(__file__)
+current_dir = os.path.dirname(curent_file_abs_path)
+sys.path.insert(0,current_dir)
 
 class FPFlockOnline(object):
     """ This class is intanced with epsilon, mu and delta"""
@@ -121,14 +129,6 @@ class FPFlockOnline(object):
 
         return stdin, keyFlock, elements_in_flock_count
 
-    def preprocessDataset(self, filename):
-        dataset = pd.read_csv(filename, delim_whitespace=True, header=None)
-        dataset.columns = ["id", "item_id", "latitude", "longitude", "real_timestamp"]
-        dataset.sort_values(['id', 'real_timestamp'], ascending=[True, True], inplace=True)
-        dataset['timestamp'] = dataset.groupby(['id']).cumcount()
-        dataset = dataset.drop(columns=['item_id'])
-        return dataset
-
     def flockFinder(self, filename, output_file):
         global traj
         global stdin
@@ -140,7 +140,7 @@ class FPFlockOnline(object):
         delta = self.delta
         LCMmaximal.precision = 0.001
 
-        dataset = FPFlockOnline.preprocessDataset(self, filename)
+        dataset = ProcessData.flock_preprocessDataset(self, filename)
 
         if os.path.exists('output.mfi'):
             os.system('rm output.mfi')

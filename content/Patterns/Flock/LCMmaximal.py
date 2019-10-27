@@ -25,9 +25,11 @@
 import csv
 import scipy.spatial as ss
 import math
-import time
-import os
-import pandas as pd
+import os, sys
+curent_file_abs_path = os.path.abspath(__file__)
+current_dir = os.path.dirname(curent_file_abs_path)
+sys.path.insert(0,current_dir)
+os.chdir(str(os.getcwd()) + '/../Patterns/Flock')
 
 class Index(object):
     def __init__(self,x,y):
@@ -214,6 +216,7 @@ def maximalDisksTimestamp(timestamp, diskID):
          os.system('rm outputDisk.mfi')
 
     if os.path.exists('outputDisk.dat'):
+        print('existe')
         os.system("./fim_maximal outputDisk.dat 1 outputDisk.mfi")
 
     if os.path.exists('outputDisk.mfi'):

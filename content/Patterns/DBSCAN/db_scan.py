@@ -2,22 +2,21 @@
 
 # Importing the libraries
 import numpy as np
-import pandas as pd
 from sklearn.cluster import DBSCAN
 from sklearn import metrics
 from sklearn.preprocessing import StandardScaler
 
-
-def loadData(filename):
-    data = pd.read_csv(filename, delim_whitespace=True, header=None)
-    data.columns = ["user_id", "item_id", "lat", "long", "timestamp"]
-    summary_stats = data.describe()
-    print(summary_stats.to_string())
-    return data
+import os, sys
+curent_file_abs_path = os.path.abspath(__file__)
+current_dir = os.path.dirname(curent_file_abs_path) + "/../../Processing"
+carpeta2_abs_path = os.path.abspath(current_dir)
+print(carpeta2_abs_path)
+sys.path.insert(0,carpeta2_abs_path)
+from pre_process import ProcessData
 
 def main():
     # Importing the dataset
-    df = loadData('salidas/US_NewYork_POIS_Coords_short.txt')
+    df = ProcessData.loadData('salidas/US_NewYork_POIS_Coords_short.txt')
     features = df.iloc[:, [2, 3, 4]].values
 
     df_scaled = StandardScaler().fit(features)

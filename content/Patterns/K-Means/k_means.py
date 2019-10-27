@@ -18,17 +18,11 @@ import matplotlib.dates as mdates
 from mpl_toolkits.mplot3d import Axes3D
 import seaborn as sb
 from sklearn.preprocessing import StandardScaler
-
-def loadData(filename):
-    data = pd.read_csv(filename, delim_whitespace=True, header=None)
-    data.columns = ["user_id", "item_id", "lat", "long", "timestamp"]
-    summary_stats = data.describe()
-    print(summary_stats.to_string())
-    return data
+from content.Processing import pre_process
 
 def main():
     # create blobs
-    df = loadData('salidas/US_NewYork_POIS_Coords_short.txt')
+    df = pre_process.loadData('salidas/US_NewYork_POIS_Coords_short.txt')
     #kmeans = KMeans(n_clusters=3).fit(df)
     #centroids = kmeans.cluster_centers_
     #print(centroids)

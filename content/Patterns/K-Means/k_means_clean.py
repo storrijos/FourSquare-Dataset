@@ -19,12 +19,12 @@ from mpl_toolkits.mplot3d import Axes3D
 import seaborn as sb
 from sklearn.preprocessing import StandardScaler
 
-def loadData(filename):
-    data = pd.read_csv(filename, delim_whitespace=True, header=None)
-    data.columns = ["user_id", "item_id", "lat", "long", "timestamp"]
-    summary_stats = data.describe()
-    print(summary_stats.to_string())
-    return data
+import os, sys
+curent_file_abs_path = os.path.abspath(__file__)
+current_dir = os.path.dirname(curent_file_abs_path) + "/../../Processing"
+carpeta2_abs_path = os.path.abspath(current_dir)
+sys.path.insert(0,carpeta2_abs_path)
+from pre_process import ProcessData
 
 def findNumberClusters(data_transformed):
     Sum_of_squared_distances = []
@@ -77,7 +77,7 @@ def plot2d3dgraph(centroids_inverse, df_scaled_inverse, k_means):
 
 def main():
     # create blobs
-    df = loadData('salidas/US_NewYork_POIS_Coords.txt')
+    df = ProcessData.loadData('salidas/US_NewYork_POIS_Coords.txt')
     features = df.iloc[:, [2, 3, 4]].values
 
     df_scaled = StandardScaler().fit(features)
@@ -93,7 +93,6 @@ def main():
     print(df_scaled_inverse)
 
     plot2d3dgraph(centroids_inverse, df_scaled_inverse, k_means)
-
 
 if __name__ == '__main__':
     main()
