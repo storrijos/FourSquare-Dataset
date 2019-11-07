@@ -7,7 +7,7 @@ algo.get_neighbors().
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-from surprise import Dataset, Reader
+from surprise import Dataset, Reader, Trainset
 from surprise.model_selection import train_test_split
 from src.Patterns.Flock.fpFlockOnline import FPFlockOnline
 from src.Recommender.knn_recommender import KNNCustom
@@ -17,16 +17,24 @@ import pandas as pd
 import os
 
 class KNN():
-    def recommender(self, filename, k, neighbors):
-        dataset = ProcessData.recommender_preprocessDataset(filename)
-        #Read DATASET
+
+    def recommender(self, train_file, test_file, k, neighbors):
         reader = Reader(line_format='user item rating', rating_scale=(1, 5))
-        data = Dataset.load_from_df(dataset[['id', 'item_id', 'rating']], reader)
-        #data = Dataset.load_builtin('ml-100k')
-        trainset, testset = train_test_split(data, test_size=.15)
+
+        #TRAIN
+        train_dataset = ProcessData.recommender_preprocessDataset(train_file)
+        train_data = Dataset.load_from_df(train_dataset[['id', 'item_id', 'rating']], reader)
+        train = train_data.construct_trainset(train_data.raw_ratings)
+
+        #TEST
+        test_dataset = ProcessData.recommender_preprocessDataset(test_file)
+        test_data = Dataset.load_from_df(test_dataset[['id', 'item_id', 'rating']], reader)
+        test = test_data.construct_testset(test_data.raw_ratings)
+
         # Use user_based true/false to switch between user-based or item-based collaborative filtering
         algo = KNNCustom(k=k, sim_options={'name': 'pearson_baseline', 'user_based': True})
-        algo.fit_custom(trainset, neighbors)
+
+        algo.fit_custom(train, neighbors)
         return algo
 
     def recommend(self, algo, uid, iid):
@@ -50,7 +58,9 @@ if __name__ == '__main__':
         flock_neighbors_classified = pd.read_csv(flock_neighbors_path, delim_whitespace=True, header=None)
         flock_neighbors_classified.columns = ["user_id", "neighbour_id", "weight"]
 
-        algo_flock = knn.recommender('Datasets/US_NewYork_POIS_Coords_short.txt', 10, flock_neighbors_classified)
+        algo_flock = knn.recommender('Datasets/US_NewYork_POIS_Coords_short.txt',
+                                     'Datasets/US_NewYork_POIS_Coords_short.txt',
+                                     10, flock_neighbors_classified)
         flock_prediction = knn.recommend(algo_flock, 31, 4244)
 
     ## ST-dbscan
@@ -58,9 +68,12 @@ if __name__ == '__main__':
     st_dbscan.execute_stdbscan('Datasets/US_NewYork_POIS_Coords_short_1k.txt')
     st_dbscan_neighbors_path = str(curent_file_abs_path) + '/st_dbscan_neighbors_classified.txt'
     if os.path.exists(st_dbscan_neighbors_path):
-        st_dbscan_neighbors_classified = pd.read_csv(str(curent_file_abs_path) + '/st_dbscan_neighbors_classified.txt', delim_whitespace=True, header=None)
+        st_dbscan_neighbors_classified = pd.read_csv(str(curent_file_abs_path) + '/st_dbscan_neighbors_classified.txt',
+                                                     delim_whitespace=True, header=None)
         st_dbscan_neighbors_classified.columns = ["user_id", "neighbour_id", "weight"]
-        algo_st_dbscan = knn.recommender('Datasets/US_NewYork_POIS_Coords_short.txt', 10, st_dbscan_neighbors_classified)
+        algo_st_dbscan = knn.recommender('Datasets/US_NewYork_POIS_Coords_short.txt',
+                                         'Datasets/US_NewYork_POIS_Coords_short.txt',
+                                         10, st_dbscan_neighbors_classified)
         st_dbscan_prediction = knn.recommend(algo_st_dbscan, 31, 4244)
 
 

@@ -4,8 +4,10 @@ src/Patterns/Flock/py3env
 src/Patterns/Flock/__pycache__
 src/Patterns/Flock/output.dat
 src/Patterns/Flock/output.mfi
+src/Patterns/Flock/output_prueba.txt
 src/Patterns/Flock/outputDisk.mfi
 src/Patterns/ST_DBSCAN/__pycache__
 venv
 entradas
 src/Patterns/Flock/Experiments
+src.egg-info
