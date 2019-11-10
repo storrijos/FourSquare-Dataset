@@ -3,7 +3,7 @@
 from STPoint import STPoint
 from DBSCAN import DBSCAN
 from Convoy import Convoy
-
+from src.Utils.utils import progressBar
 
 class CMC:
     """ generated source for class CMC """
@@ -12,11 +12,17 @@ class CMC:
         """ generated source for method cm_clustering """
         Vs = []
         V_Result = []
-        time_interval = len(o[0].points)
+        #time_interval = len(o[0].points)
+        #time_interval = 20
+        values = []
+        for i in range(len(o)):
+            values.append(len(o[i].points))
+        time_interval = max(values)
         print('TIME')
         print(time_interval)
         i = 0
         while i < time_interval:
+            progressBar(i, time_interval)
             V_Next = []
             tmp_point = []
             snapshot_cluster = []
@@ -26,6 +32,7 @@ class CMC:
                         tmp_point.append(s)
 
             if len(tmp_point) < m:
+                i += 1 #Check
                 continue
 
             clusters = DBSCAN.dbscan_to_cluster(tmp_point, e, m)

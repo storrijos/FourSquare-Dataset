@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
     #minPoints, #lifetime, #distance_max
 
-    res = CMC.cm_clustering(traj_set, 3, 3, 0.005)
-    print('result')
+    res = CMC.cm_clustering(traj_set, 10, 2, 0.005)
+    print("\n")
     for conv in res:
         print(conv.toString())

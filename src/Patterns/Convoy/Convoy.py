@@ -58,15 +58,18 @@ class Convoy(object):
 
     def toString(self):
 
-        res = "Start_time: " + str(self.getStartTime()) + ",\tEnd_Time: " + str(self.getEndTime()) + "\t(" + str(self.getLifetime()) + ")\nobj_list: ";
+        res = "Start_time: " + str(self.getStartTime()) + ",\tEnd_Time: " + str(self.getEndTime()) + "\t(lifetime: " + str(self.getLifetime()) + ")\nobj_list: ";
 
         # Collections.sort(this);
 
         # res += str(self.cluster[0])
-
+        flag = 1
         for oid in self.cluster:
-
-            res += ", " + str(oid)
+            if flag:
+                res += " " + str(oid)
+                flag = 0
+            else:
+                res += ", " + str(oid)
 
 
         res += '\n'
