@@ -8,7 +8,7 @@ from src.Utils.utils import progressBar
 class CMC:
     """ generated source for class CMC """
     @classmethod
-    def cm_clustering(cls, o, m, k, e):
+    def cm_clustering(cls, o, m, k, e, partials=False):
         """ generated source for method cm_clustering """
         Vs = []
         V_Result = []
@@ -21,7 +21,8 @@ class CMC:
         print('TIME')
         print(time_interval)
         i = 0
-        while i < time_interval:
+        for i in range(time_interval):
+
             progressBar(i, time_interval)
             V_Next = []
             tmp_point = []
@@ -32,15 +33,20 @@ class CMC:
                         tmp_point.append(s)
 
             if len(tmp_point) < m:
-                i += 1 #Check
-                continue
+                pass
+                #i += 1 #Check
+                #continue
 
             clusters = DBSCAN.dbscan_to_cluster(tmp_point, e, m)
             for c in clusters:
                 snapshot_cluster.append(Convoy(cluster=c.oids))
+
             for v in Vs:
                 v.assigned = False
                 for c in snapshot_cluster:
+                    #print(len(c.intersection(v).cluster))
+                    if partials:
+                        V_Result.append(v)
                     if len(c.intersection(v).cluster) >= m:
                         v = c.intersection(v)
                         v.assigned = True
@@ -54,6 +60,8 @@ class CMC:
                     c.startTime = i + 1
                     c.endTime = i + 1
                     V_Next.append(c)
+
             Vs = V_Next
             i += 1
+
         return V_Result

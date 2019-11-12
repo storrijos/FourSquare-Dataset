@@ -43,5 +43,10 @@ class STPoint:
     def distance(self, x2, y2):
         x2 = x2 - self.x
         y2 = y2 - self.y
+        #print('valor')
+        #print(x2, y2)
         sum = x2 * x2 + y2 * y2
+        #print(sum)
+        #print(math.sqrt(sum))
+        #print('######')
         return math.sqrt(sum)
