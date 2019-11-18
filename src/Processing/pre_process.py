@@ -1,10 +1,13 @@
 import pandas as pd
 import os
 
+"""
 def find_path():
     curent_file_abs_path = os.path.dirname(os.path.realpath(__file__))
     os.chdir(curent_file_abs_path)
+    print(curent_file_abs_path)
     return curent_file_abs_path
+"""
 class ProcessData:
     def __init__(self):
         pass
@@ -19,7 +22,7 @@ class ProcessData:
         return result
 
     def recommender_preprocessDataset(filename):
-        find_path()
+        #find_path()
         dataset = pd.read_csv(filename, delim_whitespace=True, header=None)
         dataset.columns = ["id", "item_id", "latitude", "longitude", "real_timestamp"]
         dataset.sort_values(['id', 'real_timestamp'], ascending=[True, True], inplace=True)
@@ -64,7 +67,7 @@ class ProcessData:
         return final_df
 
     def flock_preprocessDataset(self, filename):
-        find_path()
+        #find_path()
         dataset = pd.read_csv(filename, delim_whitespace=True, header=None)
         dataset.columns = ["id", "item_id", "latitude", "longitude", "real_timestamp"]
         dataset.sort_values(['id', 'real_timestamp'], ascending=[True, True], inplace=True)
@@ -113,13 +116,10 @@ class ProcessData:
         self.printToFile('salidas/US_NewYork_POIS_Coords', salida)
 
     def loadData(filename):
-        find_path()
-
         data = pd.read_csv(filename, delim_whitespace=True, header=None)
         data.columns = ["user_id", "item_id", "lat", "long", "timestamp"]
         summary_stats = data.describe()
         return data
-
 
 class LineDataset:
 

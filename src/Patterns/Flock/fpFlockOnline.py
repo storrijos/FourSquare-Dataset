@@ -28,6 +28,8 @@ import pandas as pd
 import numpy
 import matplotlib.pyplot as plt
 import os, sys
+import click
+
 #Import
 from src.Processing.pre_process import ProcessData
 
@@ -120,7 +122,7 @@ class FPFlockOnline(object):
 
         return stdin, keyFlock, elements_in_flock_count
 
-    def flockFinder(self, filename, output_file):
+    def flockFinder(self, filename, output_file, neighbors_output):
 
         global traj
         global stdin
@@ -133,7 +135,7 @@ class FPFlockOnline(object):
         LCMmaximal.precision = 0.001
 
         dataset = ProcessData.flock_preprocessDataset(self, filename)
-        os.chdir(str(os.getcwd()) + '/../Patterns/Flock')
+        #os.chdir(str(os.getcwd()) + '/../Patterns/Flock')
 
         if os.path.exists('output.mfi'):
             os.system('rm output.mfi')
@@ -199,7 +201,7 @@ class FPFlockOnline(object):
 
         #print('FLOCK')
 
-        neighbors_classified = self.printFinalResultDataFrame(self.df)
+        neighbors_classified = self.printFinalResultDataFrame(self.df, neighbors_output)
 
         self.writeEndOfFile(output_file, 'Flocks_avg: ' + str(flocks_avg))
         #print("Flocks: ", len(stdin))
@@ -242,17 +244,21 @@ class FPFlockOnline(object):
         with open(output_file, "a") as outputFile:
             outputFile.write(text)
 
-    def dump_to_file(self, neighbors_classified):
+    def dump_to_file(self, neighbors_classified, neighbors_output):
         process = ProcessData()
         final_df = process.dump_to_pandas(neighbors_classified)
-        curent_file_abs_path = os.path.dirname(os.path.realpath(__file__))
-        final_df.to_csv(str(curent_file_abs_path) + "/../../Recommender/flock_neighbors_classified.txt", sep=" ", encoding='utf-8', index=False, header=False)
+        #curent_file_abs_path = os.path.dirname(os.path.realpath(__file__))
 
-    def printFinalResultDataFrame(self, df):
+        #final_df.to_csv(str(curent_file_abs_path) + "/../../Recommender/" + str(neighbors_output), sep=" ", encoding='utf-8', index=False, header=False)
+        os.chdir("../../..")
+
+        final_df.to_csv(neighbors_output, sep=" ", encoding='utf-8', index=False, header=False)
+
+    def printFinalResultDataFrame(self, df, neighbors_output):
         # Remove Duplicates from DataFrame
         df = df.drop_duplicates(subset=['begin', 'end', 'traj']).apply(list)
         neighbors_classified = self.clasify_neighbors(self.dataset_to_list_of_lists(df))
-        return self.dump_to_file(neighbors_classified)
+        return self.dump_to_file(neighbors_classified, neighbors_output)
 
 def experimentos():
     min_mu = 2
@@ -288,11 +294,28 @@ def plot_x_y_values(df, x_label, y_label):
     df.plot(x=x_label, y=y_label, marker='.')
     plt.show()
 
-def main():
-    output_file = 'output_prueba.txt' #sys.argv[1]
-    fp = FPFlockOnline(0.2,3,2)
-    fp.flockFinder('Datasets/US_NewYork_POIS_Coords_short.txt', output_file)
+
+@click.command()
+@click.option('--filename', default='US_NewYork_POIS_Coords_short.txt', help='Dataset.')
+@click.option('--output', default='convoy_neighbors_classified.txt', help='Output file.')
+@click.option('--epsilon', default=0.2, help='Epsilon.')
+@click.option('--mu', default=2, help='Mu.')
+@click.option('--delta', default=0.2, help='Delta.')
+
+def flock(filename, output, epsilon, mu, delta):
+    fp = FPFlockOnline(epsilon,mu,delta)
+
+    partial_output = (filename.rsplit('.', 1)[0]).rsplit('/', 1)[-1] + '_partial_traj' + '.txt'
+    #partial_output = 'partial.txt'
+    fp.flockFinder(filename, partial_output, output)
+
+#def main():
+    #output_file = 'output_prueba.txt' #sys.argv[1]
+    #fp = FPFlockOnline(0.2,3,2)
+    #fp.flockFinder('Datasets/US_NewYork_POIS_Coords_short.txt', output_file)
+
 
     #experimentos()
 if __name__ == '__main__':
-    main()
+    flock()
+

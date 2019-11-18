@@ -91,6 +91,7 @@ class AlgoBase(object):
         except ValueError:
             iuid = 'UKN__' + str(uid)
         try:
+            print(iid)
             iiid = self.trainset.to_inner_iid(iid)
         except ValueError:
             iiid = 'UKN__' + str(iid)
@@ -163,6 +164,7 @@ class AlgoBase(object):
         """
 
         # The ratings are translated back to their original scale.
+
         predictions = [self.predict(uid,
                                     iid,
                                     r_ui_trans,
@@ -369,11 +371,13 @@ class KNNCustom(SymmetricAlgo):
 
         if k_neighbors:
             for (neighbor, sim) in k_neighbors.items():
-                #print(self.trainset.ur[self.trainset.to_inner_uid(neighbor)])
+                print(self.trainset.ur[self.trainset.to_inner_uid(neighbor)])
                 for (item, r) in self.trainset.ur[self.trainset.to_inner_uid(neighbor)]:
-                    #print('item' + str(item) + 'el_mio' + str(y))
+                    print(self.trainset.to_raw_iid(item))
+                    print(self.trainset.to_raw_iid(y))
+                    print('item' + str(item) + 'el_mio' + str(y))
                     if item == y:
-                        #print('entra')
+                        print('entra')
                         sum_ratings += r * sim
                         actual_k += 1
 

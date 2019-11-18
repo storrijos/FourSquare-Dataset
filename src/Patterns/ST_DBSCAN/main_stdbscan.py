@@ -6,6 +6,7 @@ import pyproj
 import matplotlib.pyplot as plt
 from src.Processing.pre_process import ProcessData
 import os
+import click
 
 class STDBscan():
 
@@ -62,16 +63,17 @@ class STDBscan():
         print('##')
         return neighbors
 
-    def dump_to_file(self, neighbors_classified):
+    def dump_to_file(self, neighbors_classified, output_file):
         if neighbors_classified is not None:
             process = ProcessData()
             final_df = process.dump_to_pandas(neighbors_classified)
-            curent_file_abs_path = os.path.dirname(os.path.realpath(__file__))
-            final_df.to_csv(str(curent_file_abs_path) + "/../../Recommender/st_dbscan_neighbors_classified.txt", sep=" ", encoding='utf-8', index=False, header=False)
+            #curent_file_abs_path = os.path.dirname(os.path.realpath(__file__))
+            final_df.to_csv(output_file, sep=" ", encoding='utf-8', index=False, header=False)
+            #final_df.to_csv(str(curent_file_abs_path) + "/../../Recommender/" + output_file, sep=" ", encoding='utf-8', index=False, header=False)
 
-    def execute_stdbscan(self, filename, spatial_thresold=5000, temporal_threshold=6000, min_neighbors=1):
-        curent_file_abs_path = os.path.dirname(os.path.realpath(__file__))
-        os.chdir(curent_file_abs_path)
+    def execute_stdbscan(self, filename, output_file, spatial_thresold=5000, temporal_threshold=6000, min_neighbors=1):
+        #curent_file_abs_path = os.path.dirname(os.path.realpath(__file__))
+        #os.chdir(curent_file_abs_path)
 
         df = ProcessData.loadData(filename)
         '''
@@ -93,7 +95,7 @@ class STDBscan():
         neighbors = self.stdbscan_neighbors(df, result)
         print(neighbors)
         self.result = result
-        self.dump_to_file(neighbors)
+        self.dump_to_file(neighbors, output_file)
         return neighbors
 
     def stdbscan_plot_clusters(self):
@@ -101,9 +103,21 @@ class STDBscan():
         df = self.undo_projection(self.result)
         self.plot_clusters(df, 'output')
 
-if __name__ == '__main__':
+@click.command()
+@click.option('--filename', default='US_NewYork_POIS_Coords_short.txt', help='Dataset.')
+@click.option('--neighbors_classified', default='convoy_neighbors_classified.txt', help='Output file.')
+@click.option('--spatial_thresold', default=5000, help='Spatial thresold.')
+@click.option('--temporal_threshold', default=6000, help='Temporal thresold.')
+@click.option('--min_neighbors', default=1, help='Min neighbors.')
+
+def dbscan(filename, neighbors_classified, spatial_thresold, temporal_threshold, min_neighbors):
     st = STDBscan()
-    st.stdbscan_plot_clusters()
+    st.execute_stdbscan(filename, neighbors_classified, spatial_thresold, temporal_threshold, min_neighbors)
+
+if __name__ == '__main__':
+    dbscan()
+    #st = STDBscan()
+    #st.stdbscan_plot_clusters()
 
     #df = pd.DataFrame(test_time())
     #print(pd.value_counts(df['cluster']))

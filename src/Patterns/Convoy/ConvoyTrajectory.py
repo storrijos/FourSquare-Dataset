@@ -13,7 +13,7 @@ def convoy_preprocessDataset(filename):
     dataset = dataset.drop(columns=['item_id'])
 
     header = ["obj_id", "t", "x", "y"]
-    dataset.to_csv('resource/output.csv', columns=header, index=False, sep=',')
+    dataset.to_csv(filename.rsplit('.', 1)[0] + '_temp_output' + '.csv', columns=header, index=False, sep=',')
 
     return dataset
 
@@ -46,7 +46,6 @@ def clasify_neighbors(list):
         if search != None:
             dict[elem] = search
     return dict
-
 
 def dump_to_file(neighbors_classified, output):
     process = ProcessData()
@@ -83,18 +82,19 @@ def toPandasFormat(res):
 @click.option('--minpoints', default=2, help='Minimum number of points.')
 @click.option('--lifetime', default=2, help='Minimum trajectory Lifetime.')
 @click.option('--distance_max', default=0.2, help='Maximum distance between points.')
+@click.option('--partials', default=False, help='Partials trajectories')
 
-def convoy(filename, output, minpoints, lifetime, distance_max):
+def convoy(filename, output, minpoints, lifetime, distance_max, partials):
     dataset = convoy_preprocessDataset(filename)
-    parser = TrajectoryParser('resource/output.csv')
+    parser = TrajectoryParser(filename.rsplit('.', 1)[0] + '_temp_output' + '.csv')
     # obj_id, t, x, y
     traj_set = parser.get_traj_set()
     # minPoints, #lifetime, #distance_max
-    res = CMC.cm_clustering(traj_set, minpoints, lifetime, distance_max, True)
+    res = CMC.cm_clustering(traj_set, minpoints, lifetime, distance_max, partials)
     print("\n")
     printFinalResultDataFrame(toPandasFormat(res), output)
     for conv in res:
-        with open("trajectory_output.txt", "a") as text_file:
+        with open(output.rsplit('.', 1)[0] + '_trajectory_output' + '.txt', "a") as text_file:
             text_file.write(conv.toString())
         print(conv.toString())
 

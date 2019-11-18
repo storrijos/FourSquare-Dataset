@@ -11,12 +11,64 @@ from surprise import Dataset, Reader, Trainset
 from surprise.model_selection import train_test_split
 from src.Patterns.Flock.fpFlockOnline import FPFlockOnline
 from src.Recommender.knn_recommender import KNNCustom
-from src.Processing.pre_process import ProcessData, find_path
+from src.Processing.pre_process import ProcessData
 from src.Patterns.ST_DBSCAN.main_stdbscan import STDBscan
+from surprise import get_dataset_dir
+import io  # needed because of weird encoding of u.item file
 import pandas as pd
 import os
+from surprise.accuracy import rmse
+import click
 
 class KNN():
+
+
+    def __init__(self):
+        self.trainset = []
+
+    def read_item_names(self, file_name):
+        """Read the u.item file from MovieLens 100-k dataset and return two
+        mappings to convert raw ids into movie names and movie names into raw ids.
+        """
+        rid_to_name = {}
+        name_to_rid = {}
+        with io.open(file_name, 'r', encoding='ISO-8859-1') as f:
+            for line in f:
+                line = line.split('|')
+                rid_to_name[line[0]] = line[1]
+                name_to_rid[line[1]] = line[0]
+
+        return rid_to_name, name_to_rid
+
+    # Let's build a pandas dataframe with all the predictions
+
+    def get_Iu(self, uid):
+        """Return the number of items rated by given user
+
+        Args:
+            uid: The raw id of the user.
+        Returns:
+            The number of items rated by the user.
+        """
+
+        try:
+            return len(self.trainset.ur[self.trainset.to_inner_uid(uid)])
+        except ValueError:  # user was not part of the trainset
+            return 0
+
+    def get_Ui(self, iid):
+        """Return the number of users that have rated given item
+
+        Args:
+            iid: The raw id of the item.
+        Returns:
+            The number of users that have rated the item.
+        """
+
+        try:
+            return len(self.trainset.ir[self.trainset.to_inner_iid(iid)])
+        except ValueError:  # item was not part of the trainset
+            return 0
 
     def recommender(self, train_file, test_file, k, neighbors):
         reader = Reader(line_format='user item rating', rating_scale=(1, 5))
@@ -35,6 +87,20 @@ class KNN():
         algo = KNNCustom(k=k, sim_options={'name': 'pearson_baseline', 'user_based': True})
 
         algo.fit_custom(train, neighbors)
+        print('test')
+        print(test)
+        predictions = algo.test(test)
+        rmse(predictions)
+
+        self.trainset = algo.trainset
+        print('algo: {0}, k = {1}, min_k = {2}'.format(algo.__class__.__name__, algo.k, algo.min_k))
+
+        df = pd.DataFrame(predictions, columns=['uid', 'iid', 'rui', 'est', 'details'])
+        df['Iu'] = df.uid.apply(self.get_Iu)
+        df['Ui'] = df.iid.apply(self.get_Ui)
+        df['err'] = abs(df.est - df.rui)
+        print(df)
+
         return algo
 
     def recommend(self, algo, uid, iid):
@@ -45,7 +111,29 @@ class KNN():
         # get a prediction for specific users and items.
         return algo.predict(uid, iid, r_ui=1, verbose=True)
 
+    def prepareCSV(self, filename):
+        neighbors_classified = pd.read_csv(filename, delim_whitespace=True, header=None)
+        neighbors_classified.columns = ["user_id", "neighbour_id", "weight"]
+        return neighbors_classified
+
+@click.command()
+@click.option('--train_file', default='US_NewYork_POIS_Coords_short.txt', help='Dataset.')
+@click.option('--test_file', default='US_NewYork_POIS_Coords_short.txt', help='Dataset.')
+@click.option('--k', default=2, help='Min k neighbors.')
+@click.option('--neighbors_classified', default='convoy_neighbors_classified.txt', help='Output file.')
+@click.option('--uid', default=-1, help='user id')
+@click.option('--iid', default=-1, help='item id.')
+
+def knn(train_file, test_file, k, neighbors_classified, uid, iid):
+    knn = KNN()
+    neighbors_classified = knn.prepareCSV(neighbors_classified)
+    algo = knn.recommender(train_file,test_file,k, neighbors_classified)
+    if -1 not in (uid, iid):
+        prediction = knn.recommend(algo, uid, iid)
+
 if __name__ == '__main__':
+    knn()
+    """
     knn = KNN()
     ###FLOCK
     output_file = 'output_prueba.txt' #sys.argv[1]
@@ -55,27 +143,23 @@ if __name__ == '__main__':
 
     flock_neighbors_path = str(curent_file_abs_path) + '/flock_neighbors_classified.txt'
     if os.path.exists(flock_neighbors_path):
-        flock_neighbors_classified = pd.read_csv(flock_neighbors_path, delim_whitespace=True, header=None)
-        flock_neighbors_classified.columns = ["user_id", "neighbour_id", "weight"]
-
+        flock_neighbors_classified = knn.prepareCSV(flock_neighbors_path)
         algo_flock = knn.recommender('Datasets/US_NewYork_POIS_Coords_short.txt',
-                                     'Datasets/US_NewYork_POIS_Coords_short.txt',
-                                     10, flock_neighbors_classified)
-        flock_prediction = knn.recommend(algo_flock, 31, 4244)
-
+                                     'Datasets/US_NewYork_POIS_Coords_short_test.txt',
+                                     1, flock_neighbors_classified)
+        flock_prediction = knn.recommend(algo_flock, 15, 6589)
+    
     ## ST-dbscan
     st_dbscan = STDBscan()
     st_dbscan.execute_stdbscan('Datasets/US_NewYork_POIS_Coords_short_1k.txt')
     st_dbscan_neighbors_path = str(curent_file_abs_path) + '/st_dbscan_neighbors_classified.txt'
     if os.path.exists(st_dbscan_neighbors_path):
-        st_dbscan_neighbors_classified = pd.read_csv(str(curent_file_abs_path) + '/st_dbscan_neighbors_classified.txt',
-                                                     delim_whitespace=True, header=None)
-        st_dbscan_neighbors_classified.columns = ["user_id", "neighbour_id", "weight"]
+        st_dbscan_neighbors_classified = knn.prepareCSV(st_dbscan_neighbors_path)
         algo_st_dbscan = knn.recommender('Datasets/US_NewYork_POIS_Coords_short.txt',
                                          'Datasets/US_NewYork_POIS_Coords_short.txt',
                                          10, st_dbscan_neighbors_classified)
         st_dbscan_prediction = knn.recommend(algo_st_dbscan, 31, 4244)
-
+    """
 
 
 
