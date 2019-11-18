@@ -1,0 +1,4 @@
+Start_time: 1,	End_Time: 1	(lifetime: 1)
+obj_list:  3, 31, 36, 82
+Start_time: 1,	End_Time: 2	(lifetime: 2)
+obj_list:  3, 31, 36, 82
