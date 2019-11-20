@@ -141,7 +141,7 @@ def readFileGroupItem(txt_file, pois):
 def save_dataset_with_coords(input_file, coords_file, output_file):
     pois_coords = readPOISandCoordinates(coords_file)
     salida = readFileGroupItem(input_file, pois_coords)
-    printToFile('entradas/' + str(output_file), salida)
+    printToFile(str(output_file), salida)
 
 if __name__ == '__main__':
     save_dataset_with_coords()
