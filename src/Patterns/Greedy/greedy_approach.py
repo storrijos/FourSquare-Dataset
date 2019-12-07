@@ -46,6 +46,14 @@ def print_result(data_hash):
         print(k, v)
 
 def print_to_pandas(data_hash, output):
+
+
+    with open(output, "a") as text_file:
+        for k, v in data_hash.items():
+            for value in v:
+                text_file.write(k + " " + value + '\n')
+
+"""
     print('dentro')
     final_df = pd.DataFrame(columns=['user_id', 'neighbour_id'])
     for k, v in data_hash.items():
@@ -54,6 +62,8 @@ def print_to_pandas(data_hash, output):
 
     final_df.to_csv(output, sep=" ", encoding='utf-8', index=False, header=False)
     return final_df
+"""
+
 
 def readFileGroupItem(txt_file):
     token = open(txt_file, "r")
@@ -99,12 +109,12 @@ def process_and_get_accurate_timestamp(items, timestamp):
     print("TIEMPO: " + str(end - start))
 
 def main():
-    #hour_seconds = 1
-    #max_hour = 10
-    #items = ProcessData.readFileGroupItem("entradas/entrada_corta.txt")
-    #process_and_get_K_first()
-    #for time_loop in range(hour_seconds, hour_seconds * max_hour, hour_seconds):
-        #process_and_get_accurate_timestamp(items, time_loop)
+    hour_seconds = 1
+    max_hour = 10
+    items = ProcessData.readFileGroupItem("entradas/entrada_corta.txt")
+    process_and_get_K_first()
+    for time_loop in range(hour_seconds, hour_seconds * max_hour, hour_seconds):
+        process_and_get_accurate_timestamp(items, time_loop)
 
     #pois = ProcessData.readPOISandCoordinates('POIS_Coords_Foursquare.txt')
     #items = ProcessData.readFileGroupItem('entrada_corta.txt', pois)

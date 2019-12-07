@@ -263,7 +263,9 @@ class FPFlockOnline(object):
         # Remove Duplicates from DataFrame
         df = df.drop_duplicates(subset=['begin', 'end', 'traj']).apply(list)
         neighbors_classified = self.clasify_neighbors(self.dataset_to_list_of_lists(df))
-        return self.dump_to_file(neighbors_classified, neighbors_output)
+        process = ProcessData()
+        #return self.dump_to_file(neighbors_classified, neighbors_output)
+        return process.dump_to_file(neighbors_classified, neighbors_output)
 
 def experimentos():
     min_mu = 2

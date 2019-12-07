@@ -66,10 +66,13 @@ class STDBscan():
     def dump_to_file(self, neighbors_classified, output_file):
         if neighbors_classified is not None:
             process = ProcessData()
+            """
             final_df = process.dump_to_pandas(neighbors_classified)
             #curent_file_abs_path = os.path.dirname(os.path.realpath(__file__))
             final_df.to_csv(output_file, sep=" ", encoding='utf-8', index=False, header=False)
             #final_df.to_csv(str(curent_file_abs_path) + "/../../Recommender/" + output_file, sep=" ", encoding='utf-8', index=False, header=False)
+            """
+            process.dump_to_file(neighbors_classified, output_file)
 
     def execute_stdbscan(self, filename, output_file, spatial_thresold=5000, temporal_threshold=6000, min_neighbors=1):
         #curent_file_abs_path = os.path.dirname(os.path.realpath(__file__))

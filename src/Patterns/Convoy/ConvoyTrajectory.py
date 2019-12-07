@@ -49,8 +49,11 @@ def clasify_neighbors(list):
 
 def dump_to_file(neighbors_classified, output):
     process = ProcessData()
+    """
     final_df = process.dump_to_pandas(neighbors_classified)
     final_df.to_csv(output, sep=" ", encoding='utf-8', index=False, header=False)
+    """
+    process.dump_to_file(neighbors_classified, output)
 
 def printFinalResultDataFrame(df, output):
     # Remove Duplicates from DataFrame
