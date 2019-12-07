@@ -41,6 +41,7 @@ class FPFlockOnline(object):
         self.mu = mu
         self.delta = delta
         self.df = pd.DataFrame(columns=['keyFlock', 'begin', 'end', 'traj'])
+        self.df[['keyFlock','begin', 'end']] = self.df[['keyFlock','begin', 'end']].astype('int32')
 
     def getTransactions(maximalDisks):
         newKey = set()

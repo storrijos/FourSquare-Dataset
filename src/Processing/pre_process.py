@@ -45,6 +45,8 @@ class ProcessData:
         dataset.sort_values(['id', 'real_timestamp'], ascending=[True, True], inplace=True)
         dataset['timestamp'] = dataset.groupby(['id']).cumcount()
         dataset = dataset.drop(columns=['latitude', 'longitude', 'real_timestamp'])
+        dataset[['id', 'item_id','timestamp']] = dataset[['id', 'item_id','timestamp']].astype('int32')
+
         dataset['rating'] = 1  # np.random.randint(1, 5, len(dataset))
         return dataset
 
@@ -95,12 +97,17 @@ class ProcessData:
         dataset.columns = ["id", "item_id", "latitude", "longitude", "real_timestamp"]
         dataset.sort_values(['id', 'real_timestamp'], ascending=[True, True], inplace=True)
         dataset['timestamp'] = dataset.groupby(['id']).cumcount()
+        dataset[['id', 'item_id','timestamp', 'real_timestamp']] = dataset[['id', 'item_id','timestamp', 'real_timestamp']].astype('int32')
+        dataset[['latitude', 'longitude']] = dataset[['latitude', 'longitude']].astype('float32')
         dataset = dataset.drop(columns=['item_id'])
         return dataset
 
     def loadData(filename):
         data = pd.read_csv(filename, delim_whitespace=True, header=None)
         data.columns = ["user_id", "item_id", "lat", "long", "timestamp"]
+        data[['user_id', 'item_id','timestamp']] = data[['user_id', 'item_id','timestamp']].astype('int32')
+        data[['lat', 'long']] = data[['lat', 'long']].astype('float32')
+
         summary_stats = data.describe()
         return data
 
@@ -144,9 +151,9 @@ class ProcessData:
 @click.option('--coords_file', default='POIS_Coords_Foursquaretxt', help='Dataset.')
 @click.option('--output_file', default='US_NewYorkTempTrain_short.txt', help='Dataset.')
 def save_dataset_with_coords(input_file, coords_file, output_file):
-    pois_coords = readPOISandCoordinates(coords_file)
-    salida = readFileGroupItem(input_file, pois_coords)
-    printToFile(str(output_file), salida)
+    pois_coords = ProcessData.readPOISandCoordinates(coords_file)
+    salida = ProcessData.readFileGroupItem(input_file, pois_coords)
+    ProcessData.printToFile(str(output_file), salida)
 
 if __name__ == '__main__':
     save_dataset_with_coords()

@@ -26,7 +26,6 @@ def dataset_to_list_of_lists(dataset):
         result.append([int(x) for x in row.split(',')])
     return result
 
-
 def deep_search(elem, list):
     neighbors = []
     for row in list:
@@ -35,7 +34,6 @@ def deep_search(elem, list):
 
     flatten = sum(neighbors, [])
     return [(ii, 1.0) for n, ii in enumerate(flatten) if ii not in flatten[:n] and ii != elem]
-
 
 def clasify_neighbors(list):
     flatten_list = sum(list, [])
