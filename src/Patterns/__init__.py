@@ -1,1 +1,1 @@
-__all__ = ['DBSCAN', 'First Approach', 'Flock', 'K-Means', 'ST_DBSCAN', 'import_helper']
+__all__ = ['DBSCAN', 'Greedy', 'Flock', 'K-Means', 'ST_DBSCAN', 'import_helper']

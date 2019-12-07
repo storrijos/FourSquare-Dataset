@@ -92,47 +92,46 @@ class ProcessData:
         dataset = dataset.drop(columns=['item_id'])
         return dataset
 
-
     def loadData(filename):
         data = pd.read_csv(filename, delim_whitespace=True, header=None)
         data.columns = ["user_id", "item_id", "lat", "long", "timestamp"]
         summary_stats = data.describe()
         return data
 
-def printToFile(file, salida):
-    with open(file, 'w') as f:
-        for item in salida:
-            f.write("%s\n" % item)
+    def printToFile(file, salida):
+        with open(file, 'w') as f:
+            for item in salida:
+                f.write("%s\n" % item)
 
-def readPOISandCoordinates(txt_file):
-    token = open(txt_file, "r")
-    linestoken = token.readlines()
-    poi_map = {}
-    for line in linestoken:
-        poi_id = line.split()[0]
-        lat = line.split()[1]
-        longitude = line.split()[2]
-        poi_map[poi_id] = [lat, longitude]
-    return poi_map
+    def readPOISandCoordinates(txt_file):
+        token = open(txt_file, "r")
+        linestoken = token.readlines()
+        poi_map = {}
+        for line in linestoken:
+            poi_id = line.split()[0]
+            lat = line.split()[1]
+            longitude = line.split()[2]
+            poi_map[poi_id] = [lat, longitude]
+        return poi_map
 
-def readFileGroupItem(txt_file, pois):
-    token = open(txt_file, "r")
-    linestoken = token.readlines()
-    items_lines = []
-    count = 1
-    for line in linestoken:
-        percentage = (float(count) / float(len(linestoken))) * 100
-        print('Setting up items' + "%.2f" % percentage + '%')
-        count += 1
-        item_id = str(line.split()[1])
-        user_id = line.split()[0]
-        timestamp = line.split()[3]
-        poi_lat_long = pois[item_id]
-        poi_lat = poi_lat_long[0]
-        poi_long = poi_lat_long[1]
-        line_dataset = LineDataset(user_id, timestamp, poi_lat, poi_long, item_id)
-        items_lines.append(line_dataset)
-    return items_lines
+    def readFileGroupItem(txt_file, pois):
+        token = open(txt_file, "r")
+        linestoken = token.readlines()
+        items_lines = []
+        count = 1
+        for line in linestoken:
+            percentage = (float(count) / float(len(linestoken))) * 100
+            print('Setting up items' + "%.2f" % percentage + '%')
+            count += 1
+            item_id = str(line.split()[1])
+            user_id = line.split()[0]
+            timestamp = line.split()[3]
+            poi_lat_long = pois[item_id]
+            poi_lat = poi_lat_long[0]
+            poi_long = poi_lat_long[1]
+            line_dataset = LineDataset(user_id, timestamp, poi_lat, poi_long, item_id)
+            items_lines.append(line_dataset)
+        return items_lines
 
 @click.command()
 @click.option('--input_file', default='US_NewYorkTempTrain.txt', help='Dataset.')

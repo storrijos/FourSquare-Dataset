@@ -29,6 +29,7 @@ import numpy
 import matplotlib.pyplot as plt
 import os, sys
 import click
+import src.Utils.utils as Utils
 
 #Import
 from src.Processing.pre_process import ProcessData
@@ -157,15 +158,19 @@ class FPFlockOnline(object):
 
         elements_in_flock_count = 0
         flocks_avg = 0
+        counter = 0
+        print('a')
         for timestamp in timestamps:
             output = open('output.dat','w')
             LCMmaximal.disksTimestamp(points, timestamp)
             if not os.path.exists('outputDisk.dat'):
                 continue
-
             maximalDisks, diskID = LCMmaximal.maximalDisksTimestamp(timestamp, diskID)
             totalMaximalDisks.update(maximalDisks)
             traj = FPFlockOnline.getTransactions(maximalDisks)
+
+            counter = counter + 1 + len(traj)
+            Utils.progressBar(counter, len(timestamps), bar_length=20)
 
             st = ''                     
             for i in traj:
@@ -199,7 +204,7 @@ class FPFlockOnline(object):
             #print(elements_in_flock_count)
             flocks_avg = elements_in_flock_count / len(stdin)
 
-        #print('FLOCK')
+        print('FLOCK')
 
         neighbors_classified = self.printFinalResultDataFrame(self.df, neighbors_output)
 
