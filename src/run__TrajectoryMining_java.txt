@@ -1,0 +1,7 @@
+GitHub rejected committing a file larger than 100MB, so the JAR file is in my Dropbox:
+https://www.dropbox.com/s/gxwe52m9yviae4k/TrajectoryMining-0.0.1-SNAPSHOT-jar-with-dependencies.jar?dl=0
+
+This was the message I used:
+Adding JAR file from TrajectoryMining project. It can be called (using the DAT file provided in that project) as follows:
+java -cp TrajectoryMining-0.0.1-SNAPSHOT-jar-with-dependencies.jar single.MainApp 20 2 2 10 3 100 1000 dis_flated_sampled.dat
+Parameters are named (not explained in any way) when using the JAR but some of them are missing
