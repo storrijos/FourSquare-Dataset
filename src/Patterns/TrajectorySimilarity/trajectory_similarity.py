@@ -8,12 +8,14 @@ import click
 from scipy.spatial.distance import directed_hausdorff
 
 class TrajectorySimilarity(object):
+
     def prepareDataset(self, dataset):
         traj_data_dict = {}
         with open(dataset, 'r') as inf:
             traj_data_dict = eval(inf.read())
         traj_lst = []
         traj_keys = []
+
         for key, data_instance in traj_data_dict.items():
             traj_lst.append(np.vstack(data_instance[0]).T)
             traj_keys.append(key)
@@ -22,7 +24,7 @@ class TrajectorySimilarity(object):
 
     # 3 - Distance matrix
 
-    def hausdorff( u, v):
+    def hausdorff(u, v):
         d = max(directed_hausdorff(u, v)[0], directed_hausdorff(v, u)[0])
         return d
 
@@ -42,10 +44,20 @@ class TrajectorySimilarity(object):
         traj_count = len(traj_lst)
         D = np.zeros((traj_count, traj_count))
 
+        with open(dataset, 'r') as inf:
+            traj_data_dict = eval(inf.read())
+
         # This may take a while
-        for i in range(traj_count):
-            for j in range(i + 1, traj_count):
-                distance = TrajectorySimilarity.hausdorff(traj_lst[i], traj_lst[j])
+        for i, u in enumerate(traj_keys):
+            for j, v in enumerate(traj_keys[i+1:]):
+                distance = 0
+                for u_key, values1 in traj_data_dict[u][0].items():
+                    for v_key, values2 in traj_data_dict[v][0].items():
+                        print(values1)
+                        print(values2)
+                        distance += 1 - TrajectorySimilarity.hausdorff(values1, values2)
+                        print(distance)
+                #distance = TrajectorySimilarity.hausdorff(traj_lst[i], traj_lst[j])
                 D[i, j] = distance
                 D[j, i] = distance
 

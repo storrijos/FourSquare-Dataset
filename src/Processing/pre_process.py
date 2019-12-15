@@ -154,18 +154,41 @@ class ProcessData:
         dataset = ProcessData.loadData(input_data)
 
         print(dataset)
+        previous_timestamp = dataset['timestamp'].iloc[0]
+
+#traj_dict = {3: {1: [[lat.....], [long....]], 2: [[lat.....], [long....]]}, ...}
+
         for index, item in dataset.iterrows():
             user_id = int(item['user_id'])
-            if user_id in rows_array:
-                rows_array[user_id][0].append(item['lat'])
-                rows_array[user_id][1].append(item['long'])
-            else:
-                rows_array[user_id] = []
-                latitude = [item['lat']]
-                rows_array[user_id].append(latitude)
-                longitude = [item['long']]
-                rows_array[user_id].append(longitude)
+            user_dict = {}
+            #Mas de 8h, otra trayectoria
 
+            #traj_dict = {3: [[lat.....], [long....]], 15: [[lat.....], [long....]], 31: [[lat.....], [long....]]...}
+            #traj_dict = {3: {1: [[lat.....], [long....]], 2: [[lat.....], [long....]]}, ...}
+
+            if user_id in rows_array:
+                if item['timestamp'] - previous_timestamp >= 28800:
+                    print('entra')
+                    lenght = len(rows_array[user_id])
+                    rows_array[user_id][lenght] = [[None for x in range(1)] for y in range(2)]
+                    rows_array[user_id][lenght][0] = [item['lat']]
+                    rows_array[user_id][lenght][1] = [item['long']]
+                    previous_timestamp = item['timestamp']
+
+                else:
+                    rows_array[user_id][len(rows_array[user_id])-1][0].append(item['lat'])
+                    rows_array[user_id][len(rows_array[user_id])-1][1].append(item['long'])
+                    previous_timestamp = item['timestamp']
+            else:
+                latitude = [item['lat']]
+                rows_array[user_id] = {}
+                rows_array[user_id][0] = [[None for x in range(1)] for y in range(2)]
+                rows_array[user_id][0][0] = latitude
+                longitude = [item['long']]
+                rows_array[user_id][0][1] = longitude
+                previous_timestamp = item['timestamp']
+
+        print(rows_array)
         for key, value in rows_array.items():
             rows_array[key] = [rows_array[key]]
 
@@ -184,7 +207,9 @@ def save_dataset_with_coords(input_file, coords_file, output_file):
     ProcessData.printToFile(str(output_file), salida)
 
 if __name__ == '__main__':
+    ProcessData.loadAndCleanDataset('entradas/Datasets/US_NewYork_POIS_Coords_short.txt', 'file2.txt')
     #ProcessData.loadAndCleanDataset('US_NewYork_POIS_Coords_shortCompleto2.txt')
-    save_dataset_with_coords()
+
+    #save_dataset_with_coords()
 
 
