@@ -30,6 +30,7 @@ import matplotlib.pyplot as plt
 import os, sys
 import click
 import src.Utils.utils as Utils
+import gc
 
 #Import
 from src.Processing.pre_process import ProcessData
@@ -116,7 +117,6 @@ class FPFlockOnline(object):
                 data = {'keyFlock': keyFlock, 'begin': begin, 'end': end, 'traj': str(b)}
                 self.df = self.df.append(data, ignore_index=True)
 
-
                 elements_in_flock_count += len(b)
                 #print('LONGITUD')
                 #print(elements_in_flock_count)
@@ -136,7 +136,10 @@ class FPFlockOnline(object):
         delta = self.delta
         LCMmaximal.precision = 0.001
 
-        dataset = ProcessData.flock_preprocessDataset(self, filename)
+
+        ProcessData.flock_preprocessDataset(self, filename)
+        dataset = pd.read_pickle('./FlockID.df')
+
         #os.chdir(str(os.getcwd()) + '/../Patterns/Flock')
 
         if os.path.exists('output.mfi'):
@@ -146,7 +149,11 @@ class FPFlockOnline(object):
 
         points = LCMmaximal.pointTimestamp(dataset)
 
+        del dataset
+        gc.collect()
+
         timestamps = list(map(int, points.keys()))
+        print('LEN' + str(len(timestamps)))
         #print('timestamps: ' + str(timestamps))
         timestamps.sort()
 
@@ -160,16 +167,18 @@ class FPFlockOnline(object):
         elements_in_flock_count = 0
         flocks_avg = 0
         counter = 0
-        print('a')
+
         for timestamp in timestamps:
+            print('a')
             output = open('output.dat','w')
             LCMmaximal.disksTimestamp(points, timestamp)
             if not os.path.exists('outputDisk.dat'):
                 continue
+            print('b')
             maximalDisks, diskID = LCMmaximal.maximalDisksTimestamp(timestamp, diskID)
             totalMaximalDisks.update(maximalDisks)
             traj = FPFlockOnline.getTransactions(maximalDisks)
-
+            print('c')
             counter = counter + 1 + len(traj)
             Utils.progressBar(counter, len(timestamps), bar_length=20)
 
@@ -250,6 +259,7 @@ class FPFlockOnline(object):
         with open(output_file, "a") as outputFile:
             outputFile.write(text)
 
+    """
     def dump_to_file(self, neighbors_classified, neighbors_output):
         process = ProcessData()
         final_df = process.dump_to_pandas(neighbors_classified)
@@ -259,7 +269,7 @@ class FPFlockOnline(object):
         os.chdir("../../..")
 
         final_df.to_csv(neighbors_output, sep=" ", encoding='utf-8', index=False, header=False)
-
+    """
     def printFinalResultDataFrame(self, df, neighbors_output):
         # Remove Duplicates from DataFrame
         df = df.drop_duplicates(subset=['begin', 'end', 'traj']).apply(list)
@@ -268,6 +278,7 @@ class FPFlockOnline(object):
         #return self.dump_to_file(neighbors_classified, neighbors_output)
         return process.dump_to_file(neighbors_classified, neighbors_output)
 
+"""
 def experimentos():
     min_mu = 2
     max_mu = 10
@@ -297,6 +308,7 @@ def experimentos():
     #print(df.to_string())
 
     FPFlockOnline.writeEndOfFile('df_results.txt', df.to_string())
+"""
 
 def plot_x_y_values(df, x_label, y_label):
     df.plot(x=x_label, y=y_label, marker='.')

@@ -19,3 +19,8 @@ python3 src/Recommender/knn.py --train_file entradas/Datasets/US_NewYork_POIS_Co
 python3 src/Patterns/Greedy/greedy_approach.py --filename entradas/entrada_corta.txt --output greedy.txt  --delta 15552000
 
 
+python3 src/Patterns/Convoy/ConvoyTrajectory.py --filename US_NewYork_POIS_Coords_shortCompleto2.txt --output convoy_neighbors_classified.txt --minpoints 3 --lifetime 2 --distance_max 0.1 --partials True
+
+
+python3 src/Patterns/TrajectorySimilarity/trajectory_similarity.py --dataset file.txt --output_file similarity_output.txt --k 10
+python3 src/Recommender/knn.py --train_file US_NewYork_POIS_Coords_shortCompleto2.txt --test_file entradas/Datasets/US_NewYork_POIS_Coords_short_test.txt --k 1 --neighbors_classified similarity_output.txt

@@ -11,3 +11,4 @@ venv
 entradas
 src/Patterns/Flock/Experiments
 src.egg-info
+*.pyc

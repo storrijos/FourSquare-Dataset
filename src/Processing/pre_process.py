@@ -1,6 +1,8 @@
 import pandas as pd
 import click
 import os
+import json
+
 
 class LineDataset:
 
@@ -100,6 +102,7 @@ class ProcessData:
         dataset[['id', 'item_id','timestamp', 'real_timestamp']] = dataset[['id', 'item_id','timestamp', 'real_timestamp']].astype('int32')
         dataset[['latitude', 'longitude']] = dataset[['latitude', 'longitude']].astype('float32')
         dataset = dataset.drop(columns=['item_id'])
+        dataset.to_pickle('FlockID.df')
         return dataset
 
     def loadData(filename):
@@ -146,6 +149,31 @@ class ProcessData:
             items_lines.append(line_dataset)
         return items_lines
 
+    def loadAndCleanDataset(input_data, output_file):
+        rows_array = {}
+        dataset = ProcessData.loadData(input_data)
+
+        print(dataset)
+        for index, item in dataset.iterrows():
+            user_id = int(item['user_id'])
+            if user_id in rows_array:
+                rows_array[user_id][0].append(item['lat'])
+                rows_array[user_id][1].append(item['long'])
+            else:
+                rows_array[user_id] = []
+                latitude = [item['lat']]
+                rows_array[user_id].append(latitude)
+                longitude = [item['long']]
+                rows_array[user_id].append(longitude)
+
+        for key, value in rows_array.items():
+            rows_array[key] = [rows_array[key]]
+
+        with open(output_file, 'a') as file:
+            file.write(json.dumps(rows_array))
+
+        return rows_array
+
 @click.command()
 @click.option('--input_file', default='US_NewYorkTempTrain.txt', help='Dataset.')
 @click.option('--coords_file', default='POIS_Coords_Foursquaretxt', help='Dataset.')
@@ -156,5 +184,7 @@ def save_dataset_with_coords(input_file, coords_file, output_file):
     ProcessData.printToFile(str(output_file), salida)
 
 if __name__ == '__main__':
+    #ProcessData.loadAndCleanDataset('US_NewYork_POIS_Coords_shortCompleto2.txt')
     save_dataset_with_coords()
+
 
