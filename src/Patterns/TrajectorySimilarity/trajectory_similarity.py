@@ -35,7 +35,7 @@ class TrajectorySimilarity(object):
                 idx = np.argpartition(item, range(k))
                 for neighbor in idx[:k]:
                     if neighbor != i:
-                        text_file.write(str(traj_keys[i]) + " " + str(traj_keys[neighbor]) + " " + str(1 / D[i][neighbor]) + '\n')
+                        text_file.write(str(traj_keys[i]) + " " + str(traj_keys[neighbor]) + " " + str(1 - D[i][neighbor]) + '\n')
 
     def calculateDistance(self, dataset):
         traj_lst, traj_keys = self.prepareDataset(dataset)
