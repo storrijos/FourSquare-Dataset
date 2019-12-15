@@ -37,7 +37,7 @@ class TrajectorySimilarity(object):
                 idx = np.argpartition(item, range(k))
                 for neighbor in idx[:k]:
                     if neighbor != i:
-                        text_file.write(str(traj_keys[i]) + " " + str(traj_keys[neighbor]) + " " + str(1 - D[i][neighbor]) + '\n')
+                        text_file.write(str(traj_keys[i]) + " " + str(traj_keys[neighbor]) + " " + str(D[i][neighbor]) + '\n')
 
     def calculateDistance(self, dataset):
         traj_lst, traj_keys = self.prepareDataset(dataset)
@@ -53,14 +53,12 @@ class TrajectorySimilarity(object):
                 distance = 0
                 for u_key, values1 in traj_data_dict[u][0].items():
                     for v_key, values2 in traj_data_dict[v][0].items():
-                        print(values1)
-                        print(values2)
-                        distance += 1 - TrajectorySimilarity.hausdorff(values1, values2)
-                        print(distance)
+                        distance += 1 - TrajectorySimilarity.hausdorff(np.vstack(values1).T, np.vstack(values2).T)
                 #distance = TrajectorySimilarity.hausdorff(traj_lst[i], traj_lst[j])
                 D[i, j] = distance
                 D[j, i] = distance
 
+        print(D)
         return traj_keys, D
 
 @click.command()
