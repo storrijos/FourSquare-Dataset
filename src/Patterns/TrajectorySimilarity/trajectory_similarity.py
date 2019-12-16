@@ -4,6 +4,8 @@ import os
 import math
 import numpy as np
 import click
+import src.Utils.utils as Utils
+
 
 from scipy.spatial.distance import directed_hausdorff
 
@@ -36,7 +38,7 @@ class TrajectorySimilarity(object):
             for i, item in enumerate(D):
                 idx = np.argpartition(item, range(k))
                 for neighbor in idx[:k]:
-                    if neighbor != i:
+                    if neighbor != i and D[i][neighbor] != 0.0:
                         text_file.write(str(traj_keys[i]) + " " + str(traj_keys[neighbor]) + " " + str(D[i][neighbor]) + '\n')
 
     def calculateDistance(self, dataset):
@@ -47,10 +49,13 @@ class TrajectorySimilarity(object):
         with open(dataset, 'r') as inf:
             traj_data_dict = eval(inf.read())
 
+        counter = 0
         # This may take a while
         for i, u in enumerate(traj_keys):
             for j, v in enumerate(traj_keys[i+1:]):
                 distance = 0
+                counter += 1
+                Utils.progressBar(counter, len(traj_keys), bar_length=20)
                 for u_key, values1 in traj_data_dict[u][0].items():
                     for v_key, values2 in traj_data_dict[v][0].items():
                         distance += 1 - TrajectorySimilarity.hausdorff(np.vstack(values1).T, np.vstack(values2).T)
