@@ -24,3 +24,11 @@ python3 src/Patterns/Convoy/ConvoyTrajectory.py --filename US_NewYork_POIS_Coord
 
 python3 src/Patterns/TrajectorySimilarity/trajectory_similarity.py --dataset file.txt --output_file similarity_output.txt --k 10
 python3 src/Recommender/knn.py --train_file US_NewYork_POIS_Coords_shortCompleto2.txt --test_file entradas/Datasets/US_NewYork_POIS_Coords_short_test.txt --k 1 --neighbors_classified similarity_output.txt
+
+
+### Cargar trajectorias con formato para buscar similitudes
+python3 src/Processing/pre_process.py --method dataset_similarity --input_file entradas/DatosNewYork/US_NewYorkTempTrain.txt --coords_file entradas/DatosNewYork/POIS_Coords_Foursquare.txt --output_file file3.txt
+#Buscar trajectorias similares. K es el numero de vecinos maximo por individuo
+python3 src/Patterns/TrajectorySimilarity/trajectory_similarity.py --dataset file3.txt --output_file similarity_output_completo.txt --k 100
+#Ejecutar recomendador
+python3 src/Recommender/knn.py --train_file entradas/Datasets/US_NewYork_POIS_Coords_short_10k.txt --test_file entradas/Datasets/US_NewYork_POIS_Coords_short_10k_test.txt --k 1 --neighbors_classified similarity_output.txt

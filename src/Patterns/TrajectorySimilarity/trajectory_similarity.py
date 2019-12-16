@@ -52,10 +52,10 @@ class TrajectorySimilarity(object):
         counter = 0
         # This may take a while
         for i, u in enumerate(traj_keys):
+            counter += 1
+            Utils.progressBar(counter, len(traj_keys), bar_length=20)
             for j, v in enumerate(traj_keys[i+1:]):
                 distance = 0
-                counter += 1
-                Utils.progressBar(counter, len(traj_keys), bar_length=20)
                 for u_key, values1 in traj_data_dict[u][0].items():
                     for v_key, values2 in traj_data_dict[v][0].items():
                         distance += 1 - TrajectorySimilarity.hausdorff(np.vstack(values1).T, np.vstack(values2).T)

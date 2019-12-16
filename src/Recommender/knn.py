@@ -71,7 +71,7 @@ class KNN():
             return 0
 
     def recommender(self, train_file, test_file, k, neighbors):
-        reader = Reader(line_format='user item rating', rating_scale=(1, 5))
+        reader = Reader(line_format='user item rating', rating_scale=(0, 5))
 
         #TRAIN
         train_dataset = ProcessData.recommender_preprocessDataset(train_file)
@@ -92,6 +92,7 @@ class KNN():
         predictions = algo.test(test)
         rmse(predictions)
 
+        print('TRAINSET2')
         self.trainset = algo.trainset
         print('algo: {0}, k = {1}, min_k = {2}'.format(algo.__class__.__name__, algo.k, algo.min_k))
 
@@ -99,6 +100,15 @@ class KNN():
         df['Iu'] = df.uid.apply(self.get_Iu)
         df['Ui'] = df.iid.apply(self.get_Ui)
         df['err'] = abs(df.est - df.rui)
+
+        pd.set_option('display.max_rows', None)
+        pd.set_option('display.max_columns', None)
+        pd.set_option('display.width', None)
+        pd.set_option('display.max_colwidth', -1)
+
+        #'RESULTS'
+        df.to_csv('salida_knn.txt', sep=' ')
+
         print(df)
 
         return algo

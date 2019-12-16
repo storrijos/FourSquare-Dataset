@@ -168,7 +168,6 @@ class ProcessData:
 
             if user_id in rows_array:
                 if item['timestamp'] - previous_timestamp >= 28800:
-                    print('entra')
                     lenght = len(rows_array[user_id])
                     rows_array[user_id][lenght] = [[None for x in range(1)] for y in range(2)]
                     rows_array[user_id][lenght][0] = [item['lat']]
@@ -198,16 +197,24 @@ class ProcessData:
         return rows_array
 
 @click.command()
+@click.option('--method', default='save_dataset', help='Method.')
 @click.option('--input_file', default='US_NewYorkTempTrain.txt', help='Dataset.')
 @click.option('--coords_file', default='POIS_Coords_Foursquaretxt', help='Dataset.')
 @click.option('--output_file', default='US_NewYorkTempTrain_short.txt', help='Dataset.')
+def main(method, input_file, coords_file, output_file):
+    if method == 'dataset_similarity':
+        ProcessData.loadAndCleanDataset(input_file, output_file)
+    else:
+        save_dataset_with_coords(input_file, coords_file, output_file)
+
 def save_dataset_with_coords(input_file, coords_file, output_file):
     pois_coords = ProcessData.readPOISandCoordinates(coords_file)
     salida = ProcessData.readFileGroupItem(input_file, pois_coords)
     ProcessData.printToFile(str(output_file), salida)
 
 if __name__ == '__main__':
-    ProcessData.loadAndCleanDataset('entradas/Datasets/US_NewYork_POIS_Coords_short.txt', 'file2.txt')
+    main()
+    #ProcessData.loadAndCleanDataset('US_NewYork_POIS_Coords_shortCompleto.txt', 'file2.txt')
     #ProcessData.loadAndCleanDataset('US_NewYork_POIS_Coords_shortCompleto2.txt')
 
     #save_dataset_with_coords()
