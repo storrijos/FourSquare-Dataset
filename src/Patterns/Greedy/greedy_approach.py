@@ -71,7 +71,7 @@ def readFileGroupItem(txt_file):
     items_map = {}
     count = 0
     for line in linestoken:
-        print(count)
+        #print(count)
         count += 1
         item_id = str(line.split()[1])
         user_id = line.split()[0]
@@ -93,7 +93,7 @@ def process_and_get_K_first():
     items = ProcessData.readFileGroupItem("entradas/entrada_corta.txt")
     temp = process_data_counting_ocurrences_hash(items, 15552000)
     result = get_first_K(temp, 2, 1)
-    print_result(result)
+    #print_result(result)
     end = time.time()
     print("TIEMPO: " + str(end - start))
 
