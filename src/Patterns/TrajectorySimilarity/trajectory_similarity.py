@@ -43,9 +43,9 @@ class TrajectorySimilarity(object):
         d = max(directed_hausdorff(u, v)[0], directed_hausdorff(v, u)[0])
         return d
 
-    def calculateSimilarity(self, k, dataset, output_file):
+    def calculateSimilarity(self, k, dataset, output_file, function):
 
-        traj_keys, D = self.calculateDistance(dataset)
+        traj_keys, D = self.calculateDistance(dataset, function)
         # Imprimimos los mejores vecinos para cada uno:
         with open(output_file, "a") as text_file:
             for i, item in enumerate(D):
@@ -54,7 +54,7 @@ class TrajectorySimilarity(object):
                     if neighbor != i and D[i][neighbor] != 0.0:
                         text_file.write(str(traj_keys[i]) + " " + str(traj_keys[neighbor]) + " " + str(D[i][neighbor]) + '\n')
 
-    def calculateDistance(self, dataset):
+    def calculateDistance(self, dataset, function):
         traj_lst, traj_keys = self.prepareDataset(dataset)
         traj_count = len(traj_lst)
         D = np.zeros((traj_count, traj_count))
@@ -71,7 +71,7 @@ class TrajectorySimilarity(object):
                 distance = 0
                 for u_key, values1 in traj_data_dict[u][0].items():
                     for v_key, values2 in traj_data_dict[v][0].items():
-                        distance += 1 - self.similarity_function('dtw', np.vstack(values1).T, np.vstack(values2).T)
+                        distance += 1 - self.similarity_function(function, np.vstack(values1).T, np.vstack(values2).T)
                         #distance += 1 - TrajectorySimilarity.hausdorff(np.vstack(values1).T, np.vstack(values2).T)
                 #distance = TrajectorySimilarity.hausdorff(traj_lst[i], traj_lst[j])
                 D[i, j] = distance
@@ -84,9 +84,11 @@ class TrajectorySimilarity(object):
 @click.option('--dataset', default='US_NewYork_POIS_Coords_short.txt', help='Dataset.')
 @click.option('--output_file', default='convoy_neighbors_classified.txt', help='Output file.')
 @click.option('--k', default=10, help='K neighbors.')
-def calculate_similarity(dataset, output_file, k):
+@click.option('--function', default='dtw', help='dtw.')
+
+def calculate_similarity(dataset, output_file, k, function):
     trajectory = TrajectorySimilarity()
-    trajectory.calculateSimilarity(k, dataset, output_file)
+    trajectory.calculateSimilarity(k, dataset, output_file, function)
 
 if __name__ == '__main__':
     calculate_similarity()
