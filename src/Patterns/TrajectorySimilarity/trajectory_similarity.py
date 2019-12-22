@@ -1,13 +1,12 @@
 # 0 - Import related libraries
 
-import os
-import math
 import numpy as np
 import click
 import src.Utils.utils as Utils
-
-
+from fastdtw import fastdtw
+from scipy.spatial.distance import euclidean
 from scipy.spatial.distance import directed_hausdorff
+from math import sin, cos, sqrt, atan2, radians
 
 class TrajectorySimilarity(object):
 
@@ -25,6 +24,20 @@ class TrajectorySimilarity(object):
         return traj_lst, traj_keys
 
     # 3 - Distance matrix
+
+    def similarity_function(self, function, u, v):
+        if function == 'hausdorff':
+            return TrajectorySimilarity.hausdorff(u, v)
+        elif function == 'dtw':
+            return TrajectorySimilarity.dtw(u, v)
+        elif function == 'lcss':
+            pass
+        else:
+            return TrajectorySimilarity.hausdorff(u, v)
+
+    def dtw(u, v):
+        distance, path = fastdtw(u, v, dist=euclidean)
+        return distance
 
     def hausdorff(u, v):
         d = max(directed_hausdorff(u, v)[0], directed_hausdorff(v, u)[0])
@@ -58,7 +71,8 @@ class TrajectorySimilarity(object):
                 distance = 0
                 for u_key, values1 in traj_data_dict[u][0].items():
                     for v_key, values2 in traj_data_dict[v][0].items():
-                        distance += 1 - TrajectorySimilarity.hausdorff(np.vstack(values1).T, np.vstack(values2).T)
+                        distance += 1 - self.similarity_function('dtw', np.vstack(values1).T, np.vstack(values2).T)
+                        #distance += 1 - TrajectorySimilarity.hausdorff(np.vstack(values1).T, np.vstack(values2).T)
                 #distance = TrajectorySimilarity.hausdorff(traj_lst[i], traj_lst[j])
                 D[i, j] = distance
                 D[j, i] = distance
