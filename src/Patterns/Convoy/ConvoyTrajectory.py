@@ -79,7 +79,7 @@ def toPandasFormat(res):
 
 @click.command()
 @click.option('--filename', default='US_NewYork_POIS_Coords_short.txt', help='Dataset.')
-@click.option('--output', default='convoy_neighbors_classified.txt', help='Output file.')
+@click.option('--output', default='similarity_output_convoy.txt', help='Output file.')
 @click.option('--minpoints', default=2, help='Minimum number of points.')
 @click.option('--lifetime', default=2, help='Minimum trajectory Lifetime.')
 @click.option('--distance_max', default=0.2, help='Maximum distance between points.')

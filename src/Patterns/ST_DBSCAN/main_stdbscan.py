@@ -108,7 +108,7 @@ class STDBscan():
 
 @click.command()
 @click.option('--filename', default='US_NewYork_POIS_Coords_short.txt', help='Dataset.')
-@click.option('--neighbors_classified', default='convoy_neighbors_classified.txt', help='Output file.')
+@click.option('--neighbors_classified', default='similarity_output_convoy.txt', help='Output file.')
 @click.option('--spatial_thresold', default=5000, help='Spatial thresold.')
 @click.option('--temporal_threshold', default=6000, help='Temporal thresold.')
 @click.option('--min_neighbors', default=1, help='Min neighbors.')

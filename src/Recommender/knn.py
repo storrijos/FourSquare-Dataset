@@ -130,7 +130,7 @@ class KNN():
 @click.option('--train_file', default='US_NewYork_POIS_Coords_short.txt', help='Dataset.')
 @click.option('--test_file', default='US_NewYork_POIS_Coords_short.txt', help='Dataset.')
 @click.option('--k', default=2, help='Min k neighbors.')
-@click.option('--neighbors_classified', default='convoy_neighbors_classified.txt', help='Output file.')
+@click.option('--neighbors_classified', default='similarity_output_convoy.txt', help='Output file.')
 @click.option('--uid', default=-1, help='user id')
 @click.option('--iid', default=-1, help='item id.')
 

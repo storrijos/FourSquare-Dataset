@@ -82,7 +82,7 @@ class TrajectorySimilarity(object):
 
 @click.command()
 @click.option('--dataset', default='US_NewYork_POIS_Coords_short.txt', help='Dataset.')
-@click.option('--output_file', default='convoy_neighbors_classified.txt', help='Output file.')
+@click.option('--output_file', default='similarity_output_convoy.txt', help='Output file.')
 @click.option('--k', default=10, help='K neighbors.')
 @click.option('--function', default='dtw', help='dtw.')
 

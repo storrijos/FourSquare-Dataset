@@ -317,7 +317,7 @@ def plot_x_y_values(df, x_label, y_label):
 
 @click.command()
 @click.option('--filename', default='US_NewYork_POIS_Coords_short.txt', help='Dataset.')
-@click.option('--output', default='convoy_neighbors_classified.txt', help='Output file.')
+@click.option('--output', default='similarity_output_convoy.txt', help='Output file.')
 @click.option('--epsilon', default=0.2, help='Epsilon.')
 @click.option('--mu', default=2, help='Mu.')
 @click.option('--delta', default=0.2, help='Delta.')

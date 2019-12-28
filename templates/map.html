@@ -1,0 +1,51 @@
+{% extends "bootstrap/base.html" %}
+
+{%block head %}
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Trajectory Mining</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <link rel = "stylesheet" type = "text/css" href = "{{ url_for('static',filename='styles/main.css') }}" />
+</head>
+
+{% endblock %}
+
+{% block content %}
+
+<body>
+<div class="container">
+  <div class="center">
+    <h2>Trajectory Mining</h2>
+
+      <div id="content_trajs"></div>
+      <div id="table" style="float: left">
+      <table class="table" id="table_neighbors_trajs">
+          <tr class="filters">
+              <th><input type="text" class="form-control" placeholder="Neighbor ID" disabled></th>
+              <th><input type="text" class="form-control" placeholder="Similarity" disabled></th>
+          </tr>
+      {% for row_index in range(neighbors|count) %}
+         <tr class='clickable-row' id="click_row" data-href='url://' onclick="">
+            <td>{{ neighbors[row_index] }}</td>
+            <td>{{ neighbors[row_index] }}</td>
+          </tr>
+      {% endfor %}
+  </table>
+  </div>
+   <div style="float: right">
+     <iframe id="iframe" src="{{ url_for('traj') }}" width="1000" height="1000" frameborder="2"></iframe>
+   </div>
+  </div>
+</div>
+
+</body>
+</html>
+
+{% endblock %}
