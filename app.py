@@ -1,8 +1,10 @@
 from flask import Flask, render_template, redirect, flash, request, url_for, jsonify
+import random
 
 from flask_bootstrap import Bootstrap
 import tablib
 from flask_util_js import FlaskUtilJs
+import json
 
 import os
 from werkzeug.utils import secure_filename
@@ -14,6 +16,7 @@ Bootstrap(app)
 fujs = FlaskUtilJs(app)
 
 files_tag = {}
+users_colors = {}
 
 UPLOAD_FOLDER = '/tmp/'
 ALLOWED_EXTENSIONS = {'txt', 'csv'}
@@ -26,6 +29,17 @@ def allowed_file(filename):
 @app.context_processor
 def inject_fujs():
     return dict(fujs=fujs)
+
+def get_random_hex():
+    random_number = random.randint(0, 16777215)
+    # convert to hexadecimal
+    hex_number = str(hex(random_number))
+    # remove 0x and prepend '#'
+    return '#' + hex_number[2:]
+
+def assign_user_color(users):
+    for user in users:
+        users_colors[user] = get_random_hex()
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/<int:neighbor_id>')
@@ -48,35 +62,53 @@ def index(neighbor_id=None):
         if files and allowed_file(files[0].filename):
 
             tag = request.form['tag']
+            files_uploaded = {}
 
             similarity = None
             for file in files:
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                files_tag.setdefault(tag, []).append(file.filename)
-                if "similarity" in file.filename:
-                    similarity = filename
 
-            df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], similarity), delim_whitespace=True, header=None)
+                ###Read number of columns
+                infile = open(filename, 'r')
+                firstLine = infile.readline()
+                number_of_columns = len(firstLine.split())
+
+                if number_of_columns == 3:
+                    files_uploaded['similarity'] = filename
+                    if not tag:
+                        tag = filename
+                elif number_of_columns == 5:
+                    files_uploaded['dataset'] = filename
+                else:
+                    files_uploaded['trajs'] = filename
+
+            files_tag[tag] = files_uploaded
+            print(files_tag)
+
+            df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], files_uploaded['similarity']), delim_whitespace=True, header=None)
             df.columns = ["user_id", "neighbor_id", "similarity"]
 
             users = df['user_id'].unique()
+            assign_user_color(users)
+
             neighbors = df[df['user_id'] == neighbor_id][["neighbor_id", "similarity"]].reset_index()
 
             neighbors2 = str(df.to_json(orient='records'))
 
-            return render_template('index.html', users=users, neighbors=neighbors, neighbors_json=neighbors2, files=list(files_tag.keys()))
+            return render_template('index.html', users=users, neighbors=neighbors, neighbors_json=neighbors2, files=list(files_tag.keys()), users_colors=users_colors)
 
     return render_template('index.html')
 
-@app.route('/map/<int:user_id>/<int:k>', methods=['GET', 'POST'])
-def map(user_id, k):
+@app.route('/map/<tag>/<int:user_id>/<int:k>', methods=['GET', 'POST'])
+def map(tag, user_id, k):
     if request.method == 'POST':
 
         neighbors = request.json
         output_url = 'map' + str(user_id) + str(k) + '.html'
 
-        trajs = plot_k_trajs_web(user_id, 'file4.txt', 'similarity_output_dtw.txt', 'templates/maps/' + output_url, k)
+        print(files_tag)
+        trajs = plot_k_trajs_web(user_id, files_tag[tag]['trajs'], files_tag[tag]['similarity'], 'templates/maps/' + output_url, k, users_colors)
         return jsonify(neighbors)
 
 

@@ -31,6 +31,8 @@ import os, sys
 import click
 import src.Utils.utils as Utils
 import gc
+import os.path
+from os import path
 
 #Import
 from src.Processing.pre_process import ProcessData
@@ -323,6 +325,9 @@ def plot_x_y_values(df, x_label, y_label):
 @click.option('--delta', default=0.2, help='Delta.')
 
 def flock(filename, output, epsilon, mu, delta):
+    if path.exists(output):
+        print('El fichero ' + str(output) + ' ya existe')
+        return
     fp = FPFlockOnline(epsilon,mu,delta)
 
     partial_output = (filename.rsplit('.', 1)[0]).rsplit('/', 1)[-1] + '_partial_traj' + '.txt'

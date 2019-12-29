@@ -7,6 +7,8 @@ from fastdtw import fastdtw
 from scipy.spatial.distance import euclidean
 from scipy.spatial.distance import directed_hausdorff
 from math import sin, cos, sqrt, atan2, radians
+import os.path
+from os import path
 
 class TrajectorySimilarity(object):
 
@@ -47,12 +49,15 @@ class TrajectorySimilarity(object):
 
         traj_keys, D = self.calculateDistance(dataset, function)
         # Imprimimos los mejores vecinos para cada uno:
-        with open(output_file, "a") as text_file:
-            for i, item in enumerate(D):
-                idx = np.argpartition(item, range(k))
-                for neighbor in idx[:k]:
-                    if neighbor != i and D[i][neighbor] != 0.0:
-                        text_file.write(str(traj_keys[i]) + " " + str(traj_keys[neighbor]) + " " + str(D[i][neighbor]) + '\n')
+        if path.exists(output_file):
+            print('El fichero' + str(output_file) + 'ya existe')
+        else:
+            with open(output_file, "a") as text_file:
+                for i, item in enumerate(D):
+                    idx = np.argpartition(item, range(k))
+                    for neighbor in idx[:k]:
+                        if neighbor != i and D[i][neighbor] != 0.0:
+                            text_file.write(str(traj_keys[i]) + " " + str(traj_keys[neighbor]) + " " + str(D[i][neighbor]) + '\n')
 
     def calculateDistance(self, dataset, function):
         traj_lst, traj_keys = self.prepareDataset(dataset)
@@ -87,6 +92,10 @@ class TrajectorySimilarity(object):
 @click.option('--function', default='dtw', help='dtw.')
 
 def calculate_similarity(dataset, output_file, k, function):
+    if path.exists(output_file):
+        print('El fichero ' + str(output_file) + ' ya existe')
+        return
+
     trajectory = TrajectorySimilarity()
     trajectory.calculateSimilarity(k, dataset, output_file, function)
 

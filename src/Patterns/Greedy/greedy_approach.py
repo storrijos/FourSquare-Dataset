@@ -7,6 +7,8 @@ sys.path.insert(0,carpeta2_abs_path)
 from src.Processing.pre_process import ProcessData
 import pandas as pd
 import click
+import os.path
+from os import path
 
 class UserInteractions:
 
@@ -46,12 +48,13 @@ def print_result(data_hash):
         print(k, v)
 
 def print_to_pandas(data_hash, output):
-
-
-    with open(output, "a") as text_file:
-        for k, v in data_hash.items():
-            for value in v:
-                text_file.write(k + " " + value + '\n')
+    if path.exists(output):
+        print('El fichero' + str(output) + 'ya existe')
+    else:
+        with open(output, "a") as text_file:
+            for k, v in data_hash.items():
+                for value in v:
+                    text_file.write(k + " " + value + '\n')
 
 """
     print('dentro')
@@ -194,6 +197,10 @@ def get_only_name(data):
 @click.option('--delta', default=0.2, help='Delta.')
 
 def greedy_approach(filename, output, delta):
+    if path.exists(output):
+        print('El fichero ' + str(output) + ' ya existe')
+        return
+
     items = readFileGroupItem(filename)
     data = process_data_hash(items, delta) #15552000
     print_to_pandas(data, output)

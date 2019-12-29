@@ -2,6 +2,8 @@ import pandas as pd
 import click
 import os
 import json
+import os.path
+from os import path
 
 
 class LineDataset:
@@ -73,10 +75,13 @@ class ProcessData:
         return dict
 
     def dump_to_file(self, neighbors_classified, output):
-        with open(output, "a") as text_file:
-            for key, elems in neighbors_classified.items():
-                for neighbor in elems:
-                    text_file.write(str(key) + " " + str(neighbor[0]) + " " + str(neighbor[1]) + '\n')
+        if path.exists(output):
+            print('El fichero ' + str(output) + ' ya existe')
+        else:
+            with open(output, "a") as text_file:
+                for key, elems in neighbors_classified.items():
+                    for neighbor in elems:
+                        text_file.write(str(key) + " " + str(neighbor[0]) + " " + str(neighbor[1]) + '\n')
 
     def dump_to_pandas(self, neighbors_classified):
         index = 0

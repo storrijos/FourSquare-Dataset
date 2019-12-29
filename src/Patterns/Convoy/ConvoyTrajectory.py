@@ -4,6 +4,8 @@ from src.Processing.pre_process import ProcessData
 import pandas as pd
 import click
 import os
+import os.path
+from os import path
 
 def convoy_preprocessDataset(filename):
     dataset = pd.read_csv(filename, delim_whitespace=True, header=None)
@@ -86,6 +88,9 @@ def toPandasFormat(res):
 @click.option('--partials', default=False, help='Partials trajectories')
 
 def convoy(filename, output, minpoints, lifetime, distance_max, partials):
+    if path.exists(output):
+        print('El fichero' + str(output) + 'ya existe')
+        return
     dataset = convoy_preprocessDataset(filename)
     parser = TrajectoryParser(filename.rsplit('.', 1)[0] + '_temp_output' + '.csv')
     # obj_id, t, x, y

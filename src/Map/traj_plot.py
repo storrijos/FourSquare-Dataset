@@ -33,6 +33,28 @@ class TrajPlot(object):
 
         return gmap
 
+
+    def plot_traj_web(self, trajs, plotname, users_colors):
+
+        gmap = gmplot.GoogleMapPlotter(self.average(trajs[0][1][0]), self.average(trajs[0][1][1]), 11)
+        print(trajs)
+        for tuple in trajs:
+            user_id = tuple[0]
+            traj = tuple[1]
+            print(traj[0])
+            # now let's plot:
+            gmap.plot(traj[0], traj[1], users_colors[user_id], edge_width=5)
+            gmap.scatter(traj[0], traj[1], '#3B0B39', size=200, marker=False)
+
+        #marker_locations = []
+        #for traj in trajs:
+        #    marker_locations.append((traj[0], traj[1]))
+
+        gmap.apikey = "AIzaSyCbVHx4f2FGjJkZCz5yMNtvlwqpiiJ-F_U"
+        gmap.draw(plotname)
+
+        return gmap
+
     def flatten_dict_dicts(self, dict):
         coords = []
         lat = []
@@ -63,7 +85,7 @@ def ascending_order(dataset, k):
     else:
         return dataset.sort_values(by='similarity', ascending=False)
 
-def plot_k_trajs_web(user_id, dataset, similarity_dataset, output_file, k):
+def plot_k_trajs_web(user_id, dataset, similarity_dataset, output_file, k, users_colors):
     traj_plot = TrajPlot()
     with open(dataset, 'r') as inf:
         traj_data_dict = eval(inf.read())
@@ -71,11 +93,11 @@ def plot_k_trajs_web(user_id, dataset, similarity_dataset, output_file, k):
     trajs = []
     users_dataset = read_similarity_dataset(similarity_dataset)
     users = ascending_order(users_dataset[users_dataset['user1_id'] == user_id].reset_index(), k)
-
+    print(users_colors)
     for user in users.iterrows():
-        trajs.append(traj_plot.flatten_dict_dicts(traj_data_dict[str(int(user[1]['user1_id']))]))
-        trajs.append(traj_plot.flatten_dict_dicts(traj_data_dict[str(int(user[1]['user2_id']))]))
-    return traj_plot.plot_traj(trajs, output_file)
+        trajs.append((int(user[1]['user1_id']), traj_plot.flatten_dict_dicts(traj_data_dict[str(int(user[1]['user1_id']))])))
+        trajs.append((int(user[1]['user2_id']), traj_plot.flatten_dict_dicts(traj_data_dict[str(int(user[1]['user2_id']))])))
+    return traj_plot.plot_traj_web(trajs, output_file, users_colors)
 
 
 @click.command()

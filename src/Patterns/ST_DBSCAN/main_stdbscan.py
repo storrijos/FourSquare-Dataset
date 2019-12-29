@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 from src.Processing.pre_process import ProcessData
 import os
 import click
+import os.path
+from os import path
 
 class STDBscan():
 
@@ -114,6 +116,10 @@ class STDBscan():
 @click.option('--min_neighbors', default=1, help='Min neighbors.')
 
 def dbscan(filename, neighbors_classified, spatial_thresold, temporal_threshold, min_neighbors):
+    if path.exists(neighbors_classified):
+        print('El fichero ' + str(neighbors_classified) + ' ya existe')
+        return
+
     st = STDBscan()
     st.execute_stdbscan(filename, neighbors_classified, spatial_thresold, temporal_threshold, min_neighbors)
 

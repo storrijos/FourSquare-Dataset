@@ -5,9 +5,13 @@
     <head>
         <meta charset="utf-8">
         <title>Trajectory Mining</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+         <!--
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+        -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.core.min.js"></script>
@@ -17,12 +21,20 @@
     {% endblock %}
     {% block content %}
     <body>
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+          <a class="navbar-brand" href="#">Trajectory Mining</a>
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item ">
+              <a class="nav-link" href="#">About us</a>
+            </li>
+          </ul>
+        </nav>
         <div class="container">
             <div class="center">
-                <h2>Trajectory Mining</h2>
-                <div class="btn-group">
+
+                <div class="btn-group" role="group" aria-label="Basic example">
                     {% for row_index in range(files|count) %}
-                    <button type="button" class="btn btn-success">{{ files[row_index] }}</button>
+                    <button type="button" class="btn btn-secondary" id="tag_button" name="{{ files[row_index] }}">{{ files[row_index] }}</button>
                     {% endfor %}
                 </div>
                 <div class="col-md-6" id="cols-div">
@@ -62,9 +74,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for row_index in range(users|count) %}
-                                        <tr class='clickable-row' name="{{ users[row_index] }}">
-                                            <td>{{ users[row_index] }}</td>
+                                        {% for user in users %}
+                                        <tr class='clickable-row' name="{{ user }}">
+                                            <td><font color="{{ users_colors[ user ]}}">{{ user }}</font></td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
@@ -101,27 +113,44 @@
                             </div>
                         </div>
                         <div id="neighbors_json" hidden>{{ neighbors_json }}</div>
+                        <div id="users_colors" hidden>{{ users_colors }}</div>
                         <script>
                             $(document).ready(function(){
 
+                                $('button').on('click', function(){
+                                    $('button').removeClass('selected');
+                                    $(this).addClass('selected');
+                                });
+
                                 $('tr.clickable-row').click(function(){
                                   user_id = parseInt($(this).attr('name'))
-                                  //k_neighbors = parseInt($('#k_neighbors').val());
+                                  tag = $('#tag_button').attr("name");
                                   if ($('#k_neighbors').val() != '') {
                                       k_neighbors = parseInt($('#k_neighbors').val())
                                   }else{
                                       k_neighbors = 0
                                   }
                                   values = _.filter(JSON.parse($('#neighbors_json').text()), {'user_id': user_id});
+                                  values = _.sortBy(values, 'similarity').reverse();
 
-                                  $('#table_neighbors tr').not(':first').not(':last').empty();
+                                  $('#table_neighbors tr').not(':first').empty();
                                   var html = '';
-                                  for(var i = 0; i < values.length; i++)
-                                      html += "<tr class='clickable-row'><td>" + values[i].neighbor_id +
-                                              "</td><td>" + values[i].similarity + "</td></tr>";
+                                  number_elems = 0;
+                                  if (k_neighbors > values.length || k_neighbors == 0){
+                                       number_elems = values.length;
+                                  }else{
+                                       number_elems = k_neighbors;
+                                  }
+
+                                  //var users_colors_dict = $('#users_colors').text();
+
+                                  //var myDict = {'3': '#6ae260', '15': '#fabade', '31': '#134f87', '36': '#419fbc'}
+                                  for(var i = 0; i < number_elems; i++)
+                                    html += "<tr class='clickable-row'><td><font color='black'>" + values[i].neighbor_id +
+                                              "</font></td><td>" + values[i].similarity + "</td></tr>";
                                   $('#table_neighbors tr').first().after(html);
                                     $('tr.clickable-row').click(function(){
-                                        var url = flask_util.url_for('map', {user_id: user_id, k: k_neighbors});
+                                        var url = flask_util.url_for('map', {tag: tag, user_id: user_id, k: k_neighbors});
 
                                       $.ajax({
                                         type: "POST",
