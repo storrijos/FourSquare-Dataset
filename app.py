@@ -107,7 +107,6 @@ def map(tag, user_id, k):
         neighbors = request.json
         output_url = 'map' + str(user_id) + str(k) + '.html'
 
-        print(files_tag)
         trajs = plot_k_trajs_web(user_id, files_tag[tag]['trajs'], files_tag[tag]['similarity'], 'templates/maps/' + output_url, k, users_colors)
         return jsonify(neighbors)
 

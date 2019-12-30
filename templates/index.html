@@ -8,6 +8,8 @@
           <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
          <!--
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
@@ -31,30 +33,32 @@
         </nav>
         <div class="container">
             <div class="center">
-
-                <div class="btn-group" role="group" aria-label="Basic example">
+                <div class="btn-group" role="group" aria-label="Horizontal Button Group">
                     {% for row_index in range(files|count) %}
-                    <button type="button" class="btn btn-secondary" id="tag_button" name="{{ files[row_index] }}">{{ files[row_index] }}</button>
+                    <button type="button" class="btn btn-info" id="tag_button" name="{{ files[row_index] }}">{{ files[row_index] }}</button>
                     {% endfor %}
                 </div>
-                <div class="col-md-6" id="cols-div">
+
+                <div class="form_div">
                     <form method="post" id="#" enctype=multipart/form-data>
-                        <div class="form-group files">
-                            <h3>Upload Your File </h3>
-                            <input type="file" class="form-control" multiple="" name=file>
+                        <div class="form">
+                            <input name="file" id="entry_value" ref="fileInput" multiple type="file">
+                            <div>
+                                <h3>Upload Your Files </h3>
+                                <button class="btn bg-color-dblue btn-primary px-4 py-3">Browse</button></div>
                         </div>
-                        <div class="form-group row">
-                            <label for="colFormLabel" class="col-sm-2 col-form-label">File TAG</label>
-                            <div class="col-sm-10">
-                                <input type="tag" class="form-control" name=tag id="colFormLabel" placeholder="Introduce the tag of the method">
-                            </div>
+                        <div class = "placeholder_form">
+                            <form class="form-inline">
+                              <div class="form-group mx-sm-3 mb-2">
+                                <input type="tag" name=tag class="form-control" id="tag" placeholder="File TAG">
+                              </div>
+                              <input type="submit" value=Upload class="btn btn-primary mb-2"></input>
+                            </form>
                         </div>
-                        <input type=submit value=Upload>
-                    </form>
-                    <form>
                     </form>
                 </div>
-                <div>
+
+                <div class="iframe">
                     <iframe id="iframe" src="{{ url_for('traj', mapa='salida2.html') }}" width="1000" height="500" frameborder="2"></iframe>
                 </div>
                 <div class = "tables">
@@ -64,7 +68,7 @@
                                 <div class="panel-heading">
                                     <h3 class="panel-title">Users</h3>
                                     <div class="pull-right">
-                                        <button class="btn btn-default btn-xs btn-filter"><span class="glyphicon glyphicon-filter"></span> Filter</button>
+                                        <button class="btn btn-default btn-xs btn-filter"><span class="fa fa-filter"></span></button>
                                     </div>
                                 </div>
                                 <table class="table" id="user_id_table">
@@ -89,11 +93,11 @@
                             <div class="panel panel-primary filterable">
                                 <div class="panel-heading">
                                     <div>
-                                        <input type="text" class="form-control" name=tag id="k_neighbors" placeholder="K neighbors">
+                                        <input type="text" class="form-control" name=tag id="k_neighbors" placeholder="KN">
                                     </div>
                                     <h3 class="panel-title" >Neighbors</h3>
                                     <div class="pull-right">
-                                        <button class="btn btn-default btn-xs btn-filter"><span class="glyphicon glyphicon-filter"></span> Filter</button>
+                                        <button class="btn btn-default btn-xs btn-filter"><span class="fa fa-filter"></span></button>
                                     </div>
                                 </div>
                                 <table class="table" id="table_neighbors">
@@ -115,16 +119,18 @@
                         <div id="neighbors_json" hidden>{{ neighbors_json }}</div>
                         <div id="users_colors" hidden>{{ users_colors }}</div>
                         <script>
+
                             $(document).ready(function(){
 
-                                $('button').on('click', function(){
-                                    $('button').removeClass('selected');
-                                    $(this).addClass('selected');
+                                var button_selected;
+
+                                $('.btn-group .btn-info').on('click', function(){
+                                    $(this).addClass('active').siblings().removeClass('active');
+                                    button_selected = $(this).attr('name')
                                 });
 
                                 $('tr.clickable-row').click(function(){
                                   user_id = parseInt($(this).attr('name'))
-                                  tag = $('#tag_button').attr("name");
                                   if ($('#k_neighbors').val() != '') {
                                       k_neighbors = parseInt($('#k_neighbors').val())
                                   }else{
@@ -143,14 +149,13 @@
                                   }
 
                                   //var users_colors_dict = $('#users_colors').text();
-
                                   //var myDict = {'3': '#6ae260', '15': '#fabade', '31': '#134f87', '36': '#419fbc'}
                                   for(var i = 0; i < number_elems; i++)
                                     html += "<tr class='clickable-row'><td><font color='black'>" + values[i].neighbor_id +
                                               "</font></td><td>" + values[i].similarity + "</td></tr>";
                                   $('#table_neighbors tr').first().after(html);
                                     $('tr.clickable-row').click(function(){
-                                        var url = flask_util.url_for('map', {tag: tag, user_id: user_id, k: k_neighbors});
+                                        var url = flask_util.url_for('map', {tag: button_selected, user_id: user_id, k: k_neighbors});
 
                                       $.ajax({
                                         type: "POST",
