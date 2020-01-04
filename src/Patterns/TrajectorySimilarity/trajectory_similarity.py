@@ -80,7 +80,6 @@ class TrajectorySimilarity(object):
 
             D[i][j] = distance
             D[j][i] = distance
-        lock = Lock()
 
         global count
         with count.get_lock():
@@ -155,7 +154,6 @@ class TrajectorySimilarity(object):
 
         pool.close()
         pool.join()
-        print(D)
 
         return traj_keys, D
 
