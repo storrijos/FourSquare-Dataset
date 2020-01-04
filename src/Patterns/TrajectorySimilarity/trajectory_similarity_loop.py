@@ -66,22 +66,15 @@ class TrajectorySimilarity(object):
                         if neighbor != i and D[i][neighbor] != 0.0:
                             text_file.write(str(traj_keys[i]) + " " + str(traj_keys[neighbor]) + " " + str(D[i][neighbor]) + '\n')
 
-#    def update_dist(self, function, traj_data_dict, u, v, x, i, j, traj_keys):
+    def update_dist(self, function, traj_data_dict, u, v, x, i, j):
+        distance = 0
+        for u_key, values1 in traj_data_dict[u][0].items():
+            for v_key, values2 in traj_data_dict[v][0].items():
+                distance += self.similarity_function(np.vstack(values1).T, function, np.vstack(values2).T)
 
-    def update_dist(self, function, traj_data_dict, u, x, i, traj_keys):
-        for j, v in enumerate(traj_keys[i + 1:], start=i + 1):
-            if j >= len(traj_keys):
-                break
-
-            distance = 0
-            for u_key, values1 in traj_data_dict[u][0].items():
-                for v_key, values2 in traj_data_dict[v][0].items():
-                    distance += self.similarity_function(np.vstack(values1).T, function, np.vstack(values2).T)
-
-            D[i][j] = distance
-            D[j][i] = distance
-
-        print("DONE: " + str(i) + "\n")
+        D[i][j] = distance
+        D[j][i] = distance
+        print("DONE: " + str(i) + " " + str(j) + "\n")
 
     def calculateDistance(self, dataset, function):
         traj_lst, traj_keys = self.prepareDataset(dataset)
@@ -99,33 +92,32 @@ class TrajectorySimilarity(object):
         counter = 0
         sub_counter = 0
         nprocs = cpu_count() - 1
-        pool = Pool(processes=nprocs)
 
         for i, u in enumerate(traj_keys):
-            #counter += 1
-            #print(str(counter) + " " + str(len(traj_keys)) + "\n")
-            #Utils.progressBar(counter, len(traj_keys), bar_length=20)
+            counter += 1
+            print(str(counter) + " " + str(len(traj_keys)) + "\n")
+            Utils.progressBar(counter, len(traj_keys), bar_length=20)
             sub_counter = 0
-            pool.apply_async(self.update_dist, args=(function, traj_data_dict, u, [], i, traj_keys))
+            pool = Pool(processes=nprocs)
+            #pool.apply_async(self.update_dist, args=(function, traj_data_dict, u, [], i, traj_keys))
 
-            '''
-            #for j, v in enumerate(traj_keys[i+1:], start=i+1):
-             #   if j >= len(traj_keys):
-              #      break
+            for j, v in enumerate(traj_keys[i+1:], start=i+1):
+                if j >= len(traj_keys):
+                    break
                # sub_counter += 1
                 #distance = 0
                 #print(sub_counter, len(traj_keys[i+1:]))
                 #value = []
                 #print(i,j)
-               # prod_x = partial(self.update_dist, traj_data_dict=traj_data_dict, function=function, u=u, v=v, x=[], i=i, j=j)
-                #pool.apply_async(self.update_dist, args=(function, traj_data_dict, u, v, [], i, j))
+                #prod_x = partial(self.update_dist, traj_data_dict=traj_data_dict, function=function, u=u, v=v, x=[], i=i, j=j)
+                pool.apply_async(self.update_dist, args=(function, traj_data_dict, u, v, [], i, j))
                 #pool.map_async(prod_x, [1])
                 #p = Process(target=prod_x)
                 #proc.append(p)
 
                 #self.update_dist(function, traj_data_dict, u, v, D, i, j)
 
-    
+            '''
                 for u_key, values1 in traj_data_dict[u][0].items():
                     prod_x = partial(self.similarity_function, function=function, u=np.vstack(values1).T)
                     r = p.map_async(prod_x, traj_data_dict[v][0].values(), callback=value.append)
@@ -146,8 +138,8 @@ class TrajectorySimilarity(object):
                 
                 '''
 
-        pool.close()
-        pool.join()
+            pool.close()
+            pool.join()
 
 
         return traj_keys, D
