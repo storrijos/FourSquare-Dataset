@@ -8,7 +8,7 @@ from scipy.spatial.distance import euclidean
 from scipy.spatial.distance import directed_hausdorff
 from math import sin, cos, sqrt, atan2, radians
 import os.path
-from multiprocessing import Pool, Process, Value, Manager, Array, cpu_count
+from multiprocessing import Pool, Process, Value, Manager, Array, cpu_count, Lock
 from functools import partial
 import copy
 from os import path
@@ -60,7 +60,7 @@ class TrajectorySimilarity(object):
             with open(output_file, "a") as text_file:
                 for i, item in enumerate(D):
                     if k > len(item):
-                        k = len(item) - 1
+                        k = len(item)
                     idx = np.argpartition(item, range(k))
                     for neighbor in idx[:k]:
                         if neighbor != i and D[i][neighbor] != 0.0:
@@ -80,7 +80,12 @@ class TrajectorySimilarity(object):
 
             D[i][j] = distance
             D[j][i] = distance
+        lock = Lock()
 
+        global count
+        with count.get_lock():
+            count.value += 1
+            print(str(count.value) + "/" + str(len(traj_keys)))
         print("DONE: " + str(i) + "\n")
 
     def calculateDistance(self, dataset, function):
@@ -92,6 +97,8 @@ class TrajectorySimilarity(object):
         arr = np.frombuffer(arr.get_obj())
         global D
         D = arr.reshape((traj_count, traj_count))
+        global count
+        count = Value('i', 0)
 
         with open(dataset, 'r') as inf:
             traj_data_dict = eval(inf.read())
@@ -148,7 +155,7 @@ class TrajectorySimilarity(object):
 
         pool.close()
         pool.join()
-
+        print(D)
 
         return traj_keys, D
 
