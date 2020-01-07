@@ -74,13 +74,13 @@ class KNN():
 
     def recommender(self, train_file, test_file, k, neighbors, output_file):
 
-        neighbors_max = math.floor(neighbors['weight'].max())
-        neighbors_min = math.ceil(neighbors['weight'].min())
-
-        reader = Reader(line_format='user item rating', rating_scale=(neighbors_max, neighbors_min))
-
         #TRAIN
         train_dataset = ProcessData.recommender_preprocessDataset(train_file)
+        tmp_train_max = math.ceil(train_dataset['rating'].max())
+        tmp_train_min = math.floor(train_dataset['rating'].min())
+
+        reader = Reader(line_format='user item rating', rating_scale=(tmp_train_min, tmp_train_max))
+
         train_data = Dataset.load_from_df(train_dataset[['id', 'item_id', 'rating']], reader)
         train = train_data.construct_trainset(train_data.raw_ratings)
 

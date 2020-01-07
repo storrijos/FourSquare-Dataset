@@ -51,7 +51,7 @@ class ProcessData:
         dataset = dataset.drop(columns=['real_timestamp'])
         dataset[['id', 'item_id', 'timestamp']] = dataset[['id', 'item_id', 'timestamp']].astype('int32')
 
-        dataset['rating'] = 1  # np.random.randint(1, 5, len(dataset))
+        #dataset['rating'] = 1  # np.random.randint(1, 5, len(dataset))
         return dataset
 
     def st_dbscan_deep_search(elem, list):
