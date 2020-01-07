@@ -152,8 +152,9 @@ class ProcessData:
                 poi_lat = poi_lat_long[0]
                 poi_long = poi_lat_long[1]
             else:
-                poi_lat = float('nan')
-                poi_long = float('nan')
+                poi_lat = str(float('nan'))
+                poi_long = str(float('nan'))
+
             line_dataset = LineDataset(user_id, timestamp, poi_lat, poi_long, item_id)
             items_lines.append(line_dataset)
         return items_lines

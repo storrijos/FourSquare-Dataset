@@ -13,13 +13,15 @@ from functools import partial
 import copy
 from os import path
 import ctypes as c
+import json
 
 class TrajectorySimilarity(object):
 
     def prepareDataset(self, dataset):
         traj_data_dict = {}
         with open(dataset, 'r') as inf:
-            traj_data_dict = eval(inf.read())
+            traj_data_dict = json.loads(inf.read())
+
         traj_lst = []
         traj_keys = []
 
@@ -30,9 +32,21 @@ class TrajectorySimilarity(object):
         return traj_lst, traj_keys
 
     # 3 - Distance matrix
+    def removeNaN(self, list):
+        total_arr = []
+        for elems in list:
+            elem = elems[np.logical_not(np.isnan(elems))]
+            if elem.size > 0:
+                total_arr.append(elem.tolist())
+        return total_arr
 
     def similarity_function(self, v, function, u):
         #v = np.vstack(v).T
+        u = self.removeNaN(u)
+        v = self.removeNaN(v)
+
+        #u = u[np.logical_not(np.isnan(u))]
+
         if function == 'hausdorff':
             return 1 - TrajectorySimilarity.hausdorff(u, v)
         elif function == 'dtw':
@@ -100,7 +114,8 @@ class TrajectorySimilarity(object):
         count = Value('i', 0)
 
         with open(dataset, 'r') as inf:
-            traj_data_dict = eval(inf.read())
+            traj_data_dict = json.loads(inf.read())
+            #traj_data_dict = eval(inf.read())
 
         counter = 0
         sub_counter = 0
