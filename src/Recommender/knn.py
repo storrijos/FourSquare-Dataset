@@ -19,6 +19,8 @@ import pandas as pd
 import os
 from surprise.accuracy import rmse
 import click
+from os import path
+import math
 
 class KNN():
 
@@ -70,8 +72,12 @@ class KNN():
         except ValueError:  # item was not part of the trainset
             return 0
 
-    def recommender(self, train_file, test_file, k, neighbors):
-        reader = Reader(line_format='user item rating', rating_scale=(0, 5))
+    def recommender(self, train_file, test_file, k, neighbors, output_file):
+
+        neighbors_max = math.floor(neighbors['weight'].max())
+        neighbors_min = math.ceil(neighbors['weight'].min())
+
+        reader = Reader(line_format='user item rating', rating_scale=(neighbors_max, neighbors_min))
 
         #TRAIN
         train_dataset = ProcessData.recommender_preprocessDataset(train_file)
@@ -107,9 +113,7 @@ class KNN():
         pd.set_option('display.max_colwidth', -1)
 
         #'RESULTS'
-        df.to_csv('salida_knn.txt', sep=' ')
-
-        print(df)
+        df.to_csv(output_file, sep=' ')
 
         return algo
 
@@ -133,11 +137,18 @@ class KNN():
 @click.option('--neighbors_classified', default='similarity_output_convoy.txt', help='Output file.')
 @click.option('--uid', default=-1, help='user id')
 @click.option('--iid', default=-1, help='item id.')
+@click.option('--output_file', default='knn_output.txt', help='output_file')
 
-def knn(train_file, test_file, k, neighbors_classified, uid, iid):
+
+def knn(train_file, test_file, k, neighbors_classified, uid, iid, output_file):
+    if path.exists(output_file):
+        print('El fichero ' + str(output_file) + ' ya existe')
+        return
+
     knn = KNN()
     neighbors_classified = knn.prepareCSV(neighbors_classified)
-    algo = knn.recommender(train_file,test_file,k, neighbors_classified)
+    algo = knn.recommender(train_file,test_file,k, neighbors_classified, output_file)
+
     if -1 not in (uid, iid):
         prediction = knn.recommend(algo, uid, iid)
 

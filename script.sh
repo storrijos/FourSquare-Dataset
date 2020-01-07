@@ -31,7 +31,7 @@ python3 src/Processing/pre_process.py --method dataset_similarity --input_file e
 #Buscar trajectorias similares. K es el numero de vecinos maximo por individuo
 python3 src/Patterns/TrajectorySimilarity/trajectory_similarity.py --dataset file3.txt --output_file similarity_output_completo.txt --k 100 --function dtw
 #Ejecutar recomendador
-python3 src/Recommender/knn.py --train_file entradas/Datasets/US_NewYork_POIS_Coords_short_10k.txt --test_file entradas/Datasets/US_NewYork_POIS_Coords_short_10k_test.txt --k 1 --neighbors_classified similarity_output.txt
+python3 src/Recommender/knn.py --train_file entradas/DatosNewYork/US_NewYorkTempTrain_short.txt --test_file entradas/DatosNewYork/US_NewYorkTest_short.txt --k 1 --neighbors_classified similarity_output_dtw.txt --output_file salida_knn_custom.txt
 
 
 python3 src/Processing/pre_process.py --method dataset_similarity --input_file US_NewYork_Temp_Train_Corto.txt --coords_file entradas/DatosNewYork/POIS_Coords_Foursquare.txt --output_file file5.txt

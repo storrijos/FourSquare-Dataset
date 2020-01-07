@@ -45,11 +45,11 @@ class ProcessData:
     def recommender_preprocessDataset(filename):
         #find_path()
         dataset = pd.read_csv(filename, delim_whitespace=True, header=None)
-        dataset.columns = ["id", "item_id", "latitude", "longitude", "real_timestamp"]
+        dataset.columns = ["id", "item_id", "rating", "real_timestamp"]
         dataset.sort_values(['id', 'real_timestamp'], ascending=[True, True], inplace=True)
         dataset['timestamp'] = dataset.groupby(['id']).cumcount()
-        dataset = dataset.drop(columns=['latitude', 'longitude', 'real_timestamp'])
-        dataset[['id', 'item_id','timestamp']] = dataset[['id', 'item_id','timestamp']].astype('int32')
+        dataset = dataset.drop(columns=['real_timestamp'])
+        dataset[['id', 'item_id', 'timestamp']] = dataset[['id', 'item_id', 'timestamp']].astype('int32')
 
         dataset['rating'] = 1  # np.random.randint(1, 5, len(dataset))
         return dataset
@@ -147,9 +147,13 @@ class ProcessData:
             item_id = str(line.split()[1])
             user_id = line.split()[0]
             timestamp = line.split()[3]
-            poi_lat_long = pois[item_id]
-            poi_lat = poi_lat_long[0]
-            poi_long = poi_lat_long[1]
+            if item_id in pois:
+                poi_lat_long = pois[item_id]
+                poi_lat = poi_lat_long[0]
+                poi_long = poi_lat_long[1]
+            else:
+                poi_lat = float('nan')
+                poi_long = float('nan')
             line_dataset = LineDataset(user_id, timestamp, poi_lat, poi_long, item_id)
             items_lines.append(line_dataset)
         return items_lines
