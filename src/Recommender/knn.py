@@ -9,10 +9,10 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 from surprise import Dataset, Reader, Trainset
 from surprise.model_selection import train_test_split
-from src_rec.Patterns.Flock.fpFlockOnline import FPFlockOnline
-from src_rec.Recommender.knn_recommender import KNNCustom
-from src_rec.Processing.pre_process import ProcessData
-from src_rec.Patterns.ST_DBSCAN.main_stdbscan import STDBscan
+from src.Patterns.Flock.fpFlockOnline import FPFlockOnline
+from src.Recommender.knn_recommender import KNNCustom
+from src.Processing.pre_process import ProcessData
+from src.Patterns.ST_DBSCAN.main_stdbscan import STDBscan
 from surprise import get_dataset_dir
 import io  # needed because of weird encoding of u.item file
 import pandas as pd
