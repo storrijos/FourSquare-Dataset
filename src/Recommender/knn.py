@@ -9,10 +9,10 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 from surprise import Dataset, Reader, Trainset
 from surprise.model_selection import train_test_split
-from src.Patterns.Flock.fpFlockOnline import FPFlockOnline
-from src.Recommender.knn_recommender import KNNCustom
-from src.Processing.pre_process import ProcessData
-from src.Patterns.ST_DBSCAN.main_stdbscan import STDBscan
+from src_rec.Patterns.Flock.fpFlockOnline import FPFlockOnline
+from src_rec.Recommender.knn_recommender import KNNCustom
+from src_rec.Processing.pre_process import ProcessData
+from src_rec.Patterns.ST_DBSCAN.main_stdbscan import STDBscan
 from surprise import get_dataset_dir
 import io  # needed because of weird encoding of u.item file
 import pandas as pd
@@ -93,12 +93,12 @@ class KNN():
         algo = KNNCustom(k=k, sim_options={'name': 'pearson_baseline', 'user_based': True})
 
         algo.fit_custom(train, neighbors)
-        print('test')
-        print(test)
+        #print('test')
+        #print(test)
         predictions = algo.test(test)
         rmse(predictions)
 
-        print('TRAINSET2')
+        #print('TRAINSET2')
         self.trainset = algo.trainset
         print('algo: {0}, k = {1}, min_k = {2}'.format(algo.__class__.__name__, algo.k, algo.min_k))
 
@@ -169,7 +169,7 @@ if __name__ == '__main__':
                                      'Datasets/US_NewYork_POIS_Coords_short_test.txt',
                                      1, flock_neighbors_classified)
         flock_prediction = knn.recommend(algo_flock, 15, 6589)
-    
+
     ## ST-dbscan
     st_dbscan = STDBscan()
     st_dbscan.execute_stdbscan('Datasets/US_NewYork_POIS_Coords_short_1k.txt')
@@ -218,4 +218,3 @@ if __name__ == '__main__':
     train_pred = algo.test(trainset.build_testset())
     accuracy.rmse(train_pred)
     """
-

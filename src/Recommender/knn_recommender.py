@@ -91,7 +91,7 @@ class AlgoBase(object):
         except ValueError:
             iuid = 'UKN__' + str(uid)
         try:
-            print(iid)
+            #print(iid)
             iiid = self.trainset.to_inner_iid(iid)
         except ValueError:
             iiid = 'UKN__' + str(iid)
@@ -99,17 +99,17 @@ class AlgoBase(object):
         details = {}
         try:
 
-            print('TRAINSET')
-            print('####')
+            #print('TRAINSET')
+            #print('####')
 
-            print('ID:' + str(iuid) + 'ITEM_ID ' + str(iiid))
+            #print('ID:' + str(iuid) + 'ITEM_ID ' + str(iiid))
             #print('ID:' + str(iuid) + 'ITEM_ID ' + str(iiid))
 
-            print('llamo')
+            #print('llamo')
 
             est = self.estimate(iuid, iiid)
 
-            print('ESTIMACION' + str(est))
+            #print('ESTIMACION' + str(est))
 
             # If the details dict was also returned
             if isinstance(est, tuple):
@@ -271,7 +271,7 @@ class AlgoBase(object):
                     print(elem)
 
             result_dict = dict(zip(neighbors_id_result_clean[:k], neighbors_weight_result_clean[:k]))
-            print(result_dict)
+            #print(result_dict)
             return result_dict
 
     def get_neighbors(self, iid, k):
@@ -362,22 +362,22 @@ class KNNCustom(SymmetricAlgo):
 
         #neighbors = [(self.sim[x, x2], r) for (x2, r) in self.yr[y]]
         k_neighbors = self.get_neighbors_flock(self.trainset.to_raw_uid(u), self.k)
-        print('USER: ' + str(self.trainset.to_raw_uid(u)) + 'item' + str(y))
-        print(k_neighbors)
-        print('##')
+        #print('USER: ' + str(self.trainset.to_raw_uid(u)) + 'item' + str(y))
+        #print(k_neighbors)
+        #print('##')
 
         # compute weighted average
         sum_sim = sum_ratings = actual_k = 0
 
         if k_neighbors:
             for (neighbor, sim) in k_neighbors.items():
-                print(self.trainset.ur[self.trainset.to_inner_uid(neighbor)])
+                #print(self.trainset.ur[self.trainset.to_inner_uid(neighbor)])
                 for (item, r) in self.trainset.ur[self.trainset.to_inner_uid(neighbor)]:
-                    print(self.trainset.to_raw_iid(item))
-                    print(self.trainset.to_raw_iid(y))
-                    print('item' + str(item) + 'el_mio' + str(y))
+                    #print(self.trainset.to_raw_iid(item))
+                    #print(self.trainset.to_raw_iid(y))
+                    #print('item' + str(item) + 'el_mio' + str(y))
                     if item == y:
-                        print('entra')
+                        #print('entra')
                         sum_ratings += r * sim
                         actual_k += 1
 
@@ -387,5 +387,5 @@ class KNNCustom(SymmetricAlgo):
         est = sum_ratings
 
         details = {'actual_k': actual_k}
-        
+
         return est, details
