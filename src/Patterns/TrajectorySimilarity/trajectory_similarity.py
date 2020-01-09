@@ -64,8 +64,8 @@ class TrajectorySimilarity(object):
         d = max(directed_hausdorff(u, v)[0], directed_hausdorff(v, u)[0])
         return d
 
-    def calculateSimilarity(self, k, dataset, output_file, function):
-        traj_keys, D = self.calculateDistance(dataset, function)
+    def calculateSimilarity(self, k, dataset, output_file, function, threads):
+        traj_keys, D = self.calculateDistance(dataset, function, threads)
         # Imprimimos los mejores vecinos para cada uno:
 
         if path.exists(output_file):
@@ -82,7 +82,7 @@ class TrajectorySimilarity(object):
 
 #    def update_dist(self, function, traj_data_dict, u, v, x, i, j, traj_keys):
 
-    def update_dist(self, function, traj_data_dict, u, x, i, traj_keys):
+    def update_dist(self, function, traj_data_dict, u, x, i, traj_keys, threads):
         for j, v in enumerate(traj_keys[i + 1:], start=i + 1):
             if j >= len(traj_keys):
                 break
@@ -95,23 +95,27 @@ class TrajectorySimilarity(object):
             D[i][j] = distance
             D[j][i] = distance
 
-        global count
-        with count.get_lock():
-            count.value += 1
-            print(str(count.value) + "/" + str(len(traj_keys)))
-        print("DONE: " + str(i) + "\n")
+        if threads:
+            global count
+            with count.get_lock():
+                count.value += 1
+                print(str(count.value) + "/" + str(len(traj_keys)))
+            print("DONE: " + str(i) + "\n")
 
-    def calculateDistance(self, dataset, function):
+    def calculateDistance(self, dataset, function, threads):
         traj_lst, traj_keys = self.prepareDataset(dataset)
         traj_count = len(traj_lst)
         #D = np.zeros((traj_count, traj_count))
 
-        arr = Array(c.c_double, traj_count * traj_count)
-        arr = np.frombuffer(arr.get_obj())
-        global D
-        D = arr.reshape((traj_count, traj_count))
-        global count
-        count = Value('i', 0)
+        if threads:
+            arr = Array(c.c_double, traj_count * traj_count)
+            arr = np.frombuffer(arr.get_obj())
+            global D
+            D = arr.reshape((traj_count, traj_count))
+            global count
+            count = Value('i', 0)
+        else:
+            D = np.zeros((traj_count, traj_count))
 
         with open(dataset, 'r') as inf:
             traj_data_dict = json.loads(inf.read())
@@ -119,16 +123,21 @@ class TrajectorySimilarity(object):
 
         counter = 0
         sub_counter = 0
-        nprocs = cpu_count() - 1
-        pool = Pool(processes=nprocs)
+        if threads:
+            nprocs = cpu_count() - 1
+            pool = Pool(processes=nprocs)
 
         for i, u in enumerate(traj_keys):
-            #counter += 1
+            counter += 1
             #print(str(counter) + " " + str(len(traj_keys)) + "\n")
             #Utils.progressBar(counter, len(traj_keys), bar_length=20)
             sub_counter = 0
-            pool.apply_async(self.update_dist, args=(function, traj_data_dict, u, [], i, traj_keys))
+            print(str(counter) + "/" + str(len(traj_keys)))
 
+            if threads:
+                pool.apply_async(self.update_dist, args=(function, traj_data_dict, u, [], i, traj_keys, threads))
+            else:
+                self.update_dist(function, traj_data_dict, u, [], i, traj_keys, threads)
             '''
             #for j, v in enumerate(traj_keys[i+1:], start=i+1):
              #   if j >= len(traj_keys):
@@ -166,9 +175,9 @@ class TrajectorySimilarity(object):
                 D[j, i] = distance
                 
                 '''
-
-        pool.close()
-        pool.join()
+        if threads:
+            pool.close()
+            pool.join()
 
         return traj_keys, D
 
@@ -177,14 +186,15 @@ class TrajectorySimilarity(object):
 @click.option('--output_file', default='similarity_output_convoy.txt', help='Output file.')
 @click.option('--k', default=10, help='K neighbors.')
 @click.option('--function', default='dtw', help='dtw.')
+@click.option('--threads', default=0, help='0 or 1')
 
-def calculate_similarity(dataset, output_file, k, function):
+def calculate_similarity(dataset, output_file, k, function, threads):
     if path.exists(output_file):
         print('El fichero ' + str(output_file) + ' ya existe')
         return
 
     trajectory = TrajectorySimilarity()
-    trajectory.calculateSimilarity(k, dataset, output_file, function)
+    trajectory.calculateSimilarity(k, dataset, output_file, function, threads)
 
 if __name__ == '__main__':
     calculate_similarity()
