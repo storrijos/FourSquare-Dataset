@@ -5,6 +5,9 @@ import click
 import src.Utils.utils as Utils
 from fastdtw import fastdtw
 from scipy.spatial.distance import euclidean
+from scipy.spatial.distance import cosine
+from scipy.spatial.distance import jensenshannon
+from scipy.spatial.distance import correlation
 from scipy.spatial.distance import directed_hausdorff
 from math import sin, cos, sqrt, atan2, radians
 import os.path
@@ -49,15 +52,21 @@ class TrajectorySimilarity(object):
 
         if function == 'hausdorff':
             return 1 - TrajectorySimilarity.hausdorff(u, v)
-        elif function == 'dtw':
-            return 1 - TrajectorySimilarity.dtw(u, v)
+        elif function == 'dtw' or function == 'dtw_euclidean':
+            return 1 - TrajectorySimilarity.dtw(u, v, euclidean)
+        elif function == 'dtw_correlation':
+            return 1 - TrajectorySimilarity.dtw(u, v, correlation)
+        elif function == 'dtw_cosine':
+            return 1 - TrajectorySimilarity.dtw(u, v, cosine)
+        elif function == 'dtw_jensenshannon':
+            return 1 - TrajectorySimilarity.dtw(u, v, jensenshannon)
         elif function == 'lcss':
             pass
         else:
             return 1 - TrajectorySimilarity.hausdorff(u, v)
 
-    def dtw(u, v):
-        distance, path = fastdtw(u, v, dist=euclidean)
+    def dtw(u, v, d):
+        distance, path = fastdtw(u, v, dist=d)
         return distance
 
     def hausdorff(u, v):
@@ -88,10 +97,13 @@ class TrajectorySimilarity(object):
                 break
 
             distance = 0
+            ntimes = 0
             for u_key, values1 in traj_data_dict[u][0].items():
                 for v_key, values2 in traj_data_dict[v][0].items():
                     distance += self.similarity_function(np.vstack(values1).T, function, np.vstack(values2).T)
+                    ntimes += 1
 
+            distance /= ntimes
             D[i][j] = distance
             D[j][i] = distance
 
@@ -155,7 +167,7 @@ class TrajectorySimilarity(object):
 
                 #self.update_dist(function, traj_data_dict, u, v, D, i, j)
 
-    
+
                 for u_key, values1 in traj_data_dict[u][0].items():
                     prod_x = partial(self.similarity_function, function=function, u=np.vstack(values1).T)
                     r = p.map_async(prod_x, traj_data_dict[v][0].values(), callback=value.append)
@@ -173,7 +185,7 @@ class TrajectorySimilarity(object):
 
                 D[i, j] = distance
                 D[j, i] = distance
-                
+
                 '''
         if threads:
             pool.close()
