@@ -54,7 +54,7 @@ def print_to_pandas(data_hash, output):
         with open(output, "a") as text_file:
             for k, v in data_hash.items():
                 for value in v:
-                    text_file.write(k + " " + value  + " " + 1.0 + '\n')
+                    text_file.write(k + " " + value  + " 1.0" + '\n')
 
 """
     print('dentro')
