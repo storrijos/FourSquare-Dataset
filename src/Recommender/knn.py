@@ -21,6 +21,7 @@ from surprise.accuracy import rmse
 import click
 from os import path
 import math
+from collections import defaultdict
 
 class KNN():
 
@@ -72,6 +73,32 @@ class KNN():
         except ValueError:  # item was not part of the trainset
             return 0
 
+    def get_top_n(self, predictions, n=10):
+        '''Return the top-N recommendation for each user from a set of predictions.
+
+        Args:
+            predictions(list of Prediction objects): The list of predictions, as
+                returned by the test method of an algorithm.
+            n(int): The number of recommendation to output for each user. Default
+                is 10.
+
+        Returns:
+        A dict where keys are user (raw) ids and values are lists of tuples:
+            [(raw item id, rating estimation), ...] of size n.
+        '''
+
+        # First map the predictions to each user.
+        top_n = defaultdict(list)
+        for uid, iid, true_r, est, _ in predictions:
+            top_n[uid].append((iid, est))
+
+        # Then sort the predictions for each user and retrieve the k highest ones.
+        for uid, user_ratings in top_n.items():
+            user_ratings.sort(key=lambda x: x[1], reverse=True)
+            top_n[uid] = user_ratings[:n]
+
+        return top_n
+
     def recommender(self, train_file, test_file, k, neighbors, output_file):
 
         #TRAIN
@@ -96,6 +123,16 @@ class KNN():
         #print('test')
         #print(test)
         predictions = algo.test(test)
+
+        top_n = self.get_top_n(predictions, n=10)
+
+        # Print the recommended items for each user
+        print('TOP')
+        for uid, user_ratings in top_n.items():
+            for (iid, rating) in user_ratings:
+                print(uid, iid, rating)
+
+        '''
         rmse(predictions)
 
         #print('TRAINSET2')
@@ -115,6 +152,7 @@ class KNN():
         #'RESULTS'
         df.to_csv(output_file, sep=' ')
 
+        '''
         return algo
 
     def recommend(self, algo, uid, iid):
