@@ -43,8 +43,8 @@ class FPFlockOnline(object):
         self.epsilon = epsilon
         self.mu = mu
         self.delta = delta
-        self.df = pd.DataFrame(columns=['keyFlock', 'begin', 'end', 'traj'])
-        self.df[['keyFlock','begin', 'end']] = self.df[['keyFlock','begin', 'end']].astype('int32')
+        #self.df = pd.DataFrame(columns=['keyFlock', 'begin', 'end', 'traj'])  #c
+        #self.df[['keyFlock','begin', 'end']] = self.df[['keyFlock','begin', 'end']].astype('int32') #c
 
     def getTransactions(maximalDisks):
         newKey = set()
@@ -68,7 +68,8 @@ class FPFlockOnline(object):
 
     def addNewLine(output_file, keyFlock, begin, end, b):
         with open(output_file, "a") as outputFile:
-            output = "KeyFlock: " + str(keyFlock) + " Begin: " + str(begin) + " End " + str(end) + ' ' + str(b) + '\n'
+            #keyFlock, Begin, End, Trajs
+            output = str(keyFlock) + " " + str(begin) + " " + str(end) + " " + str(b) + '\n'
             outputFile.write(output)
 
     def flocks(self, output_file, output1, totalMaximalDisks, keyFlock):
@@ -101,8 +102,11 @@ class FPFlockOnline(object):
                     b.sort()
                     stdin.append('{0}\t{1}\t{2}\t{3}'.format(keyFlock, begin, end, b))
                     elements_in_flock_count += len(b)
-                    #print('IMPRIMO2')
+                    print('IMPRIMO2')
                     FPFlockOnline.addNewLine(output_file, keyFlock, begin, end, b)
+                    #data = {'keyFlock': keyFlock, 'begin': begin, 'end': end, 'traj': str(b)}  # c
+                    #self.df = self.df.append(data, ignore_index=True)  # c
+
                     keyFlock += 1
                     begin = end = now
                 else:
@@ -112,12 +116,12 @@ class FPFlockOnline(object):
                 b = list(members)
                 #print('MEMBERS_IMPRS ' + str(b))
                 b.sort()
-                #print('IMPRIMO3')
+                print('IMPRIMO3')
                 stdin.append('{0}\t{1}\t{2}\t{3}'.format(keyFlock, begin, end, b))
                 FPFlockOnline.addNewLine(output_file, keyFlock, begin, end, b)
 
-                data = {'keyFlock': keyFlock, 'begin': begin, 'end': end, 'traj': str(b)}
-                self.df = self.df.append(data, ignore_index=True)
+                #data = {'keyFlock': keyFlock, 'begin': begin, 'end': end, 'traj': str(b)} #c
+                #self.df = self.df.append(data, ignore_index=True) #c
 
                 elements_in_flock_count += len(b)
                 #print('LONGITUD')
@@ -171,22 +175,19 @@ class FPFlockOnline(object):
         counter = 0
 
         for timestamp in timestamps:
-            print('a')
             output = open('output.dat','w')
             LCMmaximal.disksTimestamp(points, timestamp)
             if not os.path.exists('outputDisk.dat'):
                 continue
-            print('b')
             maximalDisks, diskID = LCMmaximal.maximalDisksTimestamp(timestamp, diskID)
             totalMaximalDisks.update(maximalDisks)
             traj = FPFlockOnline.getTransactions(maximalDisks)
-            print('c')
             counter = counter + 1 + len(traj)
             Utils.progressBar(counter, len(timestamps), bar_length=20)
 
             st = ''                     
             for i in traj:
-                if len(traj[i]) < delta:
+                if len(traj[i]) < self.mu:
                     continue
                 st += (str(traj[i])+'\n')
                 #print('aqui' + st)
@@ -218,14 +219,14 @@ class FPFlockOnline(object):
 
         print('FLOCK')
 
-        neighbors_classified = self.printFinalResultDataFrame(self.df, neighbors_output)
+        #neighbors_classified = self.printFinalResultDataFrame(self.df, neighbors_output) #c
 
-        self.writeEndOfFile(output_file, 'Flocks_avg: ' + str(flocks_avg))
+        #self.writeEndOfFile(output_file, 'Flocks_avg: ' + str(flocks_avg)) #c
         #print("Flocks: ", len(stdin))
         flocks = len(stdin)
         t2 = round(time.time()-t1,3)
         #print("\nTime: ", t2)
-        return neighbors_classified
+        #return neighbors_classified #c
 
     def dataset_to_list_of_lists(self, dataset):
         string_list = list(dataset.traj.values)
@@ -274,7 +275,9 @@ class FPFlockOnline(object):
     """
     def printFinalResultDataFrame(self, df, neighbors_output):
         # Remove Duplicates from DataFrame
+        #print(df)
         df = df.drop_duplicates(subset=['begin', 'end', 'traj']).apply(list)
+
         neighbors_classified = self.clasify_neighbors(self.dataset_to_list_of_lists(df))
         process = ProcessData()
         #return self.dump_to_file(neighbors_classified, neighbors_output)
@@ -312,6 +315,17 @@ def experimentos():
     FPFlockOnline.writeEndOfFile('df_results.txt', df.to_string())
 """
 
+def calculate_flock(filename, output, epsilon, mu, delta):
+    if path.exists(output):
+        print('El fichero ' + str(output) + ' ya existe')
+        return
+    fp = FPFlockOnline(epsilon, mu, delta)
+
+    partial_output = (filename.rsplit('.', 1)[0]).rsplit('/', 1)[-1] + '_partial_traj' + '.txt'
+    # partial_output = 'partial.txt'
+    fp.flockFinder(filename, partial_output, output)
+
+
 def plot_x_y_values(df, x_label, y_label):
     df.plot(x=x_label, y=y_label, marker='.')
     plt.show()
@@ -343,4 +357,3 @@ def flock(filename, output, epsilon, mu, delta):
     #experimentos()
 if __name__ == '__main__':
     flock()
-

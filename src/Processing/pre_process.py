@@ -51,8 +51,11 @@ class ProcessData:
         dataset = dataset.drop(columns=['real_timestamp'])
         dataset[['id', 'item_id', 'timestamp']] = dataset[['id', 'item_id', 'timestamp']].astype('int32')
 
-        #dataset['rating'] = 1  # np.random.randint(1, 5, len(dataset))
-        return dataset
+        data = dataset.groupby(['id', 'item_id'], as_index=False).agg({'rating': 'sum'})
+
+        print(data)
+
+        return data
 
     def st_dbscan_deep_search(elem, list):
         neighbors = []
@@ -109,6 +112,11 @@ class ProcessData:
         dataset = dataset.drop(columns=['item_id'])
         dataset.to_pickle('FlockID.df')
         return dataset
+
+    def loadSimilarityFile(filename):
+        data = pd.read_csv(filename, delim_whitespace=True, header=None)
+        data.columns = ["user_id1", "user_id2", "similarity"]
+        return data
 
     def loadData(filename):
         data = pd.read_csv(filename, delim_whitespace=True, header=None)
