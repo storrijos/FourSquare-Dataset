@@ -33,7 +33,7 @@ import src.Utils.utils as Utils
 import gc
 import os.path
 from os import path
-
+import math
 #Import
 from src.Processing.pre_process import ProcessData
 
@@ -43,8 +43,8 @@ class FPFlockOnline(object):
         self.epsilon = epsilon
         self.mu = mu
         self.delta = delta
-        #self.df = pd.DataFrame(columns=['keyFlock', 'begin', 'end', 'traj'])  #c
-        #self.df[['keyFlock','begin', 'end']] = self.df[['keyFlock','begin', 'end']].astype('int32') #c
+        self.df = pd.DataFrame(columns=['keyFlock', 'begin', 'end', 'traj'])  #c
+        self.df[['keyFlock','begin', 'end']] = self.df[['keyFlock','begin', 'end']].astype('int32') #c
 
     def getTransactions(maximalDisks):
         newKey = set()
@@ -120,8 +120,8 @@ class FPFlockOnline(object):
                 stdin.append('{0}\t{1}\t{2}\t{3}'.format(keyFlock, begin, end, b))
                 FPFlockOnline.addNewLine(output_file, keyFlock, begin, end, b)
 
-                #data = {'keyFlock': keyFlock, 'begin': begin, 'end': end, 'traj': str(b)} #c
-                #self.df = self.df.append(data, ignore_index=True) #c
+                data = {'keyFlock': keyFlock, 'begin': begin, 'end': end, 'traj': str(b)} #c
+                self.df = self.df.append(data, ignore_index=True) #c
 
                 elements_in_flock_count += len(b)
                 #print('LONGITUD')
@@ -217,24 +217,25 @@ class FPFlockOnline(object):
             #print(elements_in_flock_count)
             flocks_avg = elements_in_flock_count / len(stdin)
 
-        print('FLOCK')
-
-        #neighbors_classified = self.printFinalResultDataFrame(self.df, neighbors_output) #c
+        neighbors_classified = self.printFinalResultDataFrame(self.df, neighbors_output) #c
 
         #self.writeEndOfFile(output_file, 'Flocks_avg: ' + str(flocks_avg)) #c
         #print("Flocks: ", len(stdin))
         flocks = len(stdin)
         t2 = round(time.time()-t1,3)
         #print("\nTime: ", t2)
-        #return neighbors_classified #c
+        print(neighbors_classified)
+        return neighbors_classified #c
 
     def dataset_to_list_of_lists(self, dataset):
-        string_list = list(dataset.traj.values)
         result = []
-        for row in string_list:
-            row = row.replace("]", "")
-            row = row.replace("[", "")
-            result.append([int(x) for x in row.split(',')])
+        if not dataset.empty and not math.isnan(dataset.traj):
+            print(dataset.traj)
+            string_list = list(dataset.traj.values)
+            for row in string_list:
+                row = row.replace("]", "")
+                row = row.replace("[", "")
+                result.append([int(x) for x in row.split(',')])
         return result
 
     def deep_search(self, elem, list):
@@ -276,12 +277,13 @@ class FPFlockOnline(object):
     def printFinalResultDataFrame(self, df, neighbors_output):
         # Remove Duplicates from DataFrame
         #print(df)
-        df = df.drop_duplicates(subset=['begin', 'end', 'traj']).apply(list)
+        if not df.empty:
+            df = df.drop_duplicates(subset=['begin', 'end', 'traj']).apply(list)
 
-        neighbors_classified = self.clasify_neighbors(self.dataset_to_list_of_lists(df))
-        process = ProcessData()
-        #return self.dump_to_file(neighbors_classified, neighbors_output)
-        return process.dump_to_file(neighbors_classified, neighbors_output)
+            neighbors_classified = self.clasify_neighbors(self.dataset_to_list_of_lists(df))
+            process = ProcessData()
+            #return self.dump_to_file(neighbors_classified, neighbors_output)
+            return process.dump_to_file(neighbors_classified, neighbors_output)
 
 """
 def experimentos():
@@ -319,12 +321,14 @@ def calculate_flock(filename, output, epsilon, mu, delta):
     if path.exists(output):
         print('El fichero ' + str(output) + ' ya existe')
         return
-    fp = FPFlockOnline(epsilon, mu, delta)
 
     partial_output = (filename.rsplit('.', 1)[0]).rsplit('/', 1)[-1] + '_partial_traj' + '.txt'
+
+    fp = FPFlockOnline(epsilon, mu, delta)
+
     # partial_output = 'partial.txt'
     fp.flockFinder(filename, partial_output, output)
-
+    print(fp.df)
 
 def plot_x_y_values(df, x_label, y_label):
     df.plot(x=x_label, y=y_label, marker='.')

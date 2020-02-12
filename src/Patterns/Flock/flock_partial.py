@@ -13,6 +13,10 @@ class FlockPartial(object):
         similarity = pd.read_csv(similarity_file, delim_whitespace=True, header=None)
         similarity.columns = ["user_id1", "user_id2", "similarity"]
 
+        similarity[['user_id1', 'similarity']].sort_values('similarity', ascending=False).nlargest(k, 'similarity')
+
+        print(similarity)
+
         groups = similarity.groupby('user_id1')['user_id2'].apply(list).to_dict()
         pre_flock_csv_names = {}
 
@@ -20,9 +24,10 @@ class FlockPartial(object):
             users.append(user_id1)
             partial_dataframe = pois_coords_dataset[pois_coords_dataset['id'].isin(users)]
             print(partial_dataframe)
-            partial_dataframe.to_csv(str(user_id1) + 'partial_in.txt', index=False, header=None, sep=' ')
-            partial_dataframe.reset_index()
-            pre_flock_csv_names[str(user_id1) + 'partial_in.txt'] = str(user_id1) + 'partial_out.txt'
+            if not partial_dataframe.empty:
+                partial_dataframe.to_csv('src/Patterns/Flock/' + str(user_id1) + 'partial_in.txt', index=False, header=None, sep=' ')
+                partial_dataframe.reset_index()
+                pre_flock_csv_names[str(user_id1) + 'partial_in.txt'] = str(user_id1) + 'partial_out.txt'
 
         for csv_in, csv_out in pre_flock_csv_names.items():
             FPFlockOnline.calculate_flock(csv_in, csv_out, epsilon, mu, delta)
