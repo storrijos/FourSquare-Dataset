@@ -83,9 +83,11 @@ class TrajectorySimilarity(object):
             with open(output_file, "a") as text_file:
                 for i, item in enumerate(D):
                     if k > len(item):
-                        k = len(item)
-                    idx = np.argpartition(item, range(k))
-                    for neighbor in idx[:k]:
+                        k_aux = len(item) - 1
+                    else:
+                        k_aux = k
+                    idx = np.argpartition(item, range(k_aux))
+                    for neighbor in idx[:k_aux]:
                         if neighbor != i and D[i][neighbor] != 0.0:
                             text_file.write(str(traj_keys[i]) + " " + str(traj_keys[neighbor]) + " " + str(D[i][neighbor]) + '\n')
 
