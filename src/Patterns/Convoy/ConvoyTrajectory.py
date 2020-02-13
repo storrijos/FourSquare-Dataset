@@ -1,11 +1,15 @@
-from TrajectoryParser import TrajectoryParser
-from CMC import CMC
+#from TrajectoryParser import TrajectoryParser
+from src.Patterns.Convoy.TrajectoryParser import TrajectoryParser
+from src.Patterns.Convoy.CMC import CMC
+
+#from CMC import CMC
 from src.Processing.pre_process import ProcessData
 import pandas as pd
 import click
 import os
 import os.path
 from os import path
+import math
 
 def convoy_preprocessDataset(filename):
     dataset = pd.read_csv(filename, delim_whitespace=True, header=None)
@@ -20,12 +24,13 @@ def convoy_preprocessDataset(filename):
     return dataset
 
 def dataset_to_list_of_lists(dataset):
-    string_list = list(dataset.traj.values)
     result = []
-    for row in string_list:
-        # row = row.replace("]", "")
-        # row = row.replace("[", "")
-        result.append([int(x) for x in row.split(',')])
+    if not dataset.empty:
+        string_list = list(dataset.traj.values)
+        for row in string_list:
+            # row = row.replace("]", "")
+            # row = row.replace("[", "")
+            result.append([int(x) for x in row.split(',')])
     return result
 
 def deep_search(elem, list):
@@ -57,9 +62,12 @@ def dump_to_file(neighbors_classified, output):
 
 def printFinalResultDataFrame(df, output):
     # Remove Duplicates from DataFrame
-    df = df.drop_duplicates(subset=['begin', 'end', 'traj']).apply(list)
-    neighbors_classified = clasify_neighbors(dataset_to_list_of_lists(df))
-    return dump_to_file(neighbors_classified, output)
+    print(df.shape[0])
+    if df.shape[0] > 0:
+        df = df.drop_duplicates(subset=['begin', 'end', 'traj']).apply(list)
+
+        neighbors_classified = clasify_neighbors(dataset_to_list_of_lists(df))
+        return dump_to_file(neighbors_classified, output)
 
 def toPandasFormat(res):
     df = pd.DataFrame(columns=['begin', 'end', 'lifetime', 'traj'])
@@ -78,6 +86,24 @@ def toPandasFormat(res):
         df = df.append(data, ignore_index=True)
 
     return df
+
+def convoy_partials(filename, output, minpoints, lifetime, distance_max, partials):
+    if path.exists(output):
+        print('El fichero' + str(output) + 'ya existe')
+        return
+    dataset = convoy_preprocessDataset(filename)
+    parser = TrajectoryParser(filename.rsplit('.', 1)[0] + '_temp_output' + '.csv')
+    # obj_id, t, x, y
+    traj_set = parser.get_traj_set()
+    # minPoints, #lifetime, #distance_max
+    res = CMC.cm_clustering(traj_set, minpoints, lifetime, distance_max, partials)
+    print("\n")
+    printFinalResultDataFrame(toPandasFormat(res), output)
+    if partials:
+        for conv in res:
+            with open(output.rsplit('.', 1)[0] + '_trajectory_output' + '.txt', "a") as text_file:
+                text_file.write(conv.toString())
+            print(conv.toString())
 
 @click.command()
 @click.option('--filename', default='US_NewYork_POIS_Coords_short.txt', help='Dataset.')

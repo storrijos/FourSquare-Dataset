@@ -1,8 +1,13 @@
 #!/usr/bin/env python
 """ generated source for module CMC """
-from STPoint import STPoint
-from DBSCAN import DBSCAN
-from Convoy import Convoy
+#from STPoint import STPoint
+
+from src.Patterns.Convoy.STPoint import STPoint
+from src.Patterns.Convoy.DBSCAN import DBSCAN
+from src.Patterns.Convoy.Convoy import Convoy
+
+#from DBSCAN import DBSCAN
+#from Convoy import Convoy
 from src.Utils.utils import progressBar
 
 class CMC:
@@ -33,10 +38,12 @@ class CMC:
                         tmp_point.append(s)
 
             if len(tmp_point) < m:
-                pass
-                #i += 1 #Check
-                #continue
+                #pass
+                print('salta')
+                i += 1 #Check
+                continue
 
+            print('antes')
             clusters = DBSCAN.dbscan_to_cluster(tmp_point, e, m)
             for c in clusters:
                 snapshot_cluster.append(Convoy(cluster=c.oids))
@@ -44,6 +51,7 @@ class CMC:
             for v in Vs:
                 v.assigned = False
                 for c in snapshot_cluster:
+
                     #print(len(c.intersection(v).cluster))
                     if partials:
                         V_Result.append(v)

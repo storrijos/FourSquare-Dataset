@@ -1,5 +1,10 @@
-import STPoint
-from Cluster import Cluster
+#import STPoint
+
+from src.Patterns.Convoy.STPoint import STPoint
+from src.Patterns.Convoy.Cluster import Cluster
+
+
+#from Cluster import Cluster
 
 class DBSCAN:
     @staticmethod
@@ -37,7 +42,10 @@ class DBSCAN:
     @staticmethod
     def dbscan(datalist, eps, minPts):
         cluster_Id = 1
+        i = 0
         for point in datalist:
+            print(i / (len(datalist)))
+            i += 1
             if point.isUnClassfied():
                 if DBSCAN.expandCluster(datalist, point, cluster_Id, eps, minPts):
                     cluster_Id = cluster_Id + 1

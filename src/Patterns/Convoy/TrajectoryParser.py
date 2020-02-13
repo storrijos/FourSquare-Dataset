@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 """ generated source for module TrajectoryParser """
 import csv
-from Trajectory import Trajectory
-from STPoint import STPoint
+#from Trajectory import Trajectory
+from src.Patterns.Convoy.Trajectory import Trajectory
+from src.Patterns.Convoy.STPoint import STPoint
+#from STPoint import STPoint
 import pandas as pd
 class TrajectoryParser(object):
     """ generated source for class TrajectoryParser """

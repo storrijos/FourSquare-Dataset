@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """ generated source for module Trajectory """
-import STPoint
+#import STPoint
+from src.Patterns.Convoy.STPoint import STPoint
 
 class Trajectory(object):
     """ generated source for class Trajectory """
