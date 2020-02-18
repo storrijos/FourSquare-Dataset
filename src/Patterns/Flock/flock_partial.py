@@ -1,5 +1,6 @@
 
 from os import path
+import os
 import src.Processing.pre_process as ProcessData
 import click
 import pandas as pd
@@ -15,7 +16,7 @@ class FlockPartial(object):
 
         similarity[['user_id1', 'similarity']].sort_values('similarity', ascending=False).nlargest(k, 'similarity')
 
-        print(similarity)
+        #print(similarity)
 
         groups = similarity.groupby('user_id1')['user_id2'].apply(list).to_dict()
         pre_flock_csv_names = {}
@@ -23,14 +24,16 @@ class FlockPartial(object):
         for user_id1, users in groups.items():
             users.append(user_id1)
             partial_dataframe = pois_coords_dataset[pois_coords_dataset['id'].isin(users)]
-            print(partial_dataframe)
+            #print(partial_dataframe)
             if not partial_dataframe.empty:
-                partial_dataframe.to_csv('src/Patterns/Flock/' + str(user_id1) + 'partial_in.txt', index=False, header=None, sep=' ')
+                partial_dataframe.to_csv(os.path.realpath('src/Patterns/Flock/' + str(user_id1) + 'partial_in.txt'), index=False, header=None, sep=' ')
                 partial_dataframe.reset_index()
-                pre_flock_csv_names[str(user_id1) + 'partial_in.txt'] = str(user_id1) + 'partial_out.txt'
+                pre_flock_csv_names[os.path.realpath('src/Patterns/Flock/' + str(user_id1) + 'partial_in.txt')] = 'src/Patterns/Flock/' + str(user_id1) + 'partial_out.txt'
 
         for csv_in, csv_out in pre_flock_csv_names.items():
             FPFlockOnline.calculate_flock(csv_in, csv_out, epsilon, mu, delta)
+            if path.exists(csv_in):
+                os.remove(csv_in)
 
 
 @click.command()

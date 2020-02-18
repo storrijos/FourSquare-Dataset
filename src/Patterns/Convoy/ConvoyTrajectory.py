@@ -62,7 +62,7 @@ def dump_to_file(neighbors_classified, output):
 
 def printFinalResultDataFrame(df, output):
     # Remove Duplicates from DataFrame
-    print(df.shape[0])
+    #print(df.shape[0])
     if df.shape[0] > 0:
         df = df.drop_duplicates(subset=['begin', 'end', 'traj']).apply(list)
 
@@ -97,7 +97,7 @@ def convoy_partials(filename, output, minpoints, lifetime, distance_max, partial
     traj_set = parser.get_traj_set()
     # minPoints, #lifetime, #distance_max
     res = CMC.cm_clustering(traj_set, minpoints, lifetime, distance_max, partials)
-    print("\n")
+    #print("\n")
     printFinalResultDataFrame(toPandasFormat(res), output)
     if partials:
         for conv in res:
@@ -123,7 +123,7 @@ def convoy(filename, output, minpoints, lifetime, distance_max, partials):
     traj_set = parser.get_traj_set()
     # minPoints, #lifetime, #distance_max
     res = CMC.cm_clustering(traj_set, minpoints, lifetime, distance_max, partials)
-    print("\n")
+    #print("\n")
     printFinalResultDataFrame(toPandasFormat(res), output)
     for conv in res:
         with open(output.rsplit('.', 1)[0] + '_trajectory_output' + '.txt', "a") as text_file:

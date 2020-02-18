@@ -23,12 +23,12 @@ class CMC:
         for i in range(len(o)):
             values.append(len(o[i].points))
         time_interval = max(values)
-        print('TIME')
-        print(time_interval)
+        #print('TIME')
+        #print(time_interval)
         i = 0
         for i in range(time_interval):
 
-            progressBar(i, time_interval)
+            #progressBar(i, time_interval)
             V_Next = []
             tmp_point = []
             snapshot_cluster = []
@@ -39,11 +39,11 @@ class CMC:
 
             if len(tmp_point) < m:
                 #pass
-                print('salta')
+                #print('salta')
                 i += 1 #Check
                 continue
 
-            print('antes')
+            #print('antes')
             clusters = DBSCAN.dbscan_to_cluster(tmp_point, e, m)
             for c in clusters:
                 snapshot_cluster.append(Convoy(cluster=c.oids))

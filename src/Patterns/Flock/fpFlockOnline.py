@@ -2,25 +2,25 @@
 # -*- coding: utf-8 -*-
 #
 #  fpFlockOnline.py
-#  
+#
 #  Copyright 2014 Omar Ernesto Cabrera Rosero <omarcabrera@udenar.edu.co>
-#  
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 3 of the License, or
 #  (at your option) any later version.
-#  
+#
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
-#  
+#
 #  You should have received a copy of the GNU General Public License
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-#  
-#  
+#
+#
 
 import src.Patterns.Flock.LCMmaximal as LCMmaximal
 import time
@@ -100,9 +100,9 @@ class FPFlockOnline(object):
                 elif end-begin >= delta - 1:
                     b = list(members)
                     b.sort()
-                    stdin.append('{0}\t{1}\t{2}\t{3}'.format(keyFlock, begin, end, b))
+                    #stdin.append('{0}\t{1}\t{2}\t{3}'.format(keyFlock, begin, end, b))
                     elements_in_flock_count += len(b)
-                    print('IMPRIMO2')
+                    #print('IMPRIMO2')
                     FPFlockOnline.addNewLine(output_file, keyFlock, begin, end, b)
                     #data = {'keyFlock': keyFlock, 'begin': begin, 'end': end, 'traj': str(b)}  # c
                     #self.df = self.df.append(data, ignore_index=True)  # c
@@ -116,8 +116,8 @@ class FPFlockOnline(object):
                 b = list(members)
                 #print('MEMBERS_IMPRS ' + str(b))
                 b.sort()
-                print('IMPRIMO3')
-                stdin.append('{0}\t{1}\t{2}\t{3}'.format(keyFlock, begin, end, b))
+                #print('IMPRIMO3')
+                #stdin.append('{0}\t{1}\t{2}\t{3}'.format(keyFlock, begin, end, b))
                 FPFlockOnline.addNewLine(output_file, keyFlock, begin, end, b)
 
                 data = {'keyFlock': keyFlock, 'begin': begin, 'end': end, 'traj': str(b)} #c
@@ -136,11 +136,15 @@ class FPFlockOnline(object):
         global stdin
         global delta
         global keyFlock
-               
+
         LCMmaximal.epsilon = self.epsilon
         LCMmaximal.mu = self.mu
         delta = self.delta
         LCMmaximal.precision = 0.001
+
+        #print(filename)
+        #print(output_file)
+        #print(neighbors_output)
 
 
         ProcessData.flock_preprocessDataset(self, filename)
@@ -159,7 +163,7 @@ class FPFlockOnline(object):
         gc.collect()
 
         timestamps = list(map(int, points.keys()))
-        print('LEN' + str(len(timestamps)))
+        #print('LEN' + str(len(timestamps)))
         #print('timestamps: ' + str(timestamps))
         timestamps.sort()
 
@@ -183,9 +187,9 @@ class FPFlockOnline(object):
             totalMaximalDisks.update(maximalDisks)
             traj = FPFlockOnline.getTransactions(maximalDisks)
             counter = counter + 1 + len(traj)
-            Utils.progressBar(counter, len(timestamps), bar_length=20)
+            #Utils.progressBar(counter, len(timestamps), bar_length=20)
 
-            st = ''                     
+            st = ''
             for i in traj:
                 if len(traj[i]) < self.mu:
                     continue
@@ -195,11 +199,11 @@ class FPFlockOnline(object):
             output.write(st)
             output.close()
 
-            if os.path.getsize('output.dat') == 0:
+            if os.path.exists('output.dat') and os.path.getsize('output.dat') == 0:
                 continue
 
-            os.system("./fim_closed output.dat " + str(LCMmaximal.mu) + " output.mfi > /dev/null")
-                          
+            os.system('src/Patterns/Flock/' + "fim_closed output.dat " + str(LCMmaximal.mu) + " output.mfi > /dev/null")
+
             if os.path.exists('output.mfi'):
                 output1 = open('output.mfi','r')
                 output2 = open('output.mfi','r')
@@ -224,7 +228,7 @@ class FPFlockOnline(object):
         flocks = len(stdin)
         t2 = round(time.time()-t1,3)
         #print("\nTime: ", t2)
-        print(neighbors_classified)
+        #print(neighbors_classified)
         return neighbors_classified #c
 
     def dataset_to_list_of_lists(self, dataset):
@@ -328,7 +332,7 @@ def calculate_flock(filename, output, epsilon, mu, delta):
 
     # partial_output = 'partial.txt'
     fp.flockFinder(filename, partial_output, output)
-    print(fp.df)
+    #print(fp.df)
 
 def plot_x_y_values(df, x_label, y_label):
     df.plot(x=x_label, y=y_label, marker='.')

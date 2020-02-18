@@ -218,7 +218,7 @@ def maximalDisksTimestamp(timestamp, diskID):
          os.system('rm outputDisk.mfi')
 
     if os.path.exists('outputDisk.dat'):
-        os.system("./fim_maximal outputDisk.dat 1 outputDisk.mfi")
+        os.system('src/Patterns/Flock/' + "fim_maximal outputDisk.dat 1 outputDisk.mfi")
 
     if os.path.exists('outputDisk.mfi'):
         output1 = open('outputDisk.mfi', 'r')

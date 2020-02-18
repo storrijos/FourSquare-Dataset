@@ -44,7 +44,7 @@ class DBSCAN:
         cluster_Id = 1
         i = 0
         for point in datalist:
-            print(i / (len(datalist)))
+            #print(i / (len(datalist)))
             i += 1
             if point.isUnClassfied():
                 if DBSCAN.expandCluster(datalist, point, cluster_Id, eps, minPts):
@@ -105,6 +105,3 @@ class DBSCAN:
             return False
         else:
             return True
-
-
-
