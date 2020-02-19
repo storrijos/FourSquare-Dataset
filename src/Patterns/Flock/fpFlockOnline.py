@@ -73,7 +73,6 @@ class FPFlockOnline(object):
             outputFile.write(output)
 
     def flocks(self, output_file, output1, totalMaximalDisks, keyFlock):
-        print('LLAMADA')
         elements_in_flock_count = 0
         lines = output1.readlines()
         for line in lines:
@@ -83,9 +82,6 @@ class FPFlockOnline(object):
             array.sort()
             if len(array) < delta:
                 continue
-            print('LLEGA3')
-            print(array)
-            print(totalMaximalDisks)
             members = totalMaximalDisks[int(str(array[0]))].members
             begin = totalMaximalDisks[int(str(array[0]))].timestamp
             #print('ELEMENTOS ' + str(members) + ' ' + str(begin))
@@ -186,8 +182,6 @@ class FPFlockOnline(object):
             if not os.path.exists('outputDisk.dat'):
                 continue
             maximalDisks, diskID = LCMmaximal.maximalDisksTimestamp(timestamp, diskID)
-            print('MAXIMAL')
-            print(maximalDisks)
             totalMaximalDisks.update(maximalDisks)
             traj = FPFlockOnline.getTransactions(maximalDisks)
             counter = counter + 1 + len(traj)
@@ -201,24 +195,16 @@ class FPFlockOnline(object):
                 #print('aqui' + st)
             #print('ST ' + st)
             output.write(st)
-            print('ESCRIBO')
             print(st)
             output.close()
 
 
             if os.path.exists('output.dat') and os.path.getsize('output.dat') == 0:
-                print('llega')
                 continue
-            print('LLEGA')
             os.system("./fim_closed output.dat " + str(LCMmaximal.mu) + " output.mfi > /dev/null")
-            print('LLEGA3')
             if os.path.exists('output.mfi'):
-                print('LLEGA2')
-
                 output1 = open('output.mfi','r')
                 output2 = open('output.mfi','r')
-                print('OUTPUT.MFI')
-                print(output2.readlines())
                 stdin, keyFlock, elems = FPFlockOnline.flocks(self, output_file, output1, totalMaximalDisks, keyFlock)
                 elements_in_flock_count += elems
                 #print('ELEMENTOS')
