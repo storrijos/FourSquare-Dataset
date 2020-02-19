@@ -5,6 +5,7 @@ import src.Processing.pre_process as ProcessData
 import click
 import pandas as pd
 import src.Patterns.Flock.fpFlockOnline as FPFlockOnline
+import glob
 
 class FlockPartial(object):
 
@@ -16,7 +17,7 @@ class FlockPartial(object):
 
         similarity[['user_id1', 'similarity']].sort_values('similarity', ascending=False).nlargest(k, 'similarity')
 
-        #print(similarity)
+        print(similarity)
 
         groups = similarity.groupby('user_id1')['user_id2'].apply(list).to_dict()
         pre_flock_csv_names = {}
@@ -28,13 +29,20 @@ class FlockPartial(object):
             if not partial_dataframe.empty:
                 partial_dataframe.to_csv(os.path.realpath('src/Patterns/Flock/' + str(user_id1) + 'partial_in.txt'), index=False, header=None, sep=' ')
                 partial_dataframe.reset_index()
-                pre_flock_csv_names[os.path.realpath('src/Patterns/Flock/' + str(user_id1) + 'partial_in.txt')] = 'src/Patterns/Flock/' + str(user_id1) + 'partial_out.txt'
+                pre_flock_csv_names[os.path.realpath('src/Patterns/Flock/' + str(user_id1) + 'partial_in.txt')] = str(user_id1) + 'partial_out.txt'
 
         for csv_in, csv_out in pre_flock_csv_names.items():
             FPFlockOnline.calculate_flock(csv_in, csv_out, epsilon, mu, delta)
             if path.exists(csv_in):
                 os.remove(csv_in)
 
+        with open(output, "wb") as outfile:
+            read_files = glob.glob("*out.txt")
+            print(read_files)
+            for f in read_files:
+                with open(f, "rb") as infile:
+                    print(infile)
+                    outfile.write(infile.read())
 
 @click.command()
 @click.option('--dataset', default='US_NewYork_POIS_Coords_short.txt', help='Dataset.')

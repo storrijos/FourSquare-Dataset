@@ -81,11 +81,11 @@ class ProcessData:
         if path.exists(output):
             print('El fichero ' + str(output) + ' ya existe')
         else:
+            print(output)
             with open(output, "a") as text_file:
                 for key, elems in neighbors_classified.items():
                     for neighbor in elems:
                         text_file.write(str(key) + " " + str(neighbor[0]) + " " + str(neighbor[1]) + '\n')
-
     def dump_to_pandas(self, neighbors_classified):
         index = 0
         final_df = pd.DataFrame()

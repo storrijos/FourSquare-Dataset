@@ -36,7 +36,7 @@ class ConvoyPartial(object):
             if not partial_dataframe.empty:
                 partial_dataframe.to_csv('src/Patterns/Convoy/' + str(user_id1) + 'partial_in.txt', index=False, header=None, sep=' ')
                 partial_dataframe.reset_index()
-                pre_flock_csv_names[str(user_id1) + 'partial_in.txt'] = 'src/Patterns/Convoy/' + str(user_id1) + 'partial_out.txt'
+                pre_flock_csv_names[str(user_id1) + 'partial_in.txt'] = str(user_id1) + 'partial_out.txt'
 
         for csv_in, csv_out in pre_flock_csv_names.items():
             ConvoyTrajectory.convoy_partials('src/Patterns/Convoy/' + csv_in, csv_out, minpoints, lifetime, distance_max, partials)

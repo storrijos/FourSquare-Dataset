@@ -73,7 +73,7 @@ class FPFlockOnline(object):
             outputFile.write(output)
 
     def flocks(self, output_file, output1, totalMaximalDisks, keyFlock):
-        #print('LLAMADA')
+        print('LLAMADA')
         elements_in_flock_count = 0
         lines = output1.readlines()
         for line in lines:
@@ -83,7 +83,9 @@ class FPFlockOnline(object):
             array.sort()
             if len(array) < delta:
                 continue
-            #print(array)
+            print('LLEGA3')
+            print(array)
+            print(totalMaximalDisks)
             members = totalMaximalDisks[int(str(array[0]))].members
             begin = totalMaximalDisks[int(str(array[0]))].timestamp
             #print('ELEMENTOS ' + str(members) + ' ' + str(begin))
@@ -184,6 +186,8 @@ class FPFlockOnline(object):
             if not os.path.exists('outputDisk.dat'):
                 continue
             maximalDisks, diskID = LCMmaximal.maximalDisksTimestamp(timestamp, diskID)
+            print('MAXIMAL')
+            print(maximalDisks)
             totalMaximalDisks.update(maximalDisks)
             traj = FPFlockOnline.getTransactions(maximalDisks)
             counter = counter + 1 + len(traj)
@@ -191,24 +195,30 @@ class FPFlockOnline(object):
 
             st = ''
             for i in traj:
-                if len(traj[i]) < self.mu:
+                if int(len(traj[i])) < self.mu:
                     continue
                 st += (str(traj[i])+'\n')
                 #print('aqui' + st)
             #print('ST ' + st)
             output.write(st)
+            print('ESCRIBO')
+            print(st)
             output.close()
 
+
             if os.path.exists('output.dat') and os.path.getsize('output.dat') == 0:
+                print('llega')
                 continue
-
-            os.system('src/Patterns/Flock/' + "fim_closed output.dat " + str(LCMmaximal.mu) + " output.mfi > /dev/null")
-
+            print('LLEGA')
+            os.system("./fim_closed output.dat " + str(LCMmaximal.mu) + " output.mfi > /dev/null")
+            print('LLEGA3')
             if os.path.exists('output.mfi'):
+                print('LLEGA2')
+
                 output1 = open('output.mfi','r')
                 output2 = open('output.mfi','r')
-                #print('OUTPUT.MFI')
-                #print(output2.readlines())
+                print('OUTPUT.MFI')
+                print(output2.readlines())
                 stdin, keyFlock, elems = FPFlockOnline.flocks(self, output_file, output1, totalMaximalDisks, keyFlock)
                 elements_in_flock_count += elems
                 #print('ELEMENTOS')
@@ -233,8 +243,7 @@ class FPFlockOnline(object):
 
     def dataset_to_list_of_lists(self, dataset):
         result = []
-        if not dataset.empty and not math.isnan(dataset.traj):
-            print(dataset.traj)
+        if not dataset.empty:
             string_list = list(dataset.traj.values)
             for row in string_list:
                 row = row.replace("]", "")
@@ -283,7 +292,7 @@ class FPFlockOnline(object):
         #print(df)
         if not df.empty:
             df = df.drop_duplicates(subset=['begin', 'end', 'traj']).apply(list)
-
+            print(df)
             neighbors_classified = self.clasify_neighbors(self.dataset_to_list_of_lists(df))
             process = ProcessData()
             #return self.dump_to_file(neighbors_classified, neighbors_output)
