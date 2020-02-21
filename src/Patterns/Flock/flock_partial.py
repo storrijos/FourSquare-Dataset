@@ -48,7 +48,9 @@ class FlockPartial(object):
             if path.exists(csv_in.rsplit('.', 1)[0] + '_partial_traj' + '.txt'):
                 os.remove(csv_in.rsplit('.', 1)[0] + '_partial_traj' + '.txt')
 
-        with open(output, "wb") as outfile:
+        #print("output file -->" + output)
+        #print("output file -->" + path.realpath(output))
+        with open(path.realpath(output), "wb") as outfile:
             read_files = glob.glob("*out.txt")
             for f in read_files:
                 with open(f, "rb") as infile:

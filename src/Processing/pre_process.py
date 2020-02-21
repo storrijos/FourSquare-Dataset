@@ -53,7 +53,7 @@ class ProcessData:
 
         data = dataset.groupby(['id', 'item_id'], as_index=False).agg({'rating': 'sum'})
 
-        print(data)
+        #print(data)
 
         return data
 
@@ -103,6 +103,7 @@ class ProcessData:
 
     def flock_partial_preprocessDataset(self, filename):
         #find_path()
+        #print("Reading with pandas " + filename + " --> " + os.path.realpath(filename))
         dataset = pd.read_csv(filename, delim_whitespace=True, header=None)
         dataset.columns = ["id", "item_id", "latitude", "longitude", "real_timestamp"]
         dataset.sort_values(['id', 'real_timestamp'], ascending=[True, True], inplace=True)
@@ -114,6 +115,7 @@ class ProcessData:
 
     def flock_preprocessDataset(self, filename):
         #find_path()
+        #print("Reading with pandas " + filename + " --> " + os.path.realpath(filename))
         dataset = pd.read_csv(filename, delim_whitespace=True, header=None)
         dataset.columns = ["id", "item_id", "latitude", "longitude", "real_timestamp"]
         dataset.sort_values(['id', 'real_timestamp'], ascending=[True, True], inplace=True)
