@@ -12,7 +12,7 @@ import glob
 class ConvoyPartial(object):
 
     def convoy_partial(self, dataset, similarity_file, k, output, minpoints, lifetime, distance_max, partials):
-        pois_coords_dataset = ProcessData.ProcessData.flock_preprocessDataset(self, dataset)
+        pois_coords_dataset = ProcessData.ProcessData.flock_partial_preprocessDataset(self, dataset)
 
         similarity = pd.read_csv(similarity_file, delim_whitespace=True, header=None)
         similarity.columns = ["user_id1", "user_id2", "similarity"]
@@ -32,11 +32,10 @@ class ConvoyPartial(object):
         for user_id1, users in groups.items():
             users.append(user_id1)
             partial_dataframe = pois_coords_dataset[pois_coords_dataset['id'].isin(users)]
-            #print(partial_dataframe)
             if not partial_dataframe.empty:
                 partial_dataframe.to_csv('src/Patterns/Convoy/' + str(user_id1) + 'partial_in.txt', index=False, header=None, sep=' ')
                 partial_dataframe.reset_index()
-                pre_flock_csv_names[str(user_id1) + 'partial_in.txt'] = str(user_id1) + 'partial_out.txt'
+                pre_flock_csv_names[str(user_id1) + 'partial_in.txt'] = 'src/Patterns/Convoy/' + str(user_id1) + 'partial_out.txt'
 
         for csv_in, csv_out in pre_flock_csv_names.items():
             ConvoyTrajectory.convoy_partials('src/Patterns/Convoy/' + csv_in, csv_out, minpoints, lifetime, distance_max, partials)
@@ -47,10 +46,8 @@ class ConvoyPartial(object):
 
         with open(output, "wb") as outfile:
             read_files = glob.glob("./src/Patterns/Convoy/*out.txt")
-            print(read_files)
             for f in read_files:
                 with open(f, "rb") as infile:
-                    print(infile)
                     outfile.write(infile.read())
 
 @click.command()

@@ -10,6 +10,16 @@ import glob
 class FlockPartial(object):
 
     def flock_partial(self, dataset, similarity_file, k, output, epsilon, mu, delta):
+
+        ## Remove .mfi
+        read_files = glob.glob("./src/Patterns/Flock/*.mfi")
+        for f in read_files:
+            os.remove(f)
+        #Remove .dat
+        read_files = glob.glob("./src/Patterns/Flock/*.dat")
+        for f in read_files:
+            os.remove(f)
+
         pois_coords_dataset = ProcessData.ProcessData.flock_preprocessDataset(self, dataset)
 
         similarity = pd.read_csv(similarity_file, delim_whitespace=True, header=None)
@@ -17,7 +27,7 @@ class FlockPartial(object):
 
         similarity[['user_id1', 'similarity']].sort_values('similarity', ascending=False).nlargest(k, 'similarity')
 
-        print(similarity)
+        #print(similarity)
 
         groups = similarity.groupby('user_id1')['user_id2'].apply(list).to_dict()
         pre_flock_csv_names = {}
@@ -35,14 +45,16 @@ class FlockPartial(object):
             FPFlockOnline.calculate_flock(csv_in, csv_out, epsilon, mu, delta)
             if path.exists(csv_in):
                 os.remove(csv_in)
+            if path.exists(csv_in.rsplit('.', 1)[0] + '_partial_traj' + '.txt'):
+                os.remove(csv_in.rsplit('.', 1)[0] + '_partial_traj' + '.txt')
 
         with open(output, "wb") as outfile:
             read_files = glob.glob("*out.txt")
-            print(read_files)
             for f in read_files:
                 with open(f, "rb") as infile:
-                    print(infile)
                     outfile.write(infile.read())
+            for f in read_files:
+                os.remove(f)
 
 @click.command()
 @click.option('--dataset', default='US_NewYork_POIS_Coords_short.txt', help='Dataset.')

@@ -101,6 +101,17 @@ class ProcessData:
         final_df.reset_index(drop=True)
         return final_df
 
+    def flock_partial_preprocessDataset(self, filename):
+        #find_path()
+        dataset = pd.read_csv(filename, delim_whitespace=True, header=None)
+        dataset.columns = ["id", "item_id", "latitude", "longitude", "real_timestamp"]
+        dataset.sort_values(['id', 'real_timestamp'], ascending=[True, True], inplace=True)
+        #dataset['timestamp'] = dataset.groupby(['id']).cumcount()
+        dataset[['id', 'item_id', 'real_timestamp']] = dataset[['id', 'item_id', 'real_timestamp']].astype('int32')
+        dataset[['latitude', 'longitude']] = dataset[['latitude', 'longitude']].astype('float32')
+        dataset.to_pickle('Flock_partialID.df')
+        return dataset
+
     def flock_preprocessDataset(self, filename):
         #find_path()
         dataset = pd.read_csv(filename, delim_whitespace=True, header=None)

@@ -39,11 +39,9 @@ class CMC:
 
             if len(tmp_point) < m:
                 #pass
-                #print('salta')
                 i += 1 #Check
                 continue
 
-            #print('antes')
             clusters = DBSCAN.dbscan_to_cluster(tmp_point, e, m)
             for c in clusters:
                 snapshot_cluster.append(Convoy(cluster=c.oids))
@@ -52,7 +50,6 @@ class CMC:
                 v.assigned = False
                 for c in snapshot_cluster:
 
-                    #print(len(c.intersection(v).cluster))
                     if partials:
                         V_Result.append(v)
                     if len(c.intersection(v).cluster) >= m:
