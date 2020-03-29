@@ -53,7 +53,7 @@ class ProcessData:
 
         data = dataset.groupby(['id', 'item_id'], as_index=False).agg({'rating': 'sum'})
 
-        print(data)
+        #print(data)
 
         return data
 
@@ -74,14 +74,14 @@ class ProcessData:
             search = ProcessData.st_dbscan_deep_search(elem, list)
             if search != None:
                 dict[elem] = search
-        print(dict)
+        #print(dict)
         return dict
 
     def dump_to_file(self, neighbors_classified, output):
         if path.exists(output):
             print('El fichero ' + str(output) + ' ya existe')
         else:
-            print(output)
+            #print(output)
             with open(output, "a") as text_file:
                 for key, elems in neighbors_classified.items():
                     for neighbor in elems:
@@ -103,6 +103,7 @@ class ProcessData:
 
     def flock_partial_preprocessDataset(self, filename):
         #find_path()
+        #print("Reading with pandas " + filename + " --> " + os.path.realpath(filename))
         dataset = pd.read_csv(filename, delim_whitespace=True, header=None)
         dataset.columns = ["id", "item_id", "latitude", "longitude", "real_timestamp"]
         dataset.sort_values(['id', 'real_timestamp'], ascending=[True, True], inplace=True)
@@ -114,6 +115,7 @@ class ProcessData:
 
     def flock_preprocessDataset(self, filename):
         #find_path()
+        #print("Reading with pandas " + filename + " --> " + os.path.realpath(filename))
         dataset = pd.read_csv(filename, delim_whitespace=True, header=None)
         dataset.columns = ["id", "item_id", "latitude", "longitude", "real_timestamp"]
         dataset.sort_values(['id', 'real_timestamp'], ascending=[True, True], inplace=True)
@@ -182,7 +184,7 @@ class ProcessData:
         rows_array = {}
         dataset = ProcessData.loadData(input_data)
 
-        print(dataset)
+        #print(dataset)
         previous_timestamp = dataset['timestamp'].iloc[0]
 
 #traj_dict = {3: {1: [[lat.....], [long....]], 2: [[lat.....], [long....]]}, ...}
@@ -216,7 +218,7 @@ class ProcessData:
                 rows_array[user_id][0][1] = longitude
                 previous_timestamp = item['timestamp']
 
-        print(rows_array)
+        #print(rows_array)
         for key, value in rows_array.items():
             rows_array[key] = [rows_array[key]]
 

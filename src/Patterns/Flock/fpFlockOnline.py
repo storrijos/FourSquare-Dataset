@@ -195,7 +195,7 @@ class FPFlockOnline(object):
                 #print('aqui' + st)
             #print('ST ' + st)
             output.write(st)
-            print(st)
+            #print(st)
             output.close()
 
 
@@ -278,7 +278,7 @@ class FPFlockOnline(object):
         #print(df)
         if not df.empty:
             df = df.drop_duplicates(subset=['begin', 'end', 'traj']).apply(list)
-            print(df)
+            #print(df)
             neighbors_classified = self.clasify_neighbors(self.dataset_to_list_of_lists(df))
             process = ProcessData()
             #return self.dump_to_file(neighbors_classified, neighbors_output)
