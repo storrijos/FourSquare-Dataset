@@ -19,7 +19,7 @@ fujs = FlaskUtilJs(app)
 files_tag = {}
 users_colors = {}
 
-UPLOAD_FOLDER = '/tmp/'
+UPLOAD_FOLDER = 'temp/'
 ALLOWED_EXTENSIONS = {'txt', 'csv'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
