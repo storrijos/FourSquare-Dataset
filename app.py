@@ -68,21 +68,22 @@ def index(neighbor_id=None):
             similarity = None
             for file in files:
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                filename_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(filename_path)
 
                 ###Read number of columns
-                infile = open(filename, 'r')
+                infile = open(filename_path, 'r')
                 firstLine = infile.readline()
                 number_of_columns = len(firstLine.split())
 
                 if number_of_columns == 3:
-                    files_uploaded['similarity'] = filename
+                    files_uploaded['similarity'] = filename_path
                     if not tag:
-                        tag = filename
+                        tag = filename_path
                 elif number_of_columns == 5:
-                    files_uploaded['dataset'] = filename
+                    files_uploaded['dataset'] = filename_path
                 else:
-                    files_uploaded['trajs'] = filename
+                    files_uploaded['trajs'] = filename_path
 
             if 'dataset' in files_uploaded and 'trajs' not in files_uploaded:
                 new_name = 'traj' + str(files_uploaded['dataset'])
