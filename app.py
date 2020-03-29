@@ -10,6 +10,7 @@ import os
 from werkzeug.utils import secure_filename
 import pandas as pd
 from src.Map.traj_plot import plot_k_trajs_web
+from src.Processing.pre_process import ProcessData
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -83,9 +84,21 @@ def index(neighbor_id=None):
                 else:
                     files_uploaded['trajs'] = filename
 
-            files_tag[tag] = files_uploaded
-            print(files_tag)
+            if 'dataset' in files_uploaded and 'trajs' not in files_uploaded:
+                new_name = 'traj' + str(files_uploaded['dataset'])
+                if not os.path.exists(UPLOAD_FOLDER + new_name):
+                    print('ENTRA')
+                    out = ProcessData.loadAndCleanDataset(files_uploaded['dataset'], UPLOAD_FOLDER + new_name)
+                    print(out)
+                    files_uploaded['trajs'] = UPLOAD_FOLDER + new_name
+                else:
+                    files_uploaded['trajs'] = UPLOAD_FOLDER + new_name
 
+                    #files_tag[tag]['trajs'] = new_name
+
+            files_tag[tag] = files_uploaded
+
+            print(files_tag)
             df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], files_uploaded['similarity']), delim_whitespace=True, header=None)
             df.columns = ["user_id", "neighbor_id", "similarity"]
 
@@ -95,7 +108,7 @@ def index(neighbor_id=None):
             neighbors = df[df['user_id'] == neighbor_id][["neighbor_id", "similarity"]].reset_index()
 
             neighbors2 = str(df.to_json(orient='records'))
-
+            
             return render_template('index.html', users=users, neighbors=neighbors, neighbors_json=neighbors2, files=list(files_tag.keys()), users_colors=users_colors)
 
     return render_template('index.html')
@@ -107,6 +120,8 @@ def map(tag, user_id, k):
         neighbors = request.json
         output_url = 'map' + str(user_id) + str(k) + '.html'
 
+        print(files_tag)
+        print(tag)
         trajs = plot_k_trajs_web(user_id, files_tag[tag]['trajs'], files_tag[tag]['similarity'], 'templates/maps/' + output_url, k, users_colors)
         return jsonify(neighbors)
 
@@ -116,4 +131,9 @@ def traj(mapa):
     return render_template('maps/' + str(mapa))
 
 if __name__ == "__main__":
+    app.secret_key = 'super secret key'
+    app.config['SESSION_TYPE'] = 'filesystem'
+
+    app.debug = True
+
     app.run(debug=True)

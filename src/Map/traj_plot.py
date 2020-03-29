@@ -3,6 +3,7 @@ import gmplot
 import click
 import pandas as pd
 from functools import reduce
+import json
 
 class TrajPlot(object):
 
@@ -37,13 +38,18 @@ class TrajPlot(object):
     def plot_traj_web(self, trajs, plotname, users_colors):
 
         gmap = gmplot.GoogleMapPlotter(self.average(trajs[0][1][0]), self.average(trajs[0][1][1]), 11)
-        print(trajs)
+        #print(trajs)
         for tuple in trajs:
             user_id = tuple[0]
             traj = tuple[1]
-            print(traj[0])
+            print('entra')
+            #print(users_colors)
             # now let's plot:
-            gmap.plot(traj[0], traj[1], users_colors[user_id], edge_width=5)
+            if user_id in users_colors:
+                color = users_colors[user_id]
+            else:
+                color = self.get_random_hex()
+            gmap.plot(traj[0], traj[1], color, edge_width=5)
             gmap.scatter(traj[0], traj[1], '#3B0B39', size=200, marker=False)
 
         #marker_locations = []
@@ -89,6 +95,7 @@ def plot_k_trajs_web(user_id, dataset, similarity_dataset, output_file, k, users
     traj_plot = TrajPlot()
     with open(dataset, 'r') as inf:
         traj_data_dict = eval(inf.read())
+    #traj_data_dict = json.loads(dataset)
 
     trajs = []
     users_dataset = read_similarity_dataset(similarity_dataset)
