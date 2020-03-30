@@ -88,19 +88,20 @@ def index(neighbor_id=None):
                 else:
                     files_uploaded['trajs'] = filename_path
 
-            '''
+
             if 'dataset' in files_uploaded and 'trajs' not in files_uploaded:
-                new_name = 'traj' + str(files_uploaded['dataset'])
-                if not os.path.exists(UPLOAD_FOLDER + new_name):
+                new_name = str(files_uploaded['dataset'][:-4]) + "trajs.txt"
+                print(new_name)
+                if not os.path.exists(new_name):
                     print('ENTRA')
-                    out = ProcessData.loadAndCleanDataset(files_uploaded['dataset'], UPLOAD_FOLDER + new_name)
+                    out = ProcessData.loadAndCleanDataset(files_uploaded['dataset'], new_name)
                     print(out)
-                    files_uploaded['trajs'] = UPLOAD_FOLDER + new_name
+                    files_uploaded['trajs'] =  new_name
                 else:
-                    files_uploaded['trajs'] = UPLOAD_FOLDER + new_name
+                    files_uploaded['trajs'] =  new_name
 
                     #files_tag[tag]['trajs'] = new_name
-            '''
+
             files_tag[tag] = files_uploaded
 
             print(files_tag)
