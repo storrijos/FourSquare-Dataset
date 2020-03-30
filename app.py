@@ -19,7 +19,7 @@ fujs = FlaskUtilJs(app)
 files_tag = {}
 users_colors = {}
 
-UPLOAD_FOLDER = 'temp/'
+UPLOAD_FOLDER = '/tmp'
 ALLOWED_EXTENSIONS = {'txt', 'csv'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -67,6 +67,7 @@ def index(neighbor_id=None):
 
             similarity = None
             for file in files:
+                old_name = ""
                 filename = secure_filename(file.filename)
                 filename_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 file.save(filename_path)
@@ -77,16 +78,17 @@ def index(neighbor_id=None):
                 number_of_columns = len(firstLine.split())
 
                 if number_of_columns == 3:
-                    files_uploaded['similarity'] = filename_path
+                    files_uploaded['similarity'] = filename
                     if not tag:
                         tag = filename_path
                 elif number_of_columns == 5:
-                    files_uploaded['dataset'] = filename_path
+                    files_uploaded['dataset'] = filename
+                    old_name = filename
                 else:
-                    files_uploaded['trajs'] = filename_path
+                    files_uploaded['trajs'] = filename
 
             if 'dataset' in files_uploaded and 'trajs' not in files_uploaded:
-                new_name = 'traj' + str(files_uploaded['dataset'])
+                new_name = '/traj' + str(files_uploaded['dataset'])
                 if not os.path.exists(UPLOAD_FOLDER + new_name):
                     print('ENTRA')
                     out = ProcessData.loadAndCleanDataset(files_uploaded['dataset'], UPLOAD_FOLDER + new_name)
