@@ -100,7 +100,8 @@ def plot_k_trajs_web(user_id, dataset, similarity_dataset, output_file, k, users
     trajs = []
     users_dataset = read_similarity_dataset(similarity_dataset)
     users = ascending_order(users_dataset[users_dataset['user1_id'] == user_id].reset_index(), k)
-    print(users_colors)
+    print('LONGITUD')
+    print(len(users))
     for user in users.iterrows():
         trajs.append((int(user[1]['user1_id']), traj_plot.flatten_dict_dicts(traj_data_dict[str(int(user[1]['user1_id']))])))
         trajs.append((int(user[1]['user2_id']), traj_plot.flatten_dict_dicts(traj_data_dict[str(int(user[1]['user2_id']))])))
