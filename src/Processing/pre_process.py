@@ -45,6 +45,12 @@ class ProcessData:
     def recommender_preprocessDataset(filename):
         #find_path()
         dataset = pd.read_csv(filename, delim_whitespace=True, header=None)
+        print(len(dataset.columns))
+        if len(dataset.columns) > 4:
+            dataset.columns = ["id", "item_id", "rating", "real_timestamp", "extra"]
+            dataset = dataset.drop(columns=['extra'])
+        else:
+            dataset.columns = ["id", "item_id", "rating", "real_timestamp"]
         dataset.columns = ["id", "item_id", "rating", "real_timestamp"]
         dataset.sort_values(['id', 'real_timestamp'], ascending=[True, True], inplace=True)
         dataset['timestamp'] = dataset.groupby(['id']).cumcount()
@@ -53,7 +59,7 @@ class ProcessData:
 
         data = dataset.groupby(['id', 'item_id'], as_index=False).agg({'rating': 'sum'})
 
-        #print(data)
+        print(data)
 
         return data
 
@@ -86,6 +92,7 @@ class ProcessData:
                 for key, elems in neighbors_classified.items():
                     for neighbor in elems:
                         text_file.write(str(key) + " " + str(neighbor[0]) + " " + str(neighbor[1]) + '\n')
+
     def dump_to_pandas(self, neighbors_classified):
         index = 0
         final_df = pd.DataFrame()

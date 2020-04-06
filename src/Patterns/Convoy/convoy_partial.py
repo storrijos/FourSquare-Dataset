@@ -49,6 +49,8 @@ class ConvoyPartial(object):
             for f in read_files:
                 with open(f, "rb") as infile:
                     outfile.write(infile.read())
+            for f in read_files:
+                os.remove(f)
 
 @click.command()
 @click.option('--dataset', default='US_NewYork_POIS_Coords_short.txt', help='Dataset.')

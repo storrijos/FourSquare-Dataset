@@ -103,8 +103,9 @@ class STDBscan():
         self.dump_to_file(neighbors, output_file)
         return neighbors
 
-    def stdbscan_plot_clusters(self):
-        pd.DataFrame(self.execute_stdbscan())
+    def stdbscan_plot_clusters(self, any=False):
+        if any:
+            pd.DataFrame(self.execute_stdbscan())
         df = self.undo_projection(self.result)
         self.plot_clusters(df, 'output')
 
@@ -122,6 +123,7 @@ def dbscan(filename, neighbors_classified, spatial_thresold, temporal_threshold,
 
     st = STDBscan()
     st.execute_stdbscan(filename, neighbors_classified, spatial_thresold, temporal_threshold, min_neighbors)
+    #st.stdbscan_plot_clusters()
 
 if __name__ == '__main__':
     dbscan()

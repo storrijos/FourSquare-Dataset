@@ -207,6 +207,7 @@ def disksTimestamp(points, timestamp):
         output.close()
 
 def maximalDisksTimestamp(timestamp, diskID):
+    original_path = os.path.abspath(os.getcwd())
     curent_file_abs_path = os.path.dirname(os.path.realpath(__file__))
     os.chdir(curent_file_abs_path)
 
@@ -241,7 +242,7 @@ def maximalDisksTimestamp(timestamp, diskID):
             diskID += 1
 
     maximalDisks = maximalDisks[timestamp]
-
+    os.chdir(original_path)
     return (maximalDisks, diskID)
 
 def main():

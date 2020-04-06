@@ -17,7 +17,7 @@ from surprise import get_dataset_dir
 import io  # needed because of weird encoding of u.item file
 import pandas as pd
 import os
-from surprise.accuracy import rmse
+from surprise.accuracy import rmse, mae
 import click
 from os import path
 import math
@@ -123,8 +123,9 @@ class KNN():
         #print('test')
         #print(test)
         predictions = algo.test(test)
+        print(predictions)
 
-        top_n = self.get_top_n(predictions, n=10)
+        top_n = self.get_top_n(predictions, n=k)
 
         # Print the recommended items for each user
         print('TOP')
@@ -132,27 +133,35 @@ class KNN():
             for (iid, rating) in user_ratings:
                 print(uid, iid, rating)
 
-        '''
         rmse(predictions)
+        mae(predictions)
+        precisions, recalls = self.precision_recall_at_k(predictions)
+        # Precision and recall can then be averaged over all users
+        print('Precision average')
+        print(sum(prec for prec in precisions.values()) / len(precisions))
+        print('Recall average')
+        print(sum(rec for rec in recalls.values()) / len(recalls))
 
         #print('TRAINSET2')
         self.trainset = algo.trainset
         print('algo: {0}, k = {1}, min_k = {2}'.format(algo.__class__.__name__, algo.k, algo.min_k))
 
         df = pd.DataFrame(predictions, columns=['uid', 'iid', 'rui', 'est', 'details'])
-        df['Iu'] = df.uid.apply(self.get_Iu)
-        df['Ui'] = df.iid.apply(self.get_Ui)
-        df['err'] = abs(df.est - df.rui)
+        df = df.drop(columns=['details'])
+        df = df.drop(columns=['rui'])
+
+        #df['Iu'] = df.uid.apply(self.get_Iu)
+        #df['Ui'] = df.iid.apply(self.get_Ui)
+        #df['err'] = abs(df.est - df.rui)
 
         pd.set_option('display.max_rows', None)
         pd.set_option('display.max_columns', None)
         pd.set_option('display.width', None)
         pd.set_option('display.max_colwidth', -1)
 
+        #print(df)
         #'RESULTS'
         df.to_csv(output_file, sep=' ')
-
-        '''
         return algo
 
     def recommend(self, algo, uid, iid):
@@ -167,6 +176,39 @@ class KNN():
         neighbors_classified = pd.read_csv(filename, delim_whitespace=True, header=None)
         neighbors_classified.columns = ["user_id", "neighbour_id", "weight"]
         return neighbors_classified
+
+    def precision_recall_at_k(self, predictions, k=10, threshold=3.5):
+        '''Return precision and recall at k metrics for each user.'''
+
+        # First map the predictions to each user.
+        user_est_true = defaultdict(list)
+        for uid, _, true_r, est, _ in predictions:
+            user_est_true[uid].append((est, true_r))
+
+        precisions = dict()
+        recalls = dict()
+        for uid, user_ratings in user_est_true.items():
+
+            # Sort user ratings by estimated value
+            user_ratings.sort(key=lambda x: x[0], reverse=True)
+
+            # Number of relevant items
+            n_rel = sum((true_r >= threshold) for (_, true_r) in user_ratings)
+
+            # Number of recommended items in top k
+            n_rec_k = sum((est >= threshold) for (est, _) in user_ratings[:k])
+
+            # Number of relevant and recommended items in top k
+            n_rel_and_rec_k = sum(((true_r >= threshold) and (est >= threshold))
+                                  for (est, true_r) in user_ratings[:k])
+
+            # Precision@K: Proportion of recommended items that are relevant
+            precisions[uid] = n_rel_and_rec_k / n_rec_k if n_rec_k != 0 else 1
+
+            # Recall@K: Proportion of relevant items that are recommended
+            recalls[uid] = n_rel_and_rec_k / n_rel if n_rel != 0 else 1
+
+        return precisions, recalls
 
 @click.command()
 @click.option('--train_file', default='US_NewYork_POIS_Coords_short.txt', help='Dataset.')

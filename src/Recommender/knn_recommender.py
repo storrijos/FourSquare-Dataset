@@ -271,7 +271,6 @@ class AlgoBase(object):
                     print(elem)
 
             result_dict = dict(zip(neighbors_id_result_clean[:k], neighbors_weight_result_clean[:k]))
-            #print(result_dict)
             return result_dict
 
     def get_neighbors(self, iid, k):
@@ -362,7 +361,7 @@ class KNNCustom(SymmetricAlgo):
 
         #neighbors = [(self.sim[x, x2], r) for (x2, r) in self.yr[y]]
         k_neighbors = self.get_neighbors_flock(self.trainset.to_raw_uid(u), self.k)
-        #print('USER: ' + str(self.trainset.to_raw_uid(u)) + 'item' + str(y))
+        print('USER: ' + str(self.trainset.to_raw_uid(u)) + 'item' + str(y))
         #print(k_neighbors)
         #print('##')
 
@@ -377,9 +376,11 @@ class KNNCustom(SymmetricAlgo):
                     #print(self.trainset.to_raw_iid(y))
                     #print('item' + str(item) + 'el_mio' + str(y))
                     if item == y:
-                        #print('entra')
+                        print('entra')
                         sum_ratings += r * sim
                         actual_k += 1
+                        print(r)
+                        print(sum_ratings, actual_k)
 
         if actual_k < self.min_k:
             raise PredictionImpossible('Not enough neighbors.')

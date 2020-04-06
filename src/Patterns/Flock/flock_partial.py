@@ -7,10 +7,11 @@ import pandas as pd
 import src.Patterns.Flock.fpFlockOnline as FPFlockOnline
 import glob
 
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 class FlockPartial(object):
 
     def flock_partial(self, dataset, similarity_file, k, output, epsilon, mu, delta):
-
         ## Remove .mfi
         read_files = glob.glob("./src/Patterns/Flock/*.mfi")
         for f in read_files:
@@ -43,20 +44,25 @@ class FlockPartial(object):
 
         for csv_in, csv_out in pre_flock_csv_names.items():
             FPFlockOnline.calculate_flock(csv_in, csv_out, epsilon, mu, delta)
-            if path.exists(csv_in):
-                os.remove(csv_in)
-            if path.exists(csv_in.rsplit('.', 1)[0] + '_partial_traj' + '.txt'):
-                os.remove(csv_in.rsplit('.', 1)[0] + '_partial_traj' + '.txt')
+            if path.exists('src/Patterns/Flock/' + csv_in):
+                os.remove('src/Patterns/Flock/' + csv_in)
+            if path.exists('src/Patterns/Flock/' + csv_in.rsplit('.', 1)[0] + '_partial_traj' + '.txt'):
+                os.remove('src/Patterns/Flock/' + csv_in.rsplit('.', 1)[0] + '_partial_traj' + '.txt')
 
-        #print("output file -->" + output)
-        #print("output file -->" + path.realpath(output))
+        print(ROOT_DIR)
+        print("output file -->" + output)
+        print("output file2 -->" + path.realpath(output))
         with open(path.realpath(output), "wb") as outfile:
-            read_files = glob.glob("*out.txt")
+            read_files = glob.glob("./src/Patterns/Flock/*out.txt")
+            read_files_in = glob.glob("./src/Patterns/Flock/*in.txt")
             for f in read_files:
                 with open(f, "rb") as infile:
                     outfile.write(infile.read())
             for f in read_files:
                 os.remove(f)
+            for f in read_files_in:
+                os.remove(f)
+
 
 @click.command()
 @click.option('--dataset', default='US_NewYork_POIS_Coords_short.txt', help='Dataset.')
@@ -66,8 +72,6 @@ class FlockPartial(object):
 @click.option('--epsilon', default=0.2, help='Epsilon.')
 @click.option('--mu', default=2, help='Mu.')
 @click.option('--delta', default=0.2, help='Delta.')
-
-
 
 def calculate_flock_partial(dataset, similarity_file, k, output, epsilon, mu, delta):
     if path.exists(output):
