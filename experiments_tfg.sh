@@ -23,10 +23,11 @@ pip3 install -e .
 PRE
 
 do_process=FALSE
-do_neighbors=TRUE
+do_neighbors=FALSE
 do_knn=FALSE
 do_eval=FALSE
 do_posteval=FALSE
+sim_avg=TRUE
 
 traintest_folder="entradas/Rome"
 filenames_train=(romeTempTrain.txt)
@@ -83,7 +84,7 @@ do
   training=$traintest_folder"/"${filename}__post
   training_sim=${training}_sim
   ## These take too much time
-  #python3 src/Patterns/Convoy/ConvoyTrajectory.py --filename $training --output $patternneigh_folder"/"$filename"__"convoy_3_2_0.1_T.txt --minpoints 3 --lifetime 2 --distance_max 0.1 --partials False &
+  python3 src/Patterns/Convoy/ConvoyTrajectory.py --filename $training --output $patternneigh_folder"/"$filename"__"convoy_3_2_0.1_T.txt --minpoints 3 --lifetime 2 --distance_max 0.1 --partials False &
   ## These take too much time (in Tokyo, not so much in Rome)
   #python3 src/Patterns/ST_DBSCAN/main_stdbscan.py --filename $training --neighbors_classified $patternneigh_folder"/"$filename"__"stdbscan_5000_6000_1.txt --spatial_thresold 5000 --temporal_threshold 6000 --min_neighbors 1 &
   #python3 src/Patterns/ST_DBSCAN/main_stdbscan.py --filename $training --neighbors_classified $patternneigh_folder"/"$filename"__"stdbscan_1000_2000_1.txt --spatial_thresold 1000 --temporal_threshold 2000 --min_neighbors 1 &
@@ -101,14 +102,24 @@ do
   ## New ones based on similarity
   #python3 src/Patterns/TrajectorySimilarity/trajectory_similarity.py --dataset $training_sim --output_file $patternneigh_folder"/"$filename"__"trajsim_haus.txt --function "hausdorff" --k 1000000 --threads 1
   #python3 src/Patterns/TrajectorySimilarity/trajectory_similarity.py --dataset $training_sim --output_file $patternneigh_folder"/"$filename"__"trajsim_dtw.txt --function "dtw" --k 1000000 --threads 1
+  wait
   ##Convoy Partials
   #python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"adhoc_3600.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_3_2_0.1_T.txt --k 100 --minpoints 3 --lifetime 2 --distance_max 0.1 --partials False &
   ## Flock Partials
-  python3 src/Patterns/Flock/flock_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"adhoc_3600.txt --output $patternneigh_folder"/"$filename"__"flock_partials_0.2_2_0.2.txt --k 100 --epsilon 0.2 --mu 2 --delta 0.2 &
+  wait
+  #python3 src/Patterns/Flock/flock_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"adhoc_3600.txt --output $patternneigh_folder"/"$filename"__"flock_partials_0.2_2_0.2.txt --k 100 --epsilon 0.2 --mu 2 --delta 0.2 &
+  wait
   #python3 src/Patterns/Flock/flock_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"adhoc_3600.txt --output $patternneigh_folder"/"$filename"__"flock_partials_0.05_4_3600.txt --k 100 --epsilon 0.05 --mu 4 --delta 3600 &
-  # wait
+  wait
 done
 wait
+fi
+
+if [ "$sim_avg" = TRUE ] ; then
+  # obtain neighbors
+  patternneigh_folder="pattern_neigh_circle"
+  echo "Similarity average"
+  python3 src/Processing/stats.py --path $patternneigh_folder
 fi
 
 if [ "$do_knn" = TRUE ] ; then
