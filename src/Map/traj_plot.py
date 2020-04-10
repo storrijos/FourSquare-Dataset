@@ -23,7 +23,7 @@ class TrajPlot(object):
         for traj in trajs:
             # now let's plot:
             gmap.plot(traj[0], traj[1], self.get_random_hex(), edge_width=5)
-            gmap.scatter(traj[0], traj[1], '#3B0B39', size=200, marker=False)
+            gmap.scatter(traj[0], traj[1], '#3B0B39', size=70, marker=False)
 
         #marker_locations = []
         #for traj in trajs:
@@ -39,18 +39,20 @@ class TrajPlot(object):
 
         gmap = gmplot.GoogleMapPlotter(self.average(trajs[0][1][0]), self.average(trajs[0][1][1]), 11)
         #print(trajs)
+        print('estamos')
         for tuple in trajs:
             user_id = tuple[0]
             traj = tuple[1]
             print('entra')
             #print(users_colors)
             # now let's plot:
-            if user_id in users_colors:
-                color = users_colors[user_id]
+            if str(user_id) in users_colors:
+                color = users_colors[str(user_id)]
             else:
+                print('MAL FATAL')
                 color = self.get_random_hex()
             gmap.plot(traj[0], traj[1], color, edge_width=5)
-            gmap.scatter(traj[0], traj[1], '#3B0B39', size=200, marker=False)
+            gmap.scatter(traj[0], traj[1], '#3B0B39', size=70, marker=False)
 
         #marker_locations = []
         #for traj in trajs:

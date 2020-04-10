@@ -40,22 +40,15 @@ def get_random_hex():
 
 def assign_user_color(users):
     for user in users:
-        users_colors[user] = get_random_hex()
+        users_colors[str(user)] = get_random_hex()
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/<int:neighbor_id>')
 def index(neighbor_id=None):
     if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        #file = request.files['file']
 
-        files = request.files.getlist("file")
+        files = request.files.getlist('input-b3[]')
 
-        # if user does not select file, browser also
-        # submit an empty part without filename
         if files[0].filename == '':
             flash('No selected file')
             return redirect(request.url)
@@ -114,7 +107,6 @@ def index(neighbor_id=None):
             neighbors = df[df['user_id'] == neighbor_id][["neighbor_id", "similarity"]].reset_index()
 
             neighbors2 = str(df.to_json(orient='records'))
-            
             return render_template('index.html', users=users, neighbors=neighbors, neighbors_json=neighbors2, files=list(files_tag.keys()), users_colors=users_colors)
 
     return render_template('index.html')
@@ -128,6 +120,7 @@ def map(tag, user_id, k):
 
         print(files_tag)
         print(tag)
+
         trajs = plot_k_trajs_web(user_id, files_tag[tag]['trajs'], files_tag[tag]['similarity'], 'templates/maps/' + output_url, k, users_colors)
         return jsonify(neighbors)
 
