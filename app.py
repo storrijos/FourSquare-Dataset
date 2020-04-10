@@ -108,7 +108,7 @@ def index(neighbor_id=None):
             neighbors2 = str(df.to_json(orient='records'))
             return render_template('index.html', users=users, neighbors=neighbors, neighbors_json=neighbors2, files=list(files_tag.keys()), users_colors=users_colors, tag= tag)
 
-    return render_template('index.html')
+    return render_template('index.html', files=list(files_tag.keys()), tag=tag)
 
 @app.route('/map/<tag>/<int:user_id>/<int:k>', methods=['GET', 'POST'])
 def map(tag, user_id, k):
