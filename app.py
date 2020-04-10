@@ -46,59 +46,58 @@ def assign_user_color(users):
 @app.route('/<int:neighbor_id>')
 def index(neighbor_id=None):
     if request.method == 'POST':
-
+        tag = request.form['tag']
         files = request.files.getlist('input-b3[]')
+        if len(files) > 0:
+            if files[0].filename == '':
+                flash('No selected file')
+                return redirect(request.url)
 
-        if files[0].filename == '':
-            flash('No selected file')
-            return redirect(request.url)
+            if files and allowed_file(files[0].filename):
 
-        if files and allowed_file(files[0].filename):
+                tag = request.form['tag']
+                files_uploaded = {}
 
-            tag = request.form['tag']
-            files_uploaded = {}
+                similarity = None
+                for file in files:
+                    old_name = ""
+                    filename = secure_filename(file.filename)
+                    filename_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    #file.save(filename_path)
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
 
-            similarity = None
-            for file in files:
-                old_name = ""
-                filename = secure_filename(file.filename)
-                filename_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                #file.save(filename_path)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+                    ###Read number of columns
+                    infile = open(filename_path, 'r')
+                    firstLine = infile.readline()
+                    number_of_columns = len(firstLine.split())
 
-                ###Read number of columns
-                infile = open(filename_path, 'r')
-                firstLine = infile.readline()
-                number_of_columns = len(firstLine.split())
-
-                if number_of_columns == 3:
-                    files_uploaded['similarity'] = filename_path
-                    if not tag:
-                        tag = filename_path
-                elif number_of_columns == 5:
-                    files_uploaded['dataset'] = filename_path
-                    old_name = filename
-                else:
-                    files_uploaded['trajs'] = filename_path
+                    if number_of_columns == 3:
+                        files_uploaded['similarity'] = filename_path
+                        if not tag:
+                            tag = filename_path
+                    elif number_of_columns == 5:
+                        files_uploaded['dataset'] = filename_path
+                        old_name = filename
+                    else:
+                        files_uploaded['trajs'] = filename_path
 
 
-            if 'dataset' in files_uploaded and 'trajs' not in files_uploaded:
-                new_name = str(files_uploaded['dataset'][:-4]) + "trajs.txt"
-                print(new_name)
-                if not os.path.exists(new_name):
-                    print('ENTRA')
-                    out = ProcessData.loadAndCleanDataset(files_uploaded['dataset'], new_name)
-                    print(out)
-                    files_uploaded['trajs'] =  new_name
-                else:
-                    files_uploaded['trajs'] =  new_name
+                if 'dataset' in files_uploaded and 'trajs' not in files_uploaded:
+                    new_name = str(files_uploaded['dataset'][:-4]) + "trajs.txt"
+                    print(new_name)
+                    if not os.path.exists(new_name):
+                        out = ProcessData.loadAndCleanDataset(files_uploaded['dataset'], new_name)
+                        print(out)
+                        files_uploaded['trajs'] =  new_name
+                    else:
+                        files_uploaded['trajs'] =  new_name
 
-                    #files_tag[tag]['trajs'] = new_name
+                        #files_tag[tag]['trajs'] = new_name
 
-            files_tag[tag] = files_uploaded
-
-            print(files_tag)
-            df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], files_uploaded['similarity']), delim_whitespace=True, header=None)
+                files_tag[tag] = files_uploaded
+        print(tag)
+        if tag in files_tag:
+            df = pd.read_csv(os.path.join(app.config['UPLOAD_FOLDER'], files_tag[tag]['similarity']), delim_whitespace=True, header=None)
             df.columns = ["user_id", "neighbor_id", "similarity"]
 
             users = df['user_id'].unique()
@@ -107,7 +106,7 @@ def index(neighbor_id=None):
             neighbors = df[df['user_id'] == neighbor_id][["neighbor_id", "similarity"]].reset_index()
 
             neighbors2 = str(df.to_json(orient='records'))
-            return render_template('index.html', users=users, neighbors=neighbors, neighbors_json=neighbors2, files=list(files_tag.keys()), users_colors=users_colors)
+            return render_template('index.html', users=users, neighbors=neighbors, neighbors_json=neighbors2, files=list(files_tag.keys()), users_colors=users_colors, tag= tag)
 
     return render_template('index.html')
 

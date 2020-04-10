@@ -57,9 +57,11 @@
         <div class="container">
             <div class="center">
                 <div class="btn-group btn-group-lg" role="group" aria-label="Horizontal Button Group">
+                    <form action="{{ url_for('index') }}" method="post" id="#">
                     {% for row_index in range(files|count) %}
-                    <button type="button" class="btn btn-info" id="tag_button" name="{{ files[row_index] }}">{{ files[row_index] }}</button>
+                        <button type="submit" class="btn btn-info" name= "tag" id="tag" value="{{ files[row_index] }}">{{ files[row_index] }}</button>
                     {% endfor %}
+                    </form>
                 </div>
 
                 <div class="form_div">
@@ -137,15 +139,13 @@
                         </div>
                         <div id="neighbors_json" hidden>{{ neighbors_json }}</div>
                         <div id="users_colors" hidden>{{ users_colors }}</div>
+                        <div id="tag_value" hidden>{{ tag }}</div>
                         <script>
 
                             $(document).ready(function(){
-                                var button_selected;
+                                var button_selected = $('#tag_value').text()
 
-                                $('.btn-group .btn-info').on('click', function(){
-                                    $(this).addClass('active').siblings().removeClass('active');
-                                    button_selected = $(this).attr('name')
-                                });
+                                console.log(button_selected);
 
                                 $('tr.clickable-row').click(function(){
                                   user_id = parseInt($(this).attr('name'))
