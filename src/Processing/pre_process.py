@@ -45,7 +45,7 @@ class ProcessData:
     def recommender_preprocessDataset(filename):
         #find_path()
         dataset = pd.read_csv(filename, delim_whitespace=True, header=None)
-        print(len(dataset.columns))
+        #print(len(dataset.columns))
         if len(dataset.columns) > 4:
             dataset.columns = ["id", "item_id", "rating", "real_timestamp", "extra"]
             dataset = dataset.drop(columns=['extra'])
@@ -59,7 +59,7 @@ class ProcessData:
 
         data = dataset.groupby(['id', 'item_id'], as_index=False).agg({'rating': 'sum'})
 
-        print(data)
+        #print(data)
 
         return data
 
@@ -84,6 +84,7 @@ class ProcessData:
         return dict
 
     def dump_to_file(self, neighbors_classified, output):
+        print('lega')
         if path.exists(output):
             print('El fichero ' + str(output) + ' ya existe')
         else:

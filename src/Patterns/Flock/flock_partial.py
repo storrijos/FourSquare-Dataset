@@ -12,6 +12,9 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 class FlockPartial(object):
 
     def flock_partial(self, dataset, similarity_file, k, output, epsilon, mu, delta):
+        original_path = os.path.abspath(os.getcwd())
+
+        route = None
         ## Remove .mfi
         read_files = glob.glob("./src/Patterns/Flock/*.mfi")
         for f in read_files:
@@ -21,7 +24,7 @@ class FlockPartial(object):
         for f in read_files:
             os.remove(f)
 
-        pois_coords_dataset = ProcessData.ProcessData.flock_preprocessDataset(self, dataset)
+        pois_coords_dataset = ProcessData.ProcessData.flock_partial_preprocessDataset(self, dataset)
 
         similarity = pd.read_csv(similarity_file, delim_whitespace=True, header=None)
         similarity.columns = ["user_id1", "user_id2", "similarity"]
@@ -43,25 +46,29 @@ class FlockPartial(object):
                 pre_flock_csv_names[os.path.realpath('src/Patterns/Flock/' + str(user_id1) + 'partial_in.txt')] = str(user_id1) + 'partial_out.txt'
 
         for csv_in, csv_out in pre_flock_csv_names.items():
-            FPFlockOnline.calculate_flock(csv_in, csv_out, epsilon, mu, delta)
-            if path.exists('src/Patterns/Flock/' + csv_in):
-                os.remove('src/Patterns/Flock/' + csv_in)
-            if path.exists('src/Patterns/Flock/' + csv_in.rsplit('.', 1)[0] + '_partial_traj' + '.txt'):
-                os.remove('src/Patterns/Flock/' + csv_in.rsplit('.', 1)[0] + '_partial_traj' + '.txt')
+            route = FPFlockOnline.calculate_flock(csv_in, csv_out, epsilon, mu, delta)
+            if path.exists(csv_in):
+                os.remove(csv_in)
+            if path.exists(csv_in.rsplit('.', 1)[0] + '_partial_traj' + '.txt'):
+                os.remove(csv_in.rsplit('.', 1)[0] + '_partial_traj' + '.txt')
 
-        print(ROOT_DIR)
         print("output file -->" + output)
         print("output file2 -->" + path.realpath(output))
-        with open(path.realpath(output), "wb") as outfile:
-            read_files = glob.glob("./src/Patterns/Flock/*out.txt")
-            read_files_in = glob.glob("./src/Patterns/Flock/*in.txt")
+        #os.chdir(route)
+        print(os.getcwd())
+        print('llega')
+        read_files = glob.glob("*out.txt")
+        read_files_in = glob.glob("*in.txt")
+        os.chdir(original_path)
+        print(os.getcwd())
+        with open(output, "wb") as outfile:
             for f in read_files:
-                with open(f, "rb") as infile:
+                with open('src/Patterns/Flock/' + f, "rb") as infile:
                     outfile.write(infile.read())
             for f in read_files:
-                os.remove(f)
+                os.remove('src/Patterns/Flock/' + f)
             for f in read_files_in:
-                os.remove(f)
+                os.remove('src/Patterns/Flock/' + f)
 
 
 @click.command()

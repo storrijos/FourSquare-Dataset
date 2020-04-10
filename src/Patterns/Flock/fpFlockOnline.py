@@ -147,7 +147,7 @@ class FPFlockOnline(object):
 
         ProcessData.flock_preprocessDataset(self, filename)
         dataset = pd.read_pickle('./FlockID.df')
-
+        #print(dataset)
         #os.chdir(str(os.getcwd()) + '/../Patterns/Flock')
 
         if os.path.exists('output.mfi'):
@@ -176,6 +176,10 @@ class FPFlockOnline(object):
         flocks_avg = 0
         counter = 0
 
+        original_path = os.path.abspath(os.getcwd())
+        curent_file_abs_path = os.path.dirname(os.path.realpath(__file__))
+        os.chdir(curent_file_abs_path)
+
         for timestamp in timestamps:
             output = open('output.dat','w')
             LCMmaximal.disksTimestamp(points, timestamp)
@@ -198,7 +202,6 @@ class FPFlockOnline(object):
             #print(st)
             output.close()
 
-
             if os.path.exists('output.dat') and os.path.getsize('output.dat') == 0:
                 continue
             os.system("./fim_closed output.dat " + str(LCMmaximal.mu) + " output.mfi > /dev/null")
@@ -217,6 +220,10 @@ class FPFlockOnline(object):
             #print(elements_in_flock_count)
             flocks_avg = elements_in_flock_count / len(stdin)
 
+        if "partial" not in neighbors_output:
+            os.chdir(original_path)
+        print(os.getcwd())
+
         neighbors_classified = self.printFinalResultDataFrame(self.df, neighbors_output) #c
 
         #self.writeEndOfFile(output_file, 'Flocks_avg: ' + str(flocks_avg)) #c
@@ -225,7 +232,7 @@ class FPFlockOnline(object):
         t2 = round(time.time()-t1,3)
         #print("\nTime: ", t2)
         #print(neighbors_classified)
-        return neighbors_classified #c
+        return neighbors_classified, original_path #c
 
     def dataset_to_list_of_lists(self, dataset):
         result = []
@@ -275,7 +282,6 @@ class FPFlockOnline(object):
     """
     def printFinalResultDataFrame(self, df, neighbors_output):
         # Remove Duplicates from DataFrame
-        #print(df)
         if not df.empty:
             df = df.drop_duplicates(subset=['begin', 'end', 'traj']).apply(list)
             #print(df)
@@ -283,6 +289,8 @@ class FPFlockOnline(object):
             process = ProcessData()
             #return self.dump_to_file(neighbors_classified, neighbors_output)
             return process.dump_to_file(neighbors_classified, neighbors_output)
+
+        print('No neighbors')
 
 """
 def experimentos():
@@ -326,8 +334,9 @@ def calculate_flock(filename, output, epsilon, mu, delta):
     fp = FPFlockOnline(epsilon, mu, delta)
 
     # partial_output = 'partial.txt'
-    fp.flockFinder(filename, partial_output, output)
+    _, route = fp.flockFinder(filename, partial_output, output)
     #print(fp.df)
+    return route
 
 def plot_x_y_values(df, x_label, y_label):
     df.plot(x=x_label, y=y_label, marker='.')

@@ -34,7 +34,6 @@ class DBSCAN:
                 new_cluster = Cluster(new_c_id)
                 new_cluster.oids.append(point.getOid())
                 result.append(new_cluster)
-
         return result
 
 

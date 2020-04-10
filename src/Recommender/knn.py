@@ -122,29 +122,29 @@ class KNN():
         algo.fit_custom(train, neighbors)
         #print('test')
         #print(test)
-        predictions = algo.test(test)
-        print(predictions)
 
+        predictions = algo.test(test, verbose=False)
+        #print(predictions)
         top_n = self.get_top_n(predictions, n=k)
 
         # Print the recommended items for each user
-        print('TOP')
+        #print('TOP')
         for uid, user_ratings in top_n.items():
             for (iid, rating) in user_ratings:
-                print(uid, iid, rating)
-
-        rmse(predictions)
-        mae(predictions)
+                #print(uid, iid, rating)
+                pass
+        #rmse(predictions)
+        #mae(predictions)
         precisions, recalls = self.precision_recall_at_k(predictions)
         # Precision and recall can then be averaged over all users
-        print('Precision average')
-        print(sum(prec for prec in precisions.values()) / len(precisions))
-        print('Recall average')
-        print(sum(rec for rec in recalls.values()) / len(recalls))
+        precision_avg = sum(prec for prec in precisions.values()) / len(precisions)
+        recall_avg = sum(rec for rec in recalls.values()) / len(recalls)
+        #print('Precision: ' + str(precision_avg) + ' Recall: ' + str(recall_avg) + ' RMSE: ' + str(rmse(predictions, verbose=False)) + ' MAE: ' + str(mae(predictions, verbose=False)))
+        print(str(precision_avg) + ',' + str(recall_avg) + ',' + str(rmse(predictions, verbose=False)) + ',' + str(mae(predictions, verbose=False)))
 
         #print('TRAINSET2')
         self.trainset = algo.trainset
-        print('algo: {0}, k = {1}, min_k = {2}'.format(algo.__class__.__name__, algo.k, algo.min_k))
+        #print('algo: {0}, k = {1}, min_k = {2}'.format(algo.__class__.__name__, algo.k, algo.min_k))
 
         df = pd.DataFrame(predictions, columns=['uid', 'iid', 'rui', 'est', 'details'])
         df = df.drop(columns=['details'])
@@ -168,9 +168,9 @@ class KNN():
         # we can now query for specific predicions
         #uid = 31  # raw user id
         #iid = 4244  # raw item id
-        print('Prediction')
+        #print('Prediction')
         # get a prediction for specific users and items.
-        return algo.predict(uid, iid, r_ui=1, verbose=True)
+        return algo.predict(uid, iid, r_ui=1, verbose=False)
 
     def prepareCSV(self, filename):
         neighbors_classified = pd.read_csv(filename, delim_whitespace=True, header=None)

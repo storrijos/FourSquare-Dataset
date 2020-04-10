@@ -22,7 +22,10 @@ class CMC:
         values = []
         for i in range(len(o)):
             values.append(len(o[i].points))
-        time_interval = max(values)
+        if values:
+            time_interval = max(values)
+        else:
+            time_interval = 0
         #print('TIME')
         #print(time_interval)
         i = 0
@@ -39,7 +42,7 @@ class CMC:
 
             if len(tmp_point) < m:
                 #pass
-                i += 1 #Check
+                #i += 1 #Check
                 continue
 
             clusters = DBSCAN.dbscan_to_cluster(tmp_point, e, m)
@@ -49,8 +52,7 @@ class CMC:
             for v in Vs:
                 v.assigned = False
                 for c in snapshot_cluster:
-
-                    if partials:
+                    if partials is True:
                         V_Result.append(v)
                     if len(c.intersection(v).cluster) >= m:
                         v = c.intersection(v)

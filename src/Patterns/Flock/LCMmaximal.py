@@ -111,7 +111,6 @@ def calculateDisks(p1, p2):
     X = p1_x - p2_x
     Y = p1_y - p2_y
     D2 = math.pow(X, 2) + math.pow(Y, 2)
-
     if (D2 == 0):
         return []
 
@@ -179,7 +178,6 @@ def disksTimestamp(points, timestamp):
 
         treeFrame = ss.cKDTree(frame)
         pointsNearestFrame = treeFrame.query_ball_point([point.x,point.y], epsilon+precision)
-
         for i in pointsNearestFrame:
             p2 = pointsFrame[i]
             if point == p2:
@@ -207,9 +205,6 @@ def disksTimestamp(points, timestamp):
         output.close()
 
 def maximalDisksTimestamp(timestamp, diskID):
-    original_path = os.path.abspath(os.getcwd())
-    curent_file_abs_path = os.path.dirname(os.path.realpath(__file__))
-    os.chdir(curent_file_abs_path)
 
     """This method return the maximal disks per timestamp with LCM"""
     maximalDisks = {}
@@ -242,7 +237,6 @@ def maximalDisksTimestamp(timestamp, diskID):
             diskID += 1
 
     maximalDisks = maximalDisks[timestamp]
-    os.chdir(original_path)
     return (maximalDisks, diskID)
 
 def main():

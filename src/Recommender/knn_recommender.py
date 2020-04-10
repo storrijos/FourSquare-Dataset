@@ -84,7 +84,6 @@ class AlgoBase(object):
             - Some additional details about the prediction that might be useful
               for later analysis.
         """
-
         # Convert raw ids to inner ids
         try:
             iuid = self.trainset.to_inner_uid(uid)
@@ -106,7 +105,6 @@ class AlgoBase(object):
             #print('ID:' + str(iuid) + 'ITEM_ID ' + str(iiid))
 
             #print('llamo')
-
             est = self.estimate(iuid, iiid)
 
             #print('ESTIMACION' + str(est))
@@ -197,8 +195,6 @@ class AlgoBase(object):
         method_name = self.bsl_options.get('method', 'als')
 
         try:
-            if getattr(self, 'verbose', False):
-                print('Estimating biases using', method_name + '...')
             self.bu, self.bi = method[method_name](self)
             return self.bu, self.bi
         except KeyError:
@@ -242,11 +238,7 @@ class AlgoBase(object):
             args += [self.trainset.global_mean, bx, by, shrinkage]
 
         try:
-            if getattr(self, 'verbose', False):
-                print('Computing the {0} similarity matrix...'.format(name))
             sim = construction_func[name](*args)
-            if getattr(self, 'verbose', False):
-                print('Done computing similarity matrix.')
             return sim
         except KeyError:
             raise NameError('Wrong sim name ' + name + '. Allowed values ' +
@@ -268,7 +260,8 @@ class AlgoBase(object):
                     neighbors_id_result_clean.append(elem)
                     neighbors_weight_result_clean.append(weight)
                 except ValueError:
-                    print(elem)
+                    return
+                    #print(elem)
 
             result_dict = dict(zip(neighbors_id_result_clean[:k], neighbors_weight_result_clean[:k]))
             return result_dict
@@ -310,7 +303,7 @@ class SymmetricAlgo(AlgoBase):
     reversed.
     """
 
-    def __init__(self, sim_options={}, verbose=True, **kwargs):
+    def __init__(self, sim_options={}, verbose=False, **kwargs):
 
         AlgoBase.__init__(self, sim_options=sim_options, **kwargs)
         self.verbose = verbose
@@ -361,7 +354,7 @@ class KNNCustom(SymmetricAlgo):
 
         #neighbors = [(self.sim[x, x2], r) for (x2, r) in self.yr[y]]
         k_neighbors = self.get_neighbors_flock(self.trainset.to_raw_uid(u), self.k)
-        print('USER: ' + str(self.trainset.to_raw_uid(u)) + 'item' + str(y))
+        #print('USER: ' + str(self.trainset.to_raw_uid(u)) + 'item' + str(y))
         #print(k_neighbors)
         #print('##')
 
@@ -376,11 +369,12 @@ class KNNCustom(SymmetricAlgo):
                     #print(self.trainset.to_raw_iid(y))
                     #print('item' + str(item) + 'el_mio' + str(y))
                     if item == y:
-                        print('entra')
+                        #print('entra')
                         sum_ratings += r * sim
                         actual_k += 1
-                        print(r)
-                        print(sum_ratings, actual_k)
+                        #print(r)
+                        #print(sum_ratings, actual_k)
+
 
         if actual_k < self.min_k:
             raise PredictionImpossible('Not enough neighbors.')

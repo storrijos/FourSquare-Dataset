@@ -46,10 +46,13 @@ class ConvoyPartial(object):
 
         with open(output, "wb") as outfile:
             read_files = glob.glob("./src/Patterns/Convoy/*out.txt")
+            read_files_output = glob.glob("./src/Patterns/Convoy/*output.txt")
             for f in read_files:
                 with open(f, "rb") as infile:
                     outfile.write(infile.read())
             for f in read_files:
+                os.remove(f)
+            for f in read_files_output:
                 os.remove(f)
 
 @click.command()
