@@ -54,6 +54,28 @@
             </li>
           </ul>
         </nav>
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ficheros necesarios</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                  <label>• Fichero dataset procesado con columnas <i>(user_id, item_id, lat, long, timestamp)</i></label>
+                  <br/><label>• Fichero de similitudes con columnas <i>(user1_id, user2_id, similitud)</i></label>
+                  <br/><label>• Opcional: Fichero de trayectorias con formato <i>({"user_id": [{"traj_counter": [...)</i> </label>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="container">
             <div class="center">
                 <div class="btn-group btn-group-lg" role="group" aria-label="Horizontal Button Group">
@@ -65,7 +87,6 @@
                 </div>
 
                 <div class="form_div">
-                    <h5>Required files: processed dataset, similarity and trajectories(optional)</h5>
                     <form method="post" id="#" enctype=multipart/form-data>
                         <input id="input-b3" name="input-b3[]" type="file" class="file" multiple data-show-upload="true" data-show-caption="true" data-msg-placeholder="Select {files} for upload...">
                         <div class = "placeholder_form">
@@ -73,6 +94,8 @@
                               <div class="form-group mx-sm-3 mb-2">
                                 <input type="tag" name=tag class="form-control" id="tag" placeholder="File TAG">
                               </div>
+                                <button type="button" class="btn btn-warning mb-2" data-toggle="modal" data-target="#exampleModal">Help </button>
+                                <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="bottom" title="hey tooltip"></span>
                               <input type="submit" value=Upload class="btn btn-primary mb-2"></input>
                             </form>
                         </div>
