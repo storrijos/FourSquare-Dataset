@@ -143,7 +143,8 @@ class KNN():
         #print(test)
 
         not_seen_elems = self.merge_train_set(train_dataset, test_dataset)
-        predictions = algo.test(not_seen_elems, test, verbose=False)
+        predictions_precision = algo.test(not_seen_elems, test, verbose=False, not_seen_flag=True)
+        predictions = algo.test(not_seen_elems, test, verbose=False, not_seen_flag=False)
         top_n = self.get_top_n(predictions, n=k)
 
         # Print the recommended items for each user
@@ -154,12 +155,11 @@ class KNN():
                 pass
         #rmse(predictions)
         #mae(predictions)
-        precisions = self.precision_recall_at_k(predictions, k=10, threshold=0.5)
+        precisions, recalls = self.precision_recall_at_k(predictions, 10, threshold=0.0)
         # Precision and recall can then be averaged over all users
         precision_avg = sum(prec for prec in precisions.values()) / len(precisions)
-        #recall_avg = sum(rec for rec in recalls.values()) / len(recalls)
-        print(str(precision_avg))
-        #print('Precision: ' + str(precision_avg) + ' Recall: ' + str(0.0) + ' RMSE: ' + str(rmse(predictions, verbose=False)) + ' MAE: ' + str(mae(predictions, verbose=False)))
+        recall_avg = sum(rec for rec in recalls.values()) / len(recalls)
+        print('Precision: ' + str(precision_avg) + ' Recall: ' + str(recall_avg) + ' RMSE: ' + str(rmse(predictions, verbose=False)) + ' MAE: ' + str(mae(predictions, verbose=False)))
         #print(str(precision_avg) + ',' + str(recall_avg) + ',' + str(rmse(predictions, verbose=False)) + ',' + str(mae(predictions, verbose=False)))
 
         #print('TRAINSET2')
@@ -214,13 +214,16 @@ class KNN():
 
             # Number of relevant items
             #n_rel = sum((true_r >= threshold) for (_, true_r) in user_ratings)
+            n_rel = 0
+            for (_, true_r) in user_ratings:
+                if true_r != None and true_r >= threshold:
+                    n_rel += 1
 
             # Number of recommended items in top k
             sum_rek_k = 0
             for (est, rating) in user_ratings[:k]:
                 if rating != None and est >= threshold:
-                    if rating >= threshold:
-                        sum_rek_k += 1
+                    sum_rek_k += 1
             #n_rec_k = sum_rek_k
             #n_rec_k = sum((est >= threshold) for (est, _) in user_ratings[:k])
 
@@ -234,9 +237,9 @@ class KNN():
             #precisions[uid] = n_rel_and_rec_k / n_rec_k if n_rec_k != 0 else 0
 
             # Recall@K: Proportion of relevant items that are recommended
-            #recalls[uid] = n_rel_and_rec_k / n_rel if n_rel != 0 else 0
+            recalls[uid] = sum_rek_k / n_rel if n_rel != 0 else 0
 
-        return precisions
+        return precisions, recalls
 
 @click.command()
 @click.option('--train_file', default='US_NewYork_POIS_Coords_short.txt', help='Dataset.')
