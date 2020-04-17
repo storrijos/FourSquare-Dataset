@@ -162,14 +162,12 @@ class AlgoBase(object):
         """
 
         # The ratings are translated back to their original scale.
-
         predictions = [self.predict(uid,
                                     iid,
                                     r_ui_trans,
                                     verbose=verbose)
                        for (uid, iid, r_ui_trans) in testset]
-
-        predictions2 = [self.predict(uid, iid, 0.0, verbose=verbose) for (uid, iid) in not_seen]
+        predictions2 = [self.predict(uid, iid, verbose=verbose) for (uid, iid) in not_seen]
 
         return predictions + predictions2
 
