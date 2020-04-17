@@ -108,7 +108,7 @@ class KNN():
         #values = df_row_reindex.groupby('id')['item_id'].apply(list)
         values = df_row_reindex.groupby('id')['item_id'].apply(lambda g: g.values.tolist()).to_dict()
 
-        all_items = df_row_reindex['item_id'].tolist()
+        all_items = list(dict.fromkeys(df_row_reindex['item_id'].tolist()))
 
         items_user_not_seen = []
 
