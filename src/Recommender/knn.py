@@ -99,6 +99,25 @@ class KNN():
 
         return top_n
 
+    def merge_train_set(self, train, test):
+        train.drop(columns=['rating'])
+        test.drop(columns=['rating'])
+
+        df_row_reindex = pd.concat([train, test], ignore_index=True)
+
+        #values = df_row_reindex.groupby('id')['item_id'].apply(list)
+        values = df_row_reindex.groupby('id')['item_id'].apply(lambda g: g.values.tolist()).to_dict()
+
+        all_items = df_row_reindex['item_id'].tolist()
+
+        items_user_not_seen = []
+
+        for user_id, user_items_list in values.items():
+            for elem_list in all_items:
+                tuple_elem = (user_id, elem_list)
+                items_user_not_seen.append(tuple_elem)
+        return items_user_not_seen
+
     def recommender(self, train_file, test_file, k, neighbors, output_file):
 
         #TRAIN
@@ -123,12 +142,12 @@ class KNN():
         #print('test')
         #print(test)
 
-        predictions = algo.test(test, verbose=False)
-        #print(predictions)
+        not_seen_elems = self.merge_train_set(train_dataset, test_dataset)
+        predictions = algo.test(not_seen_elems, test, verbose=False)
         top_n = self.get_top_n(predictions, n=k)
 
         # Print the recommended items for each user
-        #print('TOP')
+        print('TOP')
         for uid, user_ratings in top_n.items():
             for (iid, rating) in user_ratings:
                 #print(uid, iid, rating)
@@ -140,7 +159,7 @@ class KNN():
         precision_avg = sum(prec for prec in precisions.values()) / len(precisions)
         recall_avg = sum(rec for rec in recalls.values()) / len(recalls)
         #print('Precision: ' + str(precision_avg) + ' Recall: ' + str(recall_avg) + ' RMSE: ' + str(rmse(predictions, verbose=False)) + ' MAE: ' + str(mae(predictions, verbose=False)))
-        print(str(precision_avg) + ',' + str(recall_avg) + ',' + str(rmse(predictions, verbose=False)) + ',' + str(mae(predictions, verbose=False)))
+        #print(str(precision_avg) + ',' + str(recall_avg) + ',' + str(rmse(predictions, verbose=False)) + ',' + str(mae(predictions, verbose=False)))
 
         #print('TRAINSET2')
         self.trainset = algo.trainset
@@ -199,9 +218,9 @@ class KNN():
             n_rec_k = sum((est >= threshold) for (est, _) in user_ratings[:k])
 
             # Number of relevant and recommended items in top k
+
             n_rel_and_rec_k = sum(((true_r >= threshold) and (est >= threshold))
                                   for (est, true_r) in user_ratings[:k])
-
             # Precision@K: Proportion of recommended items that are relevant
             precisions[uid] = n_rel_and_rec_k / n_rec_k if n_rec_k != 0 else 0
 

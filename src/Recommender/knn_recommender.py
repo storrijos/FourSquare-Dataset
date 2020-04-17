@@ -145,7 +145,7 @@ class AlgoBase(object):
 
         return self.trainset.global_mean
 
-    def test(self, testset, verbose=False):
+    def test(self, not_seen, testset, verbose=False):
         """Test the algorithm on given testset, i.e. estimate all the ratings
         in the given testset.
         Args:
@@ -168,7 +168,10 @@ class AlgoBase(object):
                                     r_ui_trans,
                                     verbose=verbose)
                        for (uid, iid, r_ui_trans) in testset]
-        return predictions
+
+        predictions2 = [self.predict(uid, iid, 0.0, verbose=verbose) for (uid, iid) in not_seen]
+
+        return predictions + predictions2
 
     def compute_baselines(self):
         """Compute users and items baselines.
