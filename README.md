@@ -11,4 +11,14 @@ To install the virtual enviroment:
 3. `pip3 install -e .`
 4. Install all missing dependencies: `surprise, pandas, numpy, click, pyproj, matplotlib`
 
-To run the main script execute: ```python process_data.py ```
+To run the main script execute: `./experiments_tfg.sh`
+
+# To execute the visual application locally:
+
+In the file: FourSquare-Dataset/templates/maps/salida2.html
+
+Modify the line:
+
+`<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=true_or_false&key=XXX"></script>`
+
+Typing in the section `key=XXX` the api_key provided by your account in https://cloud.google.com/maps-platform/. Removed due to privacy and to avoid spam petitions.
