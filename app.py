@@ -118,7 +118,6 @@ def map(tag, user_id, k):
 
         neighbors = request.json
         output_url = 'map' + str(user_id) + str(k) + '.html'
-
         print(files_tag)
         print(tag)
 

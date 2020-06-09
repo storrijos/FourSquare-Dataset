@@ -43,13 +43,11 @@ class TrajPlot(object):
         for tuple in trajs:
             user_id = tuple[0]
             traj = tuple[1]
-            print('entra')
             #print(users_colors)
             # now let's plot:
             if str(user_id) in users_colors:
                 color = users_colors[str(user_id)]
             else:
-                print('MAL FATAL')
                 color = self.get_random_hex()
             gmap.plot(traj[0], traj[1], color, edge_width=5)
             gmap.scatter(traj[0], traj[1], '#3B0B39', size=70, marker=False)
@@ -106,7 +104,8 @@ def plot_k_trajs_web(user_id, dataset, similarity_dataset, output_file, k, users
     print(len(users))
     for user in users.iterrows():
         trajs.append((int(user[1]['user1_id']), traj_plot.flatten_dict_dicts(traj_data_dict[str(int(user[1]['user1_id']))])))
-        trajs.append((int(user[1]['user2_id']), traj_plot.flatten_dict_dicts(traj_data_dict[str(int(user[1]['user2_id']))])))
+        if str(int(user[1]['user2_id'])) in traj_data_dict:
+            trajs.append((int(user[1]['user2_id']), traj_plot.flatten_dict_dicts(traj_data_dict[str(int(user[1]['user2_id']))])))
     return traj_plot.plot_traj_web(trajs, output_file, users_colors)
 
 

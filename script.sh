@@ -62,7 +62,7 @@ python3 src/Patterns/TrajectorySimilarity/trajectory_similarity.py --dataset ent
 
 
 1.
-python3 src/Processing/pre_process.py --input_file entradas/romeTempTrain.txt --coords_file entradas/POIS_rome__Coords.txt --output_file romePOISCompleto.txt
+python3 src/Processing/pre_process.py --input_file entradas/Rome1K/romeTempTrain.txt --coords_file entradas/POIS_rome__Coords.txt --output_file romePOISCompleto.txt
 2.
 python3 src/Processing/pre_process.py --method dataset_similarity --input_file romePOISCompleto.TXT --coords_file entradas/POIS_rome__Coords.txt --output_file rome_sim.txt
 3.

@@ -24,10 +24,10 @@ PRE
 
 do_process=FALSE
 do_neighbors=FALSE
-do_knn=TRUE
+do_knn=FALSE
 do_eval=FALSE
 do_posteval=FALSE
-sim_avg=FALSE
+sim_avg=TRUE
 
 traintest_folder="entradas/Rome10K"
 filenames_train=(romeTempTrain.txt)
@@ -94,7 +94,8 @@ do
   #python3 src/Patterns/Convoy/ConvoyTrajectory.py --filename $training --output $patternneigh_folder"/"$filename"__"convoy_3_5_1_T.txt --minpoints 3 --lifetime 5 --distance_max 1 --partials True
 
   echo "Convoy"
-  #time python3 src/Patterns/Convoy/ConvoyTrajectory.py --filename $training --output $patternneigh_folder"/"$filename"__"convoy_2_2_0.01_no_partials.txt --minpoints 2 --lifetime 2 --distance_max 0.01 --partials False
+  #python3 src/Patterns/Convoy/ConvoyTrajectory.py --filename $training --output $patternneigh_folder"/"$filename"__"convoy_30_5_0.1_no_partials.txt --minpoints 20 --lifetime 2 --distance_max 0.01 --partials False
+  #python3 src/Patterns/Convoy/ConvoyTrajectory.py --filename $training --output $patternneigh_folder"/"$filename"__"convoy_2_2_0.01_no_partials.txt --minpoints 2 --lifetime 2 --distance_max 0.01 --partials False
   #python3 src/Patterns/Convoy/ConvoyTrajectory.py --filename $training --output $patternneigh_folder"/"$filename"__"convoy_5_2_0.01_no_partials.txt --minpoints 5 --lifetime 2 --distance_max 0.01 --partials False
   #python3 src/Patterns/Convoy/ConvoyTrajectory.py --filename $training --output $patternneigh_folder"/"$filename"__"convoy_10_2_0.01_no_partials.txt --minpoints 10 --lifetime 2 --distance_max 0.01 --partials False
   #python3 src/Patterns/Convoy/ConvoyTrajectory.py --filename $training --output $patternneigh_folder"/"$filename"__"convoy_20_2_0.01_no_partials.txt --minpoints 20 --lifetime 2 --distance_max 0.01 --partials False
@@ -107,6 +108,12 @@ do
   #python3 src/Patterns/Convoy/ConvoyTrajectory.py --filename $training --output $patternneigh_folder"/"$filename"__"convoy_2_2_0.01_no_partials.txt --minpoints 2 --lifetime 2 --distance_max 0.01 --partials False
   #python3 src/Patterns/Convoy/ConvoyTrajectory.py --filename $training --output $patternneigh_folder"/"$filename"__"convoy_2_2_0.001_no_partials.txt --minpoints 2 --lifetime 2 --distance_max 0.001 --partials False
   #python3 src/Patterns/Convoy/ConvoyTrajectory.py --filename $training --output $patternneigh_folder"/"$filename"__"convoy_2_2_0.00000001_no_partials.txt --minpoints 2 --lifetime 2 --distance_max 0.00000001 --partials False
+
+  #python3 src/Patterns/Convoy/ConvoyTrajectory.py --filename $training --output $patternneigh_folder"/"$filename"__"convoy_5_2_0.01_last_no_partials.txt --minpoints 5 --lifetime 2 --distance_max 0.01 --partials False
+  python3 src/Patterns/Convoy/ConvoyTrajectory.py --filename $training --output $patternneigh_folder"/"$filename"__"convoy_5_2_0.000000000000001_last_no_partials.txt --minpoints 5 --lifetime 2 --distance_max 0.000000000000001 --partials False
+  #python3 src/Patterns/Convoy/ConvoyTrajectory.py --filename $training --output $patternneigh_folder"/"$filename"__"convoy_2_2_0.0001_last_no_partials.txt --minpoints 2 --lifetime 2 --distance_max 0.0001 --partials False
+  #python3 src/Patterns/Convoy/ConvoyTrajectory.py --filename $training --output $patternneigh_folder"/"$filename"__"convoy_2_2_0.000001_no_partials.txt --minpoints 2 --lifetime 2 --distance_max 0.000001 --partials False
+
 
   ## These take too much time (in Tokyo, not so much in Rome)
   echo "ST-DBSCAN"
@@ -122,6 +129,7 @@ do
   ## Next one takes too much memory
   echo "Flock"
   #python3 src/Patterns/Flock/fpFlockOnline.py --filename $training --output $patternneigh_folder"/"$filename"__"flock_0.1_2_2.txt --epsilon 0.1 --mu 2 --delta 3 &
+  #python3 src/Patterns/Flock/fpFlockOnline.py --filename $training --output $patternneigh_folder"/"$filename"__"flock_0.001_2_2.txt --epsilon 0.001 --mu 2 --delta 3
   #python3 src/Patterns/Flock/fpFlockOnline.py --filename $training --output $patternneigh_folder"/"$filename"__"flock_10_2_2.txt --epsilon 10 --mu 2 --delta 2 &
   #REV python3 src/Patterns/Flock/fpFlockOnline.py --filename $training --output $patternneigh_folder"/"$filename"__"flock_0.1_5_2.txt --epsilon 0.1 --mu 5 --delta 2
   #Nada python3 src/Patterns/Flock/fpFlockOnline.py --filename $training --output $patternneigh_folder"/"$filename"__"flock_0.1_10_2.txt --epsilon 0.1 --mu 10 --delta 2
@@ -131,9 +139,9 @@ do
 
   ## Ad hoc
   echo "Ad-Hoc"
-  #python3 src/Patterns/Greedy/greedy_approach.py --filename $training_pre --output $patternneigh_folder"/"$filename"__"adhoc_3600.txt --delta 3600 &
+  #python3 src/Patterns/Greedy/greedy_approach.py --filename $training_pre --output $patternneigh_folder"/"$filename"__"adhoc_3600.txt --delta 3600
   #python3 src/Patterns/Greedy/greedy_approach.py --filename $training_pre --output $patternneigh_folder"/"$filename"__"adhoc_7200.txt --delta 7200 &
-  #python3 src/Patterns/Greedy/greedy_approach.py --filename $training_pre --output $patternneigh_folder"/"$filename"__"adhoc_10800.txt --delta 10800 &
+  #python3 src/Patterns/Greedy/greedy_approach.py --filename $training_pre --output $patternneigh_folder"/"$filename"__"adhoc_10800.txt --delta 10800
   #python3 src/Patterns/Greedy/greedy_approach.py --filename $training_pre --output $patternneigh_folder"/"$filename"__"adhoc_14400.txt --delta 14400 &
   #python3 src/Patterns/Greedy/greedy_approach.py --filename $training_pre --output $patternneigh_folder"/"$filename"__"adhoc_28800.txt --delta 28800 &
 
@@ -153,28 +161,29 @@ do
   #python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_3_5_1_T.txt --k 100 --minpoints 3 --lifetime 5 --distance_max 1 --partials True
 
   ##Convoy Partials no_partials
-  python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_2_0.01_T_no_partial.txt --k 100 --minpoints 2 --lifetime 2 --distance_max 0.01 --partials False
-  python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_5_2_0.01_T_no_partial.txt --k 100 --minpoints 5 --lifetime 2 --distance_max 0.01 --partials False
-  python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_10_2_0.01_T_no_partial.txt --k 100 --minpoints 10 --lifetime 2 --distance_max 0.01 --partials False
-  python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_20_2_0.01_T_no_partial.txt --k 100 --minpoints 20 --lifetime 2 --distance_max 0.01 --partials False
-  python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_5_0.01_T_no_partial.txt --k 100 --minpoints 2 --lifetime 5 --distance_max 0.01 --partials False
-  python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_10_0.01_T_no_partial.txt --k 100 --minpoints 2 --lifetime 10 --distance_max 0.01 --partials False
-  python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_20_0.01_T_no_partial.txt --k 100 --minpoints 2 --lifetime 20 --distance_max 0.01 --partials False
-  python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_2_100_T_no_partial.txt --k 100 --minpoints 2 --lifetime 2 --distance_max 100 --partials False
-  python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_2_1_T_no_partial.txt --k 100 --minpoints 2 --lifetime 2 --distance_max 1 --partials False
-  python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_2_0.1_T_no_partial.txt --k 100 --minpoints 2 --lifetime 2 --distance_max 0.1 --partials False
-  python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_2_0.01_T_no_partial.txt --k 100 --minpoints 2 --lifetime 2 --distance_max 0.01 --partials False
-  python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_2_0.001_T_no_partial.txt --k 100 --minpoints 2 --lifetime 2 --distance_max 0.001 --partials False
-  python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_2_0.00000001_T_no_partial.txt --k 100 --minpoints 2 --lifetime 2 --distance_max 0.00000001 --partials False
+  #python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_2_0.01_T_no_partial.txt --k 100 --minpoints 2 --lifetime 2 --distance_max 0.01 --partials False
+  #python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_5_2_0.01_T_no_partial.txt --k 100 --minpoints 5 --lifetime 2 --distance_max 0.01 --partials False
+  #python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_10_2_0.01_T_no_partial.txt --k 100 --minpoints 10 --lifetime 2 --distance_max 0.01 --partials False
+  #python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_20_2_0.01_T_no_partial.txt --k 100 --minpoints 20 --lifetime 2 --distance_max 0.01 --partials False
+  #python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_5_0.01_T_no_partial.txt --k 100 --minpoints 2 --lifetime 5 --distance_max 0.01 --partials False
+  #python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_10_0.01_T_no_partial.txt --k 100 --minpoints 2 --lifetime 10 --distance_max 0.01 --partials False
+ # python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_20_0.01_T_no_partial.txt --k 100 --minpoints 2 --lifetime 20 --distance_max 0.01 --partials False
+ # python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_2_100_T_no_partial.txt --k 100 --minpoints 2 --lifetime 2 --distance_max 100 --partials False
+ # python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_2_1_T_no_partial.txt --k 100 --minpoints 2 --lifetime 2 --distance_max 1 --partials False
+ # python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_2_0.1_T_no_partial.txt --k 100 --minpoints 2 --lifetime 2 --distance_max 0.1 --partials False
+ # python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_2_0.01_T_no_partial.txt --k 100 --minpoints 2 --lifetime 2 --distance_max 0.01 --partials False
+ # python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_2_0.001_T_no_partial.txt --k 100 --minpoints 2 --lifetime 2 --distance_max 0.001 --partials False
+  #python3 src/Patterns/Convoy/convoy_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"convoy_partials_2_2_0.00000001_T_no_partial.txt --k 100 --minpoints 2 --lifetime 2 --distance_max 0.00000001 --partials False
 
   ## Flock Partials
-  #python3 src/Patterns/Flock/flock_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"flock_partials_0.1_2_2.txt --k 100 --epsilon 0.01 --mu 2 --delta 0.2
-  #python3 src/Patterns/Flock/flock_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"flock_partials_0.1_2_2.txt --k 100 --epsilon 0.1 --mu 2 --delta 2
-  #python3 src/Patterns/Flock/flock_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"flock_partials_10_2_2.txt --k 100 --epsilon 10 --mu 2 --delta 2
+  #python3 src/Patterns/Flock/flock_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"flock_partials_0.1_2_2_cleaned.txt --k 100 --epsilon 0.01 --mu 2 --delta 0.2
+  #python3 src/Patterns/Flock/flock_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"flock_partials_0.1_2_2_cleaned.txt --k 100 --epsilon 0.1 --mu 2 --delta 2
+  #python3 src/Patterns/Flock/flock_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"flock_partials_10_2_2_cleaned.txt --k 100 --epsilon 10 --mu 2 --delta 2
+  #python3 src/Patterns/Flock/flock_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"flock_partials_0.1_2_2_cleaned.txt --k 100 --epsilon 0.01 --mu 2 --delta 0.2
   #python3 src/Patterns/Flock/flock_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"flock_partials_0.1_5_2.txt --k 100 --epsilon 0.1 --mu 5 --delta 2
   #Nada python3 src/Patterns/Flock/flock_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"flock_partials_0.1_10_2.txt --k 100 --epsilon 0.1 --mu 10 --delta 2
   #python3 src/Patterns/Flock/flock_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"flock_partials_0.1_2_1.txt --k 100 --epsilon 0.1 --mu 2 --delta 1
-  #python3 src/Patterns/Flock/flock_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"flock_partials_0.1_2_10.txt --k 100 --epsilon 0.1 --mu 2 --delta 10
+  #python3 src/Patterns/Flock/flock_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"flock_partials_0.1_2_10_cleaned.txt --k 100 --epsilon 0.1 --mu 2 --delta 10
   #Nada python3 src/Patterns/Flock/flock_partial.py --dataset $training --similarity_file $patternneigh_folder"/"$filename"__"stdbscan_2000_4000_1.txt --output $patternneigh_folder"/"$filename"__"flock_partials_0.1_2_100.txt --k 100 --epsilon 0.1 --mu 2 --delta 100
 
 done
@@ -192,7 +201,7 @@ if [ "$do_knn" = TRUE ] ; then
 use_tfg=TRUE
 
 if [ "$use_tfg" = TRUE ] ; then
-all_neighbours="10 20 40 60 80 100 120 150 200 250 300"
+all_neighbours="10 20 40 80 160 300"
 # obtain neighbors
 patternneigh_folder="patterns_neigh_10K_combinaciones"
 rec_folder="recs"
@@ -218,6 +227,7 @@ do
     for neighbours in $all_neighbours
     do
       val=$(python3 src/Recommender/knn.py --train_file $training_pre --test_file $test_pre --k $neighbours --neighbors_classified $neigh_file --output_file $rec_folder"/"$filename"__"$neighbours"__"$neigh_name)
+      echo "KNN_"$neighbours"_"$neigh_file","$val
       echo "KNN_"$neighbours"_"$neigh_file","$val >> $rec_folder/$patternneigh_folder"_output_knn.csv"
     done
   done
