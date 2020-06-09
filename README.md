@@ -11,4 +11,4 @@ To install the virtual enviroment:
 3. `pip3 install -e .`
 4. Install all missing dependencies: `surprise, pandas, numpy, click, pyproj, matplotlib`
 
-To run the main script execute: ```python process_data.py ```
+To run the main script execute: `./experiments_tfg.sh`
