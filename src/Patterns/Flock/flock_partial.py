@@ -62,9 +62,13 @@ class FlockPartial(object):
         os.chdir(original_path)
         print(os.getcwd())
         with open(output, "wb") as outfile:
+            lines_seen = set()  # holds lines already seen
             for f in read_files:
-                with open('src/Patterns/Flock/' + f, "rb") as infile:
-                    outfile.write(infile.read())
+                #with open('src/Patterns/Flock/' + f, "rb") as infile:
+                for each_line in open('src/Patterns/Flock/' + f, "rb"):
+                    if each_line not in lines_seen:  # check if line is not duplicate
+                        outfile.write(each_line)
+                        lines_seen.add(each_line)
             for f in read_files:
                 os.remove('src/Patterns/Flock/' + f)
             for f in read_files_in:

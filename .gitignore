@@ -14,5 +14,5 @@ src.egg-info
 *.pyc
 templates/
 pattern*
-recs/
+recs_old/
 traintest*
